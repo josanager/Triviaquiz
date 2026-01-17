@@ -1,0 +1,22 @@
+{
+  "name": "trivia-cultura-general",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "export": "node scripts/export-video.cjs",
+    "export:timecut": "node scripts/export-timecut.cjs"
+  },
+  "devDependencies": {
+    "timecut": "^0.3.3",
+    "vite": "^7.2.4"
+  },
+  "dependencies": {
+    "html2canvas": "^1.4.1",
+    "puppeteer": "^19.0.0",
+    "puppeteer-screen-recorder": "^3.0.6"
+  }
+}

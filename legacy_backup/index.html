@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trivia Cultura General</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <div id="app" class="video-player-layout">
+    <!-- Main Workspace -->
+    <div class="workspace">
+      <!-- Preview Container (Centered Content) -->
+      <div class="preview-container">
+        <div class="preview-frame">
+          <div class="background-blobs">
+            <div class="blob blob-1"></div>
+            <div class="blob blob-2"></div>
+            <div class="blob blob-3"></div>
+          </div>
+
+          <div class="glass-container">
+            <!-- Welcome Screen -->
+            <div id="welcome-screen" class="screen active">
+              <img src="/logo.svg" alt="Papelcool" class="welcome-logo animate-bounce-in" style="--delay: 0">
+
+              <h1 class="welcome-title animate-bounce-in" style="--delay: 1">
+                TRIVIA DE<br>
+                <span class="highlight-yellow wiggle">aespa</span> PARA MYs
+              </h1>
+
+              <div class="info-banner animate-bounce-in float" style="--delay: 2">
+                <span class="info-banner-text">50 Preguntas</span>
+                <span class="info-banner-bonus pulse-text">+15 seg c/u</span>
+              </div>
+
+              <div class="score-info-card animate-bounce-in" style="--delay: 3">
+                <div class="score-info-item" id="level-conocedor-intro">
+                  <span class="score-emoji wiggle">🤔</span>
+                  <span class="score-number">+12</span>
+                  <span class="score-label">Conocedor</span>
+                </div>
+                <div class="score-divider"></div>
+                <div class="score-info-item" id="level-fan-intro">
+                  <span class="score-emoji wiggle">🙂</span>
+                  <span class="score-number">+33</span>
+                  <span class="score-label">Fan</span>
+                </div>
+                <div class="score-divider"></div>
+                <div class="score-info-item" id="level-midzy-intro">
+                  <span class="score-emoji wiggle">🥳</span>
+                  <span class="score-number">+45</span>
+                  <span class="score-label">¡MY!</span>
+                </div>
+              </div>
+
+              <button id="start-btn" class="btn start-btn animate-bounce-in pulse-button"
+                style="--delay: 4">¡COMENZAR!</button>
+            </div>
+
+            <!-- Quiz Screen -->
+            <div id="quiz-screen" class="screen">
+              <!-- Corner Logo -->
+              <img src="/logo.svg" alt="Papelcool" class="corner-logo">
+
+              <header class="quiz-header">
+                <div class="question-number-circle">
+                  <span id="current-question-num">1</span>
+                </div>
+                <h2 id="question-text" class="question-title">¿PREGUNTA?</h2>
+              </header>
+
+              <div class="quiz-content">
+                <div class="image-column">
+                  <div class="polaroid-frame">
+                    <img id="question-image" src="https://placehold.co/600x400/png" alt="Question Image" />
+                  </div>
+                </div>
+
+                <div class="options-column">
+                  <div class="options-container" id="options-container">
+                    <!-- Options injected by JS -->
+                  </div>
+
+                  <div class="timer-container">
+                    <div class="timer-bar" id="timer-bar"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Result Screen -->
+            <div id="result-screen" class="screen">
+              <img src="/logo.svg" alt="Papelcool" class="result-logo animate-bounce-in" style="--delay: 0">
+              <h2 class="result-title animate-bounce-in" style="--delay: 1">¡Completado!</h2>
+
+              <div class="score-info-card animate-bounce-in" style="--delay: 2">
+                <div class="score-info-item" id="level-conocedor">
+                  <span class="score-emoji wiggle">🤔</span>
+                  <span class="score-number">+12</span>
+                  <span class="score-label">Conocedor</span>
+                </div>
+                <div class="score-divider"></div>
+                <div class="score-info-item" id="level-fan">
+                  <span class="score-emoji wiggle">🙂</span>
+                  <span class="score-number">+33</span>
+                  <span class="score-label">Fan</span>
+                </div>
+                <div class="score-divider"></div>
+                <div class="score-info-item" id="level-midzy">
+                  <span class="score-emoji wiggle">🥳</span>
+                  <span class="score-number">+45</span>
+                  <span class="score-label">¡MY!</span>
+                </div>
+              </div>
+
+              <p id="feedback-text" class="feedback animate-bounce-in wiggle-slow" style="--delay: 3">Gracias por ver el
+                video</p>
+
+              <button id="restart-btn" class="btn restart-btn animate-bounce-in pulse-button" style="--delay: 4">Jugar
+                de Nuevo</button>
+            </div>
+
+            <!-- Export Ready Screen (Only visible in export mode) -->
+            <div id="export-ready-screen" class="screen">
+              <img src="/logo.svg" alt="Papelcool" class="result-logo animate-bounce-in" style="--delay: 0">
+              <h2 class="result-title animate-bounce-in" style="--delay: 1">¡Exportación Lista!</h2>
+
+              <div class="export-ready-icon animate-bounce-in" style="--delay: 2">✅</div>
+
+              <p class="export-ready-text animate-bounce-in" style="--delay: 3">El video ha sido grabado correctamente
+              </p>
+
+              <button id="export-again-btn" class="btn restart-btn animate-bounce-in pulse-button"
+                style="--delay: 4">Exportar Otra Vez</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Playback Controls Bar -->
+    <div class="playback-controls">
+      <button id="play-btn" class="control-btn play-btn" title="Reproducir/Pausar">
+        <span class="play-icon">▶</span>
+      </button>
+      <div class="time-display">
+        <span id="current-time">00:00.0</span>
+        <span class="time-separator">/</span>
+        <span id="total-time">00:00.0</span>
+      </div>
+      <div class="playback-progress">
+        <div class="progress-track">
+          <div id="progress-bar" class="progress-fill"></div>
+        </div>
+      </div>
+      <div class="speed-control">
+        <span id="speed-value">100%</span>
+      </div>
+    </div>
+
+    <!-- Timeline with Thumbnails -->
+    <div id="timeline-container" class="timeline-container">
+      <div class="timeline-scroll">
+        <div id="timeline-thumbnails" class="timeline-thumbnails">
+          <!-- Thumbnails generated by JS -->
+        </div>
+      </div>
+      <button id="download-btn" class="download-btn" title="Descargar">
+        <span class="download-icon">📥</span>
+      </button>
+    </div>
+
+    <!-- Timeline Progress Track -->
+    <div class="timeline-progress-track">
+      <div id="timeline-progress" class="timeline-progress"></div>
+    </div>
+
+    <!-- Export Modal -->
+    <div id="export-modal" class="export-modal hidden">
+      <div class="export-backdrop"></div>
+      <div class="export-content">
+        <div class="export-icon">🎬</div>
+        <h3 class="export-title">Exportando Video</h3>
+        <div class="export-progress-bar">
+          <div id="export-progress-fill" class="export-progress-fill"></div>
+        </div>
+        <p id="export-status" class="export-status">Preparando...</p>
+        <button id="export-cancel" class="export-cancel-btn">Cancelar</button>
+      </div>
+    </div>
+  </div>
+  <script type="module" src="/src/main.js"></script>
+</body>
+
+</html>
