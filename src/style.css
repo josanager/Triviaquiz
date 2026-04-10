@@ -7,13 +7,13 @@
 }
 
 :root {
-  --bg-workspace: #0a0a0c;
-  --bg-controls: #ffffff;
-  --bg-timeline: #1a1a1e;
-  --accent-blue: #7d5fff;
-  --accent-green: #22c55e;
-  --text-primary: #f5f5f7;
-  --shadow-medium: 0 8px 24px rgba(0, 0, 0, 0.4);
+  --bg-workspace: #000000;
+  --bg-controls: #1a1a1a;
+  --bg-timeline: #0f0f0f;
+  --accent-blue: #2c2cff;
+  --accent-green: #15803d;
+  --text-primary: #ffffff;
+  --shadow-medium: 0 8px 24px rgba(0, 0, 0, 0.8);
   --font-family: 'Montserrat', sans-serif;
 }
 
@@ -22,24 +22,43 @@ html {
   /* Scale up for 2K resolution (2560px) to keep proportions enormous */
 }
 
-/* aespa Aurora theme colors */
-/* aespa Aurora theme colors */
+/* MORAT Official Palette (Inspired by 'FALTAS TÚ' cover) */
 :root {
-  --quiz-bg: #0d001a;
-  --option-bg: rgba(255, 255, 255, 0.08);
-  /* Frosted glass look */
+  --quiz-bg: #263238;
+  /* Dark Blue Grey */
+  --option-bg: rgba(38, 50, 56, 0.85);
   --option-text: #ffffff;
-  --letter-bg: #c9a0dc;
-  /* Wisteria */
-  --letter-text: #0d001a;
-  --glass-bg: rgba(255, 255, 255, 0.05);
-  --glass-border: rgba(255, 255, 255, 0.15);
+  --letter-bg: #FFC83D;
+  /* Mustard Yellow */
+  --letter-text: #1a1a1a;
+  /* Dark text for contrast on yellow */
+  --glass-bg: rgba(20, 30, 35, 0.85);
+  --glass-border: rgba(255, 200, 61, 0.3);
 
-  /* Aurora Accents */
-  --color-purple: #7d5fff;
-  --color-violet: #c9a0dc;
-  --color-cyan: #00f2ff;
-  --color-blue: #55c2ff;
+  /* MORAT Palette */
+  --color-primary: #FFC83D;
+  /* Falta Tu Yellow */
+  --color-secondary: #546E7A;
+  /* Shutter Blue-Grey */
+  --color-accent: #CFD8DC;
+  /* Concrete Grey */
+  --color-dark: #263238;
+  /* Deep Slate */
+  --color-jeans: #37474F;
+  /* Denim Dark */
+
+  /* Legacy variable mapping for compatibility */
+  --color-pink: #FFC83D;
+  /* Replaced Pink with Yellow */
+  --color-pink-light: #78909C;
+  --color-pink-pastel: #CFD8DC;
+  --color-purple: #FFA000;
+  /* Darker Yellow */
+  --color-violet: #455A64;
+  --color-cyan: #FFECB3;
+
+  /* Dynamic Circle Color */
+  --circle-color: #FFC83D;
 }
 
 body {
@@ -80,7 +99,7 @@ body {
 .preview-frame {
   width: 100%;
   height: 100%;
-  background: radial-gradient(circle at 50% 50%, #1a0033 0%, #0d001a 100%);
+  background: radial-gradient(circle at 50% 50%, #1a0011 0%, #000000 100%);
   background-size: 200% 200%;
   position: relative;
   display: flex;
@@ -91,69 +110,94 @@ body {
   border-radius: 0;
 }
 
-/* Aurora Cosmic Glow */
+/* OPTIMIZED: Removed aurora animation for faster rendering */
+/* Static subtle glow effect */
 .preview-frame::before {
   content: '';
   position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: conic-gradient(from 180deg at 50% 50%,
-      transparent 0deg,
-      var(--color-purple) 90deg,
-      var(--color-cyan) 180deg,
-      var(--color-blue) 270deg,
-      transparent 360deg);
-  filter: blur(80px);
-  opacity: 0.25;
-  animation: auroraRotate 20s linear infinite;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(ellipse at 50% 50%, rgba(255, 200, 61, 0.15) 0%, transparent 70%);
   pointer-events: none;
 }
 
-@keyframes auroraRotate {
-  from {
-    transform: rotate(0deg);
-  }
-
-  to {
-    transform: rotate(360deg);
-  }
+/* OPTIMIZED: Theme Colors - Static gradients with smooth fade transition */
+.preview-frame {
+  transition: background 1.5s ease-in-out;
 }
 
-/* Theme Colors - ITZY colors */
-.preview-frame.theme-green {
-  background: linear-gradient(-45deg, #00f2ff, #22c55e, #7d5fff);
+/* 1. Urban Concrete (Grey/Teal) */
+.theme-pink {
+  --circle-color: #FFC83D;
 }
 
 .preview-frame.theme-pink {
-  background: linear-gradient(-45deg, #7d5fff, #c9a0dc, #ff00ff);
+  background: linear-gradient(135deg, #263238 0%, #546E7A 100%);
 }
 
-.preview-frame.theme-cyan {
-  background: linear-gradient(-45deg, #00f2ff, #55c2ff, #1a0033);
+/* 2. Golden Hour (Yellow/Black) */
+.theme-blue {
+  --circle-color: #546E7A;
 }
 
-.preview-frame.theme-purple {
-  background: linear-gradient(-45deg, #1a0033, #7d5fff, #c9a0dc);
+.preview-frame.theme-blue {
+  background: linear-gradient(135deg, #102027 0%, #FFC83D 100%);
 }
 
-.preview-frame.theme-gold {
-  background: linear-gradient(-45deg, #c9a0dc, #00f2ff, #7d5fff);
+/* 3. Faltas Tú (Teal/Yellow) */
+.theme-yellow {
+  --circle-color: #FFFFFF;
 }
 
-@keyframes gradientFlow {
-  0% {
-    background-position: 0% 50%;
-  }
+.preview-frame.theme-yellow {
+  background: linear-gradient(135deg, #37474F 0%, #FFA000 100%);
+}
 
-  50% {
-    background-position: 100% 50%;
-  }
+/* 4. Denim Style (Blues) */
+.theme-mint {
+  --circle-color: #FFC83D;
+}
 
-  100% {
-    background-position: 0% 50%;
-  }
+.preview-frame.theme-mint {
+  background: linear-gradient(135deg, #212121 0%, #455A64 50%, #263238 100%);
+}
+
+/* 5. Night Vibe (Dark Slate) */
+.theme-lavender {
+  --circle-color: #FFC83D;
+}
+
+.preview-frame.theme-lavender {
+  background: linear-gradient(135deg, #000000 0%, #37474F 100%);
+}
+
+/* 6. Morat Sunset (Orange/Teal) */
+.theme-rose-gradient {
+  --circle-color: #546E7A;
+}
+
+.preview-frame.theme-rose-gradient {
+  background: linear-gradient(135deg, #263238 0%, #FF6F00 100%);
+}
+
+/* 7. Industrial (Grey/White) */
+.theme-dark-elegant {
+  --circle-color: #FFC83D;
+}
+
+.preview-frame.theme-dark-elegant {
+  background: linear-gradient(135deg, #424242 0%, #607D8B 100%);
+}
+
+/* 8. Stark Contrast (Black/Yellow) */
+.theme-contrast {
+  --circle-color: #FFFFFF;
+}
+
+.preview-frame.theme-contrast {
+  background: linear-gradient(135deg, #000000 0%, #FFEA00 50%, #000000 100%);
 }
 
 /* Background Blobs */
@@ -164,45 +208,38 @@ body {
   overflow: hidden;
 }
 
+/* OPTIMIZED: Static blobs - no animation for faster rendering */
 .blob {
   position: absolute;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.1);
-  animation: float 8s ease-in-out infinite;
-  /* GPU acceleration for smooth 60fps */
-  will-change: transform;
-  transform: translateZ(0);
-  backface-visibility: hidden;
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .blob-1 {
   width: 800px;
   height: 800px;
-  background: radial-gradient(circle, var(--color-purple), transparent 70%);
+  background: radial-gradient(circle, #546E7A, transparent 70%);
   top: -200px;
   left: -200px;
-  opacity: 0.4;
-  animation-duration: 15s;
+  opacity: 0.25;
 }
 
 .blob-2 {
   width: 700px;
   height: 700px;
-  background: radial-gradient(circle, var(--color-cyan), transparent 70%);
+  background: radial-gradient(circle, #FFC83D, transparent 70%);
   bottom: -150px;
   right: -100px;
-  opacity: 0.3;
-  animation-duration: 18s;
+  opacity: 0.15;
 }
 
 .blob-3 {
   width: 600px;
   height: 600px;
-  background: radial-gradient(circle, var(--color-violet), transparent 70%);
+  background: radial-gradient(circle, #CFD8DC, transparent 70%);
   top: 20%;
   right: 10%;
-  opacity: 0.2;
-  animation-duration: 12s;
+  opacity: 0.1;
 }
 
 /* Glass Container - Removed borders for full-width content */
@@ -276,14 +313,14 @@ body {
 }
 
 .info-banner {
-  background: var(--color-purple);
+  background: #FFC83D;
   padding: 1.5rem 5rem;
   border-radius: 60px;
   display: flex;
   gap: 2.5rem;
   align-items: center;
   margin-bottom: 2rem;
-  box-shadow: 0 8px 0 #5a3fd6, 0 15px 30px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 8px 0 #FFA000, 0 15px 30px rgba(0, 0, 0, 0.3);
 }
 
 .info-banner-text {
@@ -295,7 +332,7 @@ body {
 .info-banner-bonus {
   font-size: 1.8rem;
   font-weight: 800;
-  color: #facc15;
+  color: #FFAB00;
 }
 
 .score-info-card {
@@ -322,7 +359,7 @@ body {
 .score-number {
   font-size: 3.5rem;
   font-weight: 800;
-  color: var(--color-cyan);
+  color: #FFC83D;
 }
 
 .score-label {
@@ -338,7 +375,7 @@ body {
 }
 
 .btn {
-  background: var(--color-purple);
+  background: #FFC83D;
   color: white;
   border: none;
   padding: 1.2rem 3.5rem;
@@ -346,20 +383,20 @@ body {
   font-weight: 800;
   border-radius: 60px;
   cursor: pointer;
-  box-shadow: 0 6px 0 #5a3fd6;
+  box-shadow: 0 6px 0 #FFA000;
   transition: all 0.15s ease;
 }
 
 .btn:active {
   transform: translateY(3px);
-  box-shadow: 0 3px 0 #5a3fd6;
+  box-shadow: 0 3px 0 #FFA000;
 }
 
 .start-btn {
   font-size: 2.8rem;
   padding: 1.5rem 6rem;
-  background: var(--color-purple);
-  box-shadow: 0 8px 0 #5a3fd6;
+  background: #FFC83D;
+  box-shadow: 0 8px 0 #FFA000;
 }
 
 /* ===== QUIZ SCREEN ===== */
@@ -368,9 +405,9 @@ body {
   bottom: 40px;
   right: 50px;
   height: 30px;
-  z-index: 100;
+  z-index: 1000;
   opacity: 1;
-  filter: drop-shadow(0 0 10px rgba(125, 95, 255, 0.5));
+  filter: drop-shadow(0 0 10px rgba(255, 200, 61, 0.5));
 }
 
 @keyframes fadeInLogo {
@@ -395,7 +432,7 @@ body {
 .question-number-circle {
   width: 100px;
   height: 100px;
-  background: var(--color-purple);
+  background: var(--circle-color);
   border-radius: 50%;
   display: flex;
   justify-content: center;
@@ -403,9 +440,10 @@ body {
   font-size: 3.5rem;
   font-weight: 800;
   margin-right: 1.5rem;
-  box-shadow: 0 8px 0 #5a3fd6;
+  box-shadow: 0 8px 0 rgba(0, 0, 0, 0.3);
   flex-shrink: 0;
-  color: white;
+  color: #1a1a1a;
+  /* Dark text for yellow circle */
 }
 
 .question-title {
@@ -413,8 +451,7 @@ body {
   font-weight: 800;
   line-height: 1.1;
   text-transform: uppercase;
-  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-  color: white;
+  color: #ffffff;
 }
 
 .quiz-content {
@@ -492,15 +529,16 @@ body {
 
 .option-btn:hover {
   transform: translateY(-2px);
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.05);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
 }
 
 .option-letter {
   width: 110px;
   height: 110px;
-  background: var(--color-purple);
-  color: white;
+  background: var(--circle-color);
+  color: #1a1a1a;
+  /* Dark text for contrast */
   border-radius: 50%;
   display: flex;
   justify-content: center;
@@ -509,19 +547,20 @@ body {
   font-weight: 800;
   margin-right: 2rem;
   flex-shrink: 0;
-  box-shadow: 0 4px 0 #5a3fd6;
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.1);
 }
 
 .option-text {
   font-size: 2.8rem;
   font-weight: 800;
-  color: white;
+  color: #ffffff;
+  /* Darker text for readability */
   text-transform: uppercase;
   text-align: left;
 }
 
 .option-btn.correct {
-  background: #22c55e;
+  background: #FFC83D;
 }
 
 .option-btn.correct .option-text {
@@ -547,7 +586,7 @@ body {
 
 .timer-bar {
   height: 100%;
-  background: #22c55e;
+  background: #FFC83D;
   width: 100%;
   border-radius: 12px;
   transform-origin: left;
@@ -563,16 +602,16 @@ body {
 @keyframes countdown {
   0% {
     transform: scaleX(1);
-    background: var(--accent-green);
+    background: #FFC83D;
   }
 
   60% {
-    background: var(--color-cyan);
+    background: #FFAB00;
   }
 
   100% {
     transform: scaleX(0);
-    background: var(--color-purple);
+    background: #FFA000;
   }
 }
 
@@ -587,16 +626,16 @@ body {
   font-weight: 800;
   text-transform: uppercase;
   margin-bottom: 2rem;
-  text-shadow: 0 0 20px rgba(125, 95, 255, 0.5), 0 0 40px rgba(0, 242, 255, 0.3);
+  text-shadow: 0 0 20px rgba(255, 160, 0, 0.5), 0 0 40px rgba(255, 200, 61, 0.3);
   color: white;
 }
 
 .highlight-level {
   transform: scale(1.1);
   background: rgba(255, 255, 255, 0.2);
-  border: 2px solid #facc15;
+  border: 2px solid #FFC83D;
   border-radius: 15px;
-  box-shadow: 0 0 15px rgba(250, 204, 21, 0.5);
+  box-shadow: 0 0 15px rgba(255, 160, 0, 0.5);
   padding: 0.5rem;
 }
 
@@ -700,12 +739,12 @@ body {
   0%,
   100% {
     transform: scale(1);
-    box-shadow: 0 6px 0 #5a3fd6;
+    box-shadow: 0 6px 0 #FFA000;
   }
 
   50% {
     transform: scale(1.02);
-    box-shadow: 0 8px 0 #5a3fd6;
+    box-shadow: 0 8px 0 #FFA000;
   }
 }
 
@@ -790,7 +829,7 @@ body {
 .option-btn.highlight-correct {
   transform: scale(1.05);
   z-index: 10;
-  box-shadow: 0 8px 20px rgba(34, 197, 94, 0.4);
+  box-shadow: 0 8px 20px rgba(255, 160, 0, 0.4);
 }
 
 .quiz-content {
@@ -1152,7 +1191,7 @@ body.export-mode .glass-container {
   padding: 1.5rem 5rem !important;
   border-radius: 99px;
   margin-top: 3rem;
-  box-shadow: 0 10px 25px rgba(239, 68, 68, 0.4);
+  box-shadow: 0 10px 25px rgba(255, 160, 0, 0.4);
 }
 
 /* ===== EXPORT READY SCREEN ===== */
@@ -1233,7 +1272,7 @@ body:not(.export-mode) #export-ready-screen {
 .intro-title-line-2 {
   font-size: 11rem;
   font-weight: 900;
-  color: #facc15;
+  color: #FFC83D;
   text-transform: uppercase;
   text-shadow:
     4px 4px 0px #0a0a0c,
@@ -1242,8 +1281,8 @@ body:not(.export-mode) #export-ready-screen {
 }
 
 .intro-mid-banner {
-  background: #ef4444;
-  background: linear-gradient(to bottom, #ef4444, #b91c1c);
+  background: #FFC83D;
+  background: linear-gradient(to bottom, #FFC83D, #FFA000);
   display: flex;
   align-items: center;
   gap: 2rem;
@@ -1251,7 +1290,7 @@ body:not(.export-mode) #export-ready-screen {
   border-radius: 50px;
   /* More pill-like */
   transform: rotate(2deg);
-  box-shadow: 0 8px 0px #991b1b, 0 15px 20px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 8px 0px #660044, 0 15px 20px rgba(0, 0, 0, 0.3);
   margin-bottom: 2rem;
   border: 2px solid rgba(255, 255, 255, 0.2);
 }
@@ -1265,7 +1304,7 @@ body:not(.export-mode) #export-ready-screen {
 }
 
 .intro-score-panel {
-  background: #1e1b4b;
+  background: #1a0011;
   border: 4px solid white;
   border-radius: 30px;
   padding: 1.5rem 3rem;
@@ -1291,7 +1330,7 @@ body:not(.export-mode) #export-ready-screen {
 .intro-score-val {
   font-size: 4.5rem;
   font-weight: 900;
-  color: #facc15;
+  color: #FFC83D;
   line-height: 1;
   text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.5);
 }
@@ -1312,7 +1351,7 @@ body:not(.export-mode) #export-ready-screen {
   justify-content: center;
   width: 100%;
   height: 100%;
-  gap: 1.5rem;
+  gap: 1rem;
 }
 
 .intro-v3-logo {
@@ -1340,18 +1379,18 @@ body:not(.export-mode) #export-ready-screen {
 }
 
 .text-yellow {
-  color: #facc15;
+  color: #FFC83D;
 }
 
 .intro-v3-pill {
-  background: #7d5fff;
-  /* Purple */
+  background: #FFC83D;
+  /* Hot Pink */
   padding: 1rem 5rem;
   border-radius: 50px;
   display: flex;
   align-items: center;
   gap: 1.5rem;
-  box-shadow: 0 10px 0 #5f3dc4, 0 15px 20px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 0 #FFA000, 0 15px 20px rgba(0, 0, 0, 0.2);
   margin-bottom: 1rem;
   border: none;
   /* Reference has no border, just shadow */
@@ -1391,8 +1430,8 @@ body:not(.export-mode) #export-ready-screen {
 .intro-v3-score {
   font-size: 4rem;
   font-weight: 900;
-  color: #c084fc;
-  /* Purple/Pinkish for score numbers per reference */
+  color: #353535;
+  /* Dark gray for better contrast */
 }
 
 .intro-v3-rank {
@@ -1409,15 +1448,15 @@ body:not(.export-mode) #export-ready-screen {
 }
 
 .intro-v3-start-btn {
-  background: #da57ff;
-  /* Heliotrope Pink */
+  background: #FFC83D;
+  /* Hot Pink */
   color: white;
   font-size: 5rem;
   font-weight: 900;
   padding: 1rem 5rem;
   border-radius: 60px;
   border: none;
-  box-shadow: 0 10px 0 #a920cc, 0 20px 40px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 10px 0 #FFA000, 0 20px 40px rgba(0, 0, 0, 0.3);
   text-transform: uppercase;
   cursor: pointer;
 }
@@ -1430,7 +1469,7 @@ body:not(.export-mode) #export-ready-screen {
   justify-content: center;
   width: 100%;
   height: 100%;
-  gap: 2rem;
+  gap: 1rem;
 }
 
 .outro-v3-logo {
@@ -1469,16 +1508,136 @@ body:not(.export-mode) #export-ready-screen {
 }
 
 .outro-v3-cta-btn {
-  background: #da57ff;
-  /* Neon Pink (Project Theme) */
+  background: #FFC83D;
+  /* Hot Pink (BLACKPINK Theme) */
   color: white;
   font-size: 4.5rem;
   font-weight: 900;
   padding: 1.5rem 6rem;
   border-radius: 99px;
   border: none;
-  box-shadow: 0 10px 0 #a920cc, 0 20px 40px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 10px 0 #FFA000, 0 20px 40px rgba(0, 0, 0, 0.3);
   text-transform: uppercase;
   margin-top: 1rem;
   cursor: pointer;
+}
+
+/* ===== VERTICAL LAYOUT (9:16) ===== */
+
+.vertical .intro-v3-title-1 {
+  font-size: 4.5rem;
+}
+
+.vertical .intro-v3-title-2 {
+  font-size: 6rem;
+}
+
+.vertical .intro-v3-pill {
+  padding: 0.8rem 2rem;
+}
+
+.vertical .intro-v3-pill-text {
+  font-size: 1.6rem;
+}
+
+.vertical .intro-v3-panel {
+  flex-direction: column;
+  gap: 1rem;
+  padding: 2rem;
+}
+
+.vertical .intro-v3-divider {
+  width: 80%;
+  height: 2px;
+}
+
+.vertical .outro-v3-title {
+  font-size: 8rem;
+}
+
+.vertical .outro-v3-panel {
+  padding: 2rem;
+}
+
+.vertical .outro-v3-panel-text {
+  font-size: 2.5rem;
+}
+
+.vertical .intro-v3-start-btn {
+  font-size: 2.5rem;
+  padding: 1rem 3rem;
+}
+
+.vertical .outro-v3-cta-btn {
+  font-size: 2.5rem;
+  padding: 1.5rem 3rem;
+}
+
+.vertical .quiz-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding-top: 60px;
+  justify-content: flex-start;
+  height: auto;
+}
+
+.vertical .question-number-circle {
+  width: 70px;
+  height: 70px;
+  font-size: 2rem;
+}
+
+.vertical .question-title {
+  font-size: 1.8rem;
+  text-align: left;
+  line-height: 1.2;
+}
+
+.vertical .image-column {
+  width: 100%;
+}
+
+.vertical .polaroid-frame {
+  width: 75%;
+  margin: 0 auto;
+}
+
+.vertical .options-column {
+  width: 100%;
+  gap: 2rem;
+}
+
+.vertical .option-btn {
+  padding: 1.2rem 2.5rem;
+}
+
+.vertical .option-letter {
+  width: 70px;
+  height: 70px;
+  font-size: 2.2rem;
+}
+
+.vertical .option-text {
+  font-size: 1.8rem;
+}
+
+.vertical .timer-container {
+  height: 35px;
+  margin-top: 2rem;
+}
+
+.vertical .corner-logo {
+  bottom: 60px;
+  right: 50%;
+  transform: translateX(50%);
+  height: 40px;
+}
+
+.question-card-fill {
+  padding: 0 90px;
+}
+
+.vertical .question-card-fill {
+  padding: 0 40px;
 }

@@ -6,6 +6,11 @@
 import { Config } from "@remotion/cli/config";
 import { enableTailwind } from '@remotion/tailwind-v4';
 
-Config.setVideoImageFormat("jpeg");
+// Use PNG for better quality and compatibility
+Config.setVideoImageFormat("png");
 Config.setOverwriteOutput(true);
 Config.overrideWebpackConfig(enableTailwind);
+
+// Set explicit codec and encoding settings for stability
+Config.setCodec("h264");
+Config.setConcurrency(3); // Reduce concurrency to avoid memory issues

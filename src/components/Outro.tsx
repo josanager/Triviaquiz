@@ -1,4 +1,4 @@
-import { AbsoluteFill, staticFile, useCurrentFrame, interpolate, spring, useVideoConfig } from 'remotion';
+import { AbsoluteFill, staticFile, useCurrentFrame, spring, useVideoConfig } from 'remotion';
 
 export const Outro: React.FC = () => {
     const frame = useCurrentFrame();
@@ -38,7 +38,7 @@ export const Outro: React.FC = () => {
                     className="outro-v3-title"
                     style={{ transform: `scale(${d2}) translateY(${float}px)` }}
                 >
-                    HOW MANY<br />DID YOU GET?
+                    ¿CUÁNTAS<br />ACERTASTE?
                 </h1>
 
                 {/* 3. COMMENT PANEL (Bounce) */}
@@ -46,8 +46,8 @@ export const Outro: React.FC = () => {
                     className="outro-v3-panel"
                     style={{ transform: `scale(${d3})` }}
                 >
-                    <span className="wiggle" style={{ fontSize: '5rem' }}>💬</span>
-                    <span className="outro-v3-panel-text">Leave it in the comments!</span>
+                    <span className="wiggle" style={{ fontSize: '5rem' }}>🎶</span>
+                    <span className="outro-v3-panel-text">¡Déjalo en los comentarios!</span>
                 </div>
 
                 {/* 4. SUBSCRIBE BUTTON (Bounce + Heartbeat) */}
@@ -57,7 +57,7 @@ export const Outro: React.FC = () => {
                         transform: `scale(${d4}) scale(${heartbeat})`
                     }}
                 >
-                    SUBSCRIBE FOR MORE!
+                    ¡SUSCRÍBETE!
                 </button>
 
             </div>

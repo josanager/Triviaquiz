@@ -1,13 +1,15 @@
-import { AbsoluteFill, useCurrentFrame, interpolate, spring, useVideoConfig, Img, staticFile } from 'remotion';
+import { AbsoluteFill, useCurrentFrame, interpolate, spring, useVideoConfig, Img } from 'remotion';
 import { Question } from '../questions';
+import logoPapelcool from '../assets/logo_papelcool.svg';
 
 interface QuestionCardProps {
     question: Question;
     questionNumber: number;
     totalQuestions: number;
+    layout: 'horizontal' | 'vertical';
 }
 
-export const QuestionCard: React.FC<QuestionCardProps> = ({ question, questionNumber, totalQuestions }) => {
+export const QuestionCard: React.FC<QuestionCardProps> = ({ question, questionNumber, totalQuestions, layout }) => {
     const frame = useCurrentFrame();
     const { fps } = useVideoConfig();
 
@@ -53,9 +55,19 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({ question, questionNu
     const sway = Math.sin(frame / 20) * 1; // +/- 1 degree
 
     return (
-        <AbsoluteFill style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '0 90px', boxSizing: 'border-box' }}>
+        <AbsoluteFill
+            className={`question-card-fill ${layout === 'vertical' ? 'vertical' : ''}`}
+            style={{
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: layout === 'vertical' ? 'flex-start' : 'center',
+                alignItems: 'center',
+                boxSizing: 'border-box',
+                paddingTop: layout === 'vertical' ? '120px' : '0'
+            }}
+        >
             <img
-                src={staticFile("logo_papelcool.svg")}
+                src={logoPapelcool}
                 className="corner-logo"
                 alt="Papelcool logo"
             />
@@ -68,11 +80,11 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({ question, questionNu
                 }}
             >
                 {/* Header: Number + Title */}
-                <div style={{ gridColumn: '1 / -1', display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
+                <div className="question-header-container" style={{ gridColumn: '1 / -1', display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
                     <div className="question-number-circle">
                         {questionNumber}
                     </div>
-                    <div className="question-title" style={{ fontSize: '4rem' }}>
+                    <div className="question-title">
                         {question.question}
                     </div>
                 </div>
@@ -117,7 +129,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({ question, questionNu
                             className="timer-bar"
                             style={{
                                 transform: `scaleX(${progress})`,
-                                background: isRevealed ? 'var(--color-purple)' : 'var(--accent-green)'
+                                background: isRevealed ? '#FFA000' : '#FFC83D'
                             }}
                         />
                     </div>
