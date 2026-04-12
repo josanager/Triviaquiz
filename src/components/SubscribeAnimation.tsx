@@ -69,11 +69,13 @@ export const SubscribeAnimation: React.FC<SubscribeAnimationProps> = ({ lang = '
             alignItems: 'center',
             gap: '30px',
             padding: '25px 50px', // Even larger padding
-            background: 'rgba(255, 255, 255, 0.98)',
-            borderRadius: '80px',
-            boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
+            background: '#FFFFFF',
+            border: '4px solid black',
+            borderRadius: '20px',
+            boxShadow: '6px 6px 0px 0px rgba(0,0,0,1)',
             zIndex: 2000,
-            fontFamily: 'sans-serif',
+            fontFamily: "'Fredoka', sans-serif",
+            textTransform: 'uppercase',
         }}>
             {/* User Uploaded Logo */}
             <Img
@@ -83,7 +85,7 @@ export const SubscribeAnimation: React.FC<SubscribeAnimationProps> = ({ lang = '
                     height: '80px',
                     borderRadius: '50%',
                     objectFit: 'cover',
-                    border: '2px solid #eee'
+                    border: '4px solid black'
                 }}
             />
 
@@ -94,9 +96,12 @@ export const SubscribeAnimation: React.FC<SubscribeAnimationProps> = ({ lang = '
             {/* Subscribe Button */}
             <div style={{
                 padding: '18px 40px',
-                background: isClicked ? '#e5e5e5' : '#cc0000',
-                color: isClicked ? '#606060' : 'white',
-                borderRadius: '50px',
+                background: isClicked ? '#e5e5e5' : '#FF4D94',
+                color: isClicked ? '#606060' : 'black',
+                border: '4px solid black',
+                borderRadius: '12px',
+                boxShadow: isClicked ? '2px 2px 0px 0px rgba(0,0,0,1)' : '4px 4px 0px 0px rgba(0,0,0,1)',
+                transform: isClicked ? 'translate(2px, 2px)' : 'none',
                 fontWeight: 'bold',
                 fontSize: '26px', // Increased font size
                 textTransform: 'uppercase',
@@ -104,7 +109,6 @@ export const SubscribeAnimation: React.FC<SubscribeAnimationProps> = ({ lang = '
                 alignItems: 'center',
                 gap: '15px',
                 cursor: 'pointer',
-                transition: 'background 0.3s',
                 minWidth: '220px',
                 justifyContent: 'center'
             }}>
@@ -115,8 +119,7 @@ export const SubscribeAnimation: React.FC<SubscribeAnimationProps> = ({ lang = '
             <div style={{
                 fontSize: '50px',
                 transform: `rotate(${isBellActive ? bellRotation : 0}deg)`,
-                color: isBellActive ? '#333' : '#ccc',
-                transition: 'color 0.3s'
+                color: isBellActive ? '#333' : '#ccc'
             }}>
                 {isBellActive ? '🔔' : '🔕'}
             </div>

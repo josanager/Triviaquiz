@@ -2,9 +2,22 @@ const fs = require('fs');
 const path = require('path');
 const https = require('https');
 
-const API_KEY = "8746959d057ec689872f0c6d0cd17e7dca49f78d1e6caa5ed0da1a9ef925202c";
-const VOICE_ID = "21m00Tcm4TlvDq8ikWAM"; // Rachel (Standard System Voice)
-const MODEL_ID = "eleven_v3"; // Eleven v3 Alpha
+// Load environment variables from .env file
+const envPath = path.join(__dirname, '..', '.env');
+const envContent = fs.readFileSync(envPath, 'utf-8');
+envContent.split('\n').forEach(line => {
+    const [key, ...vals] = line.split('=');
+    if (key && vals.length) process.env[key.trim()] = vals.join('=').trim();
+});
+
+const API_KEY = process.env.ELEVENLABS_API_KEY;
+const VOICE_ID = process.env.ELEVENLABS_VOICE_ID || "21m00Tcm4TlvDq8ikWAM";
+const MODEL_ID = process.env.ELEVENLABS_MODEL_ID || "eleven_v3";
+
+if (!API_KEY) {
+    console.error("ERROR: ELEVENLABS_API_KEY not found in .env file");
+    process.exit(1);
+}
 
 const textData = [
     { text: "¡Bienvenidos a la trivia definitiva de Morat! Prepárate para poner a prueba tu fanatismo. Te presentaremos 30 preguntas sobre la banda, sus integrantes y su música. Tienes exactamente 15 segundos por cada pregunta para elegir la respuesta correcta. ¿Estás listo? ¡Que comience el juego!", filename: "intro_es.mp3" },
