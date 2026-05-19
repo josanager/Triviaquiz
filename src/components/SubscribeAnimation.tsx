@@ -68,14 +68,14 @@ export const SubscribeAnimation: React.FC<SubscribeAnimationProps> = ({ lang = '
             display: 'flex',
             alignItems: 'center',
             gap: '30px',
-            padding: '25px 50px', // Even larger padding
+            padding: '25px 50px',
             background: '#FFFFFF',
-            border: '4px solid black',
-            borderRadius: '20px',
-            boxShadow: '6px 6px 0px 0px rgba(0,0,0,1)',
+            border: '3.5px solid #3B4A54',
+            borderRadius: '50px',
+            boxShadow: '0 6px 20px rgba(0,0,0,0.15)',
             zIndex: 2000,
-            fontFamily: "'Fredoka', sans-serif",
-            textTransform: 'uppercase',
+            fontFamily: "'DynaPuff', sans-serif",
+            textTransform: 'uppercase' as const,
         }}>
             {/* User Uploaded Logo */}
             <Img
@@ -85,22 +85,22 @@ export const SubscribeAnimation: React.FC<SubscribeAnimationProps> = ({ lang = '
                     height: '80px',
                     borderRadius: '50%',
                     objectFit: 'cover',
-                    border: '4px solid black'
+                    border: '3px solid #3B4A54'
                 }}
             />
 
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                <span style={{ fontSize: '32px', fontWeight: 'bold', color: '#333' }}>Papelcool</span>
+                <span style={{ fontSize: '32px', fontWeight: 'bold', color: '#2D3436' }}>Papelcool</span>
             </div>
 
             {/* Subscribe Button */}
             <div style={{
                 padding: '18px 40px',
-                background: isClicked ? '#e5e5e5' : '#FF4D94',
-                color: isClicked ? '#606060' : 'black',
-                border: '4px solid black',
-                borderRadius: '12px',
-                boxShadow: isClicked ? '2px 2px 0px 0px rgba(0,0,0,1)' : '4px 4px 0px 0px rgba(0,0,0,1)',
+                background: isClicked ? '#e5e5e5' : '#FFB830',
+                color: isClicked ? '#606060' : '#2D3436',
+                border: '3px solid #3B4A54',
+                borderRadius: '50px',
+                boxShadow: isClicked ? '0 2px 6px rgba(0,0,0,0.1)' : '0 4px 0 #F5A623, 0 6px 12px rgba(0,0,0,0.12)',
                 transform: isClicked ? 'translate(2px, 2px)' : 'none',
                 fontWeight: 'bold',
                 fontSize: '26px', // Increased font size

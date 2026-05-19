@@ -26,12 +26,12 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({ question, questionNu
         extrapolateRight: 'clamp',
     });
 
-    // Timer color: smooth sticker-green → sticker-yellow → sticker-pink transition via RGB interpolation
-    const timerR = Math.round(interpolate(frame, [30, REVEAL_FRAME - fps * 3, REVEAL_FRAME], [46, 255, 255], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }));
-    const timerG = Math.round(interpolate(frame, [30, REVEAL_FRAME - fps * 3, REVEAL_FRAME], [204, 230, 77], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }));
-    const timerB = Math.round(interpolate(frame, [30, REVEAL_FRAME - fps * 3, REVEAL_FRAME], [113, 0, 148], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }));
+    // Timer color: smooth green → amber → pink transition via RGB interpolation
+    const timerR = Math.round(interpolate(frame, [30, REVEAL_FRAME - fps * 3, REVEAL_FRAME], [80, 255, 255], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }));
+    const timerG = Math.round(interpolate(frame, [30, REVEAL_FRAME - fps * 3, REVEAL_FRAME], [200, 168, 55], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }));
+    const timerB = Math.round(interpolate(frame, [30, REVEAL_FRAME - fps * 3, REVEAL_FRAME], [100, 0, 66], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }));
     const timerLiveColor = `rgb(${timerR}, ${timerG}, ${timerB})`;
-    const timerColor = isRevealed ? '#FF4D94' : timerLiveColor;
+    const timerColor = isRevealed ? '#FF3742' : timerLiveColor;
 
     // Urgency pulse: subtle scale oscillation in the last 2 seconds
     const urgencyIntensity = (!isRevealed && frame > URGENCY_START)
@@ -133,40 +133,44 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({ question, questionNu
         <AbsoluteFill
             className={`question-card-fill ${layout === 'vertical' ? 'vertical' : ''}`}
             style={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: layout === 'vertical' ? 'flex-start' : 'center',
-                alignItems: 'center',
-                boxSizing: 'border-box',
-                paddingTop: layout === 'vertical' ? '120px' : '0',
+                overflow: 'hidden',
             }}
         >
-            <Img src={logoPapelcool} className="corner-logo" alt="Papelcool logo" />
-
+            {/* ── Whole-scene exit wrapper ──────────────────────────── */}
             <div
-                className="quiz-content"
                 style={{
+                    position: 'absolute',
+                    inset: 0,
                     transform: `translateX(${contentParallaxX + peelX}px) translateY(${contentParallaxY + peelY}px) scale(${contentScale}) rotate(${peelRotate}deg)`,
                     opacity: contentOpacity,
-                    width: '100%',
                 }}
             >
+                {/* ── 1. QUESTION HEADER (top bar, full width, slight skew) ── */}
                 <div
-                    className="question-header-container"
+                    className="question-header-container perspective-header"
                     style={{
-                        gridColumn: '1 / -1',
-                        display: 'flex',
-                        alignItems: 'center',
-                        marginBottom: '20px',
                         transform: `translateX(${headerX}px) translateY(${headerY + headerFloat}px) scale(${headerScale}) rotate(${headerTilt + Math.sin(frame / 23) * 1.2}deg)`,
                         opacity: headerOpacity,
                     }}
                 >
-                    <div className="question-number-circle">{questionNumber}</div>
                     <div className="question-title">{question.question}</div>
                 </div>
- 
-                <div className="image-column">
+
+                {/* ── 2. QUESTION NUMBER CIRCLE (top-right corner) ── */}
+                <div
+                    className="question-number-circle perspective-number"
+                    style={{
+                        transform: `translateY(${headerFloat * 0.5}px) scale(${headerScale})`,
+                        opacity: headerOpacity,
+                    }}
+                >
+                    {questionNumber}
+                </div>
+
+                {/* ── 3. IMAGE (left side, trapezoid perspective) ── */}
+                <div
+                    className="image-column perspective-image"
+                >
                     <div
                         className="polaroid-frame"
                         style={{
@@ -178,7 +182,8 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({ question, questionNu
                     </div>
                 </div>
 
-                <div className="options-column">
+                {/* ── 4. OPTIONS (right side, stacked with perspective skew) ── */}
+                <div className="options-column perspective-options">
                     <div className="options-container">
                         {question.options.map((opt, i) => {
                             const isCorrect = i === question.correct;
@@ -223,6 +228,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({ question, questionNu
                         })}
                     </div>
 
+                    {/* ── 5. TIMER BAR (same perspective as options) ── */}
                     <div
                         className="timer-container"
                         style={{
@@ -235,7 +241,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({ question, questionNu
                             style={{
                                 width: timerWidth,
                                 transform: `scaleY(${urgencyPulse}) translateY(${Math.sin(frame / 15) * 0.8}px)`,
-                                background: `linear-gradient(90deg, ${timerColor} 0%, ${timerColor} 76%, rgba(255,255,255,0.65) 100%)`,
+                                background: timerColor,
                                 boxShadow: timerGlow > 0
                                     ? `0 0 ${timerGlow}px ${timerColor}, 0 0 ${timerGlow * 2}px ${timerColor}50`
                                     : 'none',
@@ -244,6 +250,9 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({ question, questionNu
                         />
                     </div>
                 </div>
+
+                {/* ── 6. LOGO (bottom center) ── */}
+                <Img src={logoPapelcool} className="corner-logo perspective-logo" alt="Papelcool logo" />
             </div>
         </AbsoluteFill>
     );

@@ -1,260 +1,158 @@
-// aespa Trivia Questions - 50 Preguntas para MYs
 import { questionImages } from './questionImages.js';
 
 export const questions = [
     {
-        question: "¿Nombre del 'mundo subconsciente' origen de KWANGYA?",
-        options: ["The Flat", "Ether", "Kosmo"],
-        correct: 1
-    },
-    {
-        question: "¿Qué significan las siglas P.O.S?",
-        options: ["Point of Space", "Port of Soul", "Portal of Synk"],
-        correct: 1
-    },
-    {
-        question: "¿Espacio trascendente más allá de KWANGYA?",
-        options: ["Kosmo", "Naevis", "Nu Evo"],
+        question: "¿Cuál era el nombre del equipo de baile underground de J-Hope en Gwangju?",
+        options: ["Neuron", "D-Town", "Go Arts"],
         correct: 0
     },
     {
-        question: "¿Cómo rompe Karina la alucinación en el Ep. 2?",
-        options: ["Cantando", "Rocket Punch", "Desconectándose"],
+        question: "¿Qué nombre artístico usaba Suga como productor en Daegu antes de Big Hit?",
+        options: ["D-Boy", "Gloss", "Agust"],
         correct: 1
     },
     {
-        question: "¿Fenómeno de un 'ae' cruzando al Mundo Real?",
-        options: ["REKALL", "SYNK DIVE", "DOWNLOAD"],
+        question: "¿Qué profesión soñaba tener Jungkook antes de querer ser cantante?",
+        options: ["Jugador de Bádminton", "Gamer Pro", "Atleta"],
         correct: 0
     },
     {
-        question: "¿Cuál es la habilidad de combate de Winter?",
-        options: ["Xenoglossy", "Rocket Puncher", "Armamenter"],
+        question: "¿Cuál de estos nombres fue una opción real considerada para Jimin antes del debut?",
+        options: ["Baby J", "Ji-Force", "Mochi"],
+        correct: 0
+    },
+    {
+        question: "¿En qué mes y año se publicó el primer tweet oficial en la cuenta @BTS_twt?",
+        options: ["Junio 2013", "Enero 2013", "Diciembre 2012"],
         correct: 2
     },
     {
-        question: "¿Qué artista de SM hace un cameo al final del Ep. 3?",
-        options: ["Taeyeon", "BoA", "Hyoyeon"],
+        question: "Título de la pista oculta del álbum Love Yourself: 承 'Her' sobre el miedo al éxito:",
+        options: ["Path", "Sea", "Move"],
         correct: 1
     },
     {
-        question: "¿Término para la desconexión forzada por Black Mamba?",
-        options: ["SYNK OUT", "Glitch Mode", "Error 404"],
+        question: "¿Cuál fue la primera canción original que RM subió a la cuenta de SoundCloud del grupo?",
+        options: ["Rap Monster", "Too Much", "Vote"],
         correct: 0
     },
     {
-        question: "¿Qué significa 'MY' en el lenguaje de KWANGYA?",
-        options: ["Mi alma gemela", "El amigo más preciado", "Mi reflejo"],
+        question: "¿Quién reveló una versión descartada del puente de 'Dis-ease' con estilo R&B?",
+        options: ["V", "Jungkook", "Jin"],
         correct: 1
     },
     {
-        question: "¿Habilidad de Giselle para entender idiomas?",
-        options: ["Telepatía", "Xenoglossy", "Babel"],
-        correct: 1
-    },
-    {
-        question: "¿En qué ciudad fue reclutada Winter?",
-        options: ["Busan", "Yangsan", "Ulsan"],
-        correct: 1
-    },
-    {
-        question: "¿Frase del anuario de Giselle (meme)?",
-        options: ["Life is short", "That's hot", "Dreams come true"],
-        correct: 1
-    },
-    {
-        question: "¿Nombre de bautismo de Karina?",
-        options: ["Katarina", "Katerina", "Karoline"],
+        question: "Fecha exacta y canción con la que BTS obtuvo su primer 'First Win' en un show musical:",
+        options: ["5 Mayo 2015 (I Need U)", "11 Dic 2015 (Run)", "20 Ago 2014 (Danger)"],
         correct: 0
     },
     {
-        question: "¿Canción de Ningning en 'Let's Sing Kids'?",
-        options: ["Rolling in the Deep", "Father (爸爸)", "Halo"],
+        question: "¿En qué ceremonia ganaron su primer Daesang (Mejor Álbum del Año) en 2016?",
+        options: ["MAMA", "MMA (Melon Music Awards)", "Golden Disc"],
         correct: 1
     },
     {
-        question: "¿Por qué Winter quería ser soldado?",
-        options: ["Películas", "Familia militar", "Artes marciales"],
+        question: "¿En qué país de la T1 de Bon Voyage perdió RM su pasaporte y tuvo que volver?",
+        options: ["Noruega", "Suecia", "Finlandia"],
         correct: 1
     },
     {
-        question: "¿Quién tiene cinturón mixto en Taekwondo?",
-        options: ["Winter", "Karina", "Ningning"],
+        question: "¿Qué miembro fue olvidado accidentalmente en una gasolinera en Bon Voyage 4?",
+        options: ["J-Hope", "Jin", "Jungkook"],
+        correct: 0
+    },
+    {
+        question: "Medida 'cómica' que obtuvieron de los hombros de Jin en el Ep. 92 de Run BTS:",
+        options: ["48 cm", "55 cm", "60 cm"],
+        correct: 0
+    },
+    {
+        question: "¿Por qué premio barato pelearon ferozmente los miembros en el picnic de Run BTS?",
+        options: ["Una cafetera", "Una olla de ramen", "Un peluche"],
         correct: 1
     },
     {
-        question: "¿Cómo se llama el perro de Giselle?",
-        options: ["Pepper", "Cooper", "Choco"],
+        question: "¿Qué número de episodio de Run BTS corresponde al famoso especial de Zombis?",
+        options: ["11", "24", "33"],
         correct: 1
     },
     {
-        question: "¿Emoji/símbolo oficial de Ningning?",
-        options: ["Tigre", "Mariposa", "Gato"],
+        question: "¿En qué evento acuñó V la frase 'Borahae' (I Purple You)?",
+        options: ["3rd Muster", "KCON LA", "Wings Tour Final"],
+        correct: 0
+    },
+    {
+        question: "¿En qué fecha se anunció oficialmente que el nombre del fandom sería ARMY?",
+        options: ["13 Junio 2013", "9 Julio 2013", "1 Agosto 2013"],
         correct: 1
     },
     {
-        question: "¿Quién entrenó solo 11 meses?",
-        options: ["Ningning", "Winter", "Giselle"],
+        question: "¿Cómo se llamaban los primeros petauros del azúcar (sugar gliders) de Jin?",
+        options: ["Odeng y Eomuk", "Gukmul y Odeng", "Mickey y Holly"],
+        correct: 0
+    },
+    {
+        question: "¿En qué evento Jin se volvió viral como el 'Car Door Guy'?",
+        options: ["MMA 2015", "MAMA 2016", "BBMA 2017"],
+        correct: 0
+    },
+    {
+        question: "¿En qué parte de su cuerpo V forma un 'elefante' usando sus lunares?",
+        options: ["Brazo", "Pierna", "Mejilla"],
+        correct: 0
+    },
+    {
+        question: "Miembros que protagonizaron el 'Incidente de los Dumplings' (Mandu):",
+        options: ["Jin y JK", "V y Jimin", "RM y Suga"],
+        correct: 1
+    },
+    {
+        question: "Ubicación exacta del tatuaje de la amistad '7' de Jimin:",
+        options: ["Detrás de la oreja", "Interior del dedo índice", "Tobillo"],
+        correct: 1
+    },
+    {
+        question: "Fecha en la que Jin 'despierta' en el bucle temporal del Bangtan Universe (BU):",
+        options: ["11 de Abril", "22 de Mayo", "13 de Junio"],
+        correct: 0
+    },
+    {
+        question: "Miembro que cubre los ojos de Jin en el MV de 'Blood Sweat & Tears':",
+        options: ["Suga", "V", "Jimin"],
+        correct: 1
+    },
+    {
+        question: "Nombre completo del mentor 'Tony' en American Hustle Life:",
+        options: ["Tony Jones", "Tony Smith", "Tony Brown"],
+        correct: 0
+    },
+    {
+        question: "¿De dónde saca Jin las fresas que suele regalar a los otros miembros?",
+        options: ["Granja de su tío", "Mercado de Jeju", "Cultivo hidropónico"],
+        correct: 0
+    },
+    {
+        question: "Instrumento que V tocó durante tres años en la escuela secundaria:",
+        options: ["Violín", "Saxofón", "Clarinete"],
+        correct: 1
+    },
+    {
+        question: "¿Quién tiene el tatuaje real de 'Nevermind' en su costado derecho?",
+        options: ["Suga", "Jimin", "RM"],
+        correct: 1
+    },
+    {
+        question: "¿Quién fue el último miembro en ser confirmado y mudarse al dormitorio?",
+        options: ["V", "Jin", "Jimin"],
         correct: 2
     },
     {
-        question: "¿Qué canción bailaba Winter al ser reclutada?",
-        options: ["Playing with Fire", "Bubble Pop", "Into the New World"],
+        question: "Ganador del desafío de fotografía DIY en el Ep. 106 de Run BTS:",
+        options: ["V", "Suga", "Jungkook"],
         correct: 1
-    },
-    {
-        question: "¿Versión de 'Savage' con Realidad Aumentada?",
-        options: ["Hallucination", "Synk Dive", "P.O.S Ver."],
-        correct: 2
-    },
-    {
-        question: "¿Objeto funcional de la versión de Armageddon?",
-        options: ["Casete", "Reproductor de CD (CDP)", "MP3"],
-        correct: 1
-    },
-    {
-        question: "¿Quién escribió la letra de su solo 'Up'?",
-        options: ["Kenzie", "Karina", "Yoo Young-jin"],
-        correct: 1
-    },
-    {
-        question: "¿Artista invitado en 'Welcome to My World'?",
-        options: ["Grimes", "Naevis", "BoA"],
-        correct: 1
-    },
-    {
-        question: "¿En qué canción listan sus habilidades especiales?",
-        options: ["Iconic", "aenergy", "Yeppi Yeppi"],
-        correct: 1
-    },
-    {
-        question: "¿De qué película es el remake de 'Next Level'?",
-        options: ["Fast & Furious: H&S", "Black Panther", "Alita"],
-        correct: 0
-    },
-    {
-        question: "¿Qué divide la versión Zine de My World?",
-        options: ["Tracklist", "Photocards/Concepto", "Pista oculta"],
-        correct: 1
-    },
-    {
-        question: "¿Título del solo de Ningning en el tour?",
-        options: ["Wake Up", "Bored!", "Menagerie"],
-        correct: 1
-    },
-    {
-        question: "¿Quién remezcló 'Supernova' en Re:works?",
-        options: ["Dem Jointz", "Kenzie", "Teddy"],
-        correct: 1
-    },
-    {
-        question: "¿En qué show ganaron su 'First Win'?",
-        options: ["Music Bank", "Inkigayo", "M Countdown"],
-        correct: 1
-    },
-    {
-        question: "¿Ubicación en Gangwon aparte de Pyeongchang?",
-        options: ["Sokcho", "Donghae", "Gangneung"],
-        correct: 1
-    },
-    {
-        question: "¿Quién ganó el 'Juego Photoman' en Synk Road?",
-        options: ["Karina", "Winter", "Ningning"],
-        correct: 0
-    },
-    {
-        question: "¿Qué buscaban las miembros en Synk Road?",
-        options: ["Escamas", "ae-key cards", "Chips"],
-        correct: 1
-    },
-    {
-        question: "¿Qué pasa con el hechizo en la sitcom Better Things?",
-        options: ["Invisible", "Gigante", "Teletransporte"],
-        correct: 1
-    },
-    {
-        question: "¿Cuántos episodios tiene la sitcom Better Things?",
-        options: ["3", "5", "8"],
-        correct: 0
-    },
-    {
-        question: "¿Quién lloró en la misión de terror del parque?",
-        options: ["Giselle", "Winter", "Ningning"],
-        correct: 1
-    },
-    {
-        question: "¿Videojuego favorito de Karina (rango alto)?",
-        options: ["LoL", "PUBG Mobile", "Overwatch"],
-        correct: 1
-    },
-    {
-        question: "¿Dónde ocurre principalmente la era 'Spicy'?",
-        options: ["The Flat", "Real World", "Kosmo"],
-        correct: 1
-    },
-    {
-        question: "¿Quién faltó a escenas de la sitcom por salud?",
-        options: ["Ningning", "Giselle", "Winter"],
-        correct: 0
-    },
-    {
-        question: "¿Colaboración navideña con Red Velvet?",
-        options: ["Snow Dream", "Beautiful Christmas", "Wish List"],
-        correct: 1
-    },
-    {
-        question: "¿Significado oficial de 'MY'?",
-        options: ["My Youth", "Mi amigo más preciado", "My Universe"],
-        correct: 1
-    },
-    {
-        question: "¿Colores oficiales de aespa?",
-        options: ["Aurora/Violet", "Wisteria/Malibu", "Pink/Blue"],
-        correct: 1
-    },
-    {
-        question: "¿A quién llaman 'Kim Maltese'?",
-        options: ["Winter", "Karina", "Giselle"],
-        correct: 0
-    },
-    {
-        question: "¿Qué se personaliza en el lightstick oficial?",
-        options: ["Mango", "Emblema interno", "Correa"],
-        correct: 1
-    },
-    {
-        question: "¿Quiénes son 'Dumb and Dumber'?",
-        options: ["Karina/Ningning", "Winter/Giselle", "Ningning/Giselle"],
-        correct: 1
-    },
-    {
-        question: "¿Fecha exacta del debut de aespa?",
-        options: ["17 Nov 2020", "20 Nov 2020", "17 Oct 2020"],
-        correct: 0
-    },
-    {
-        question: "¿Qué miembro tiene la ballena (🐳) como emoji?",
-        options: ["Karina", "Ningning", "Giselle"],
-        correct: 0
-    },
-    {
-        question: "¿Vehículo para ir a KWANGYA en 'Next Level'?",
-        options: ["Kwangya Express", "Nave espacial", "Aerodeslizador"],
-        correct: 0
-    },
-    {
-        question: "¿Quién se truena los dedos y usa vaselina a diario?",
-        options: ["Karina", "Winter", "Giselle"],
-        correct: 0
-    },
-    {
-        question: "¿Única miembro que fue de SM Rookies?",
-        options: ["NingNing", "Winter", "Giselle"],
-        correct: 0
     }
 ];
 
-// Link images by index
 export const questionsWithImages = questions.map((q, index) => {
     return {
         ...q,

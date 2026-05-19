@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Fredoka:wght@600;700&family=Caveat:wght@600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DynaPuff:wght@400..700&display=swap');
 
 *,
 *::before,
@@ -14,7 +14,7 @@
   --accent-green: #15803d;
   --text-primary: #ffffff;
   --shadow-medium: 0 8px 24px rgba(0, 0, 0, 0.8);
-  --font-family: 'Montserrat', sans-serif;
+  --font-family: 'DynaPuff', sans-serif;
 }
 
 html {
@@ -1378,6 +1378,10 @@ body:not(.export-mode) #export-ready-screen {
   text-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
+.intro-v3-title-subtitle {
+  font-size: 8.6rem;
+}
+
 .text-yellow {
   color: #FFC83D;
 }
@@ -1532,6 +1536,10 @@ body:not(.export-mode) #export-ready-screen {
   font-size: 6rem;
 }
 
+.vertical .intro-v3-title-subtitle {
+  font-size: 4.8rem;
+}
+
 .vertical .intro-v3-pill {
   padding: 0.8rem 2rem;
 }
@@ -1643,16 +1651,23 @@ body:not(.export-mode) #export-ready-screen {
 }
 
 /* ========================================= */
-/* PAPELCOOL STICKER POP-ART OVERRIDES       */
+/* PAPELCOOL KAWAII QUIZ DESIGN              */
 /* ========================================= */
 
 :root {
-  --sticker-yellow: #FFE600;
-  --sticker-pink: #FF4D94;
-  --sticker-blue: #407BFF;
-  --sticker-green: #2ECC71;
-  --paper-white: #FFFFFF;
-  --bg-sky: #E0F2FE;
+  /* Kawaii Palette – SATURATED */
+  --kq-sky: #7ECEF4;
+  --kq-sky-light: #A8DEFA;
+  --kq-amber: #FFA800;
+  --kq-amber-deep: #E89600;
+  --kq-green: #50C864;
+  --kq-green-deep: #3DAF50;
+  --kq-white: #FFFFFF;
+  --kq-charcoal: #1E272E;
+  --kq-dark: #141C22;
+  --kq-outline: #2D3436;
+  --kq-pink: #FF5078;
+  --kq-red: #FF3742;
 
   /* Animation Tokens */
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
@@ -1660,60 +1675,125 @@ body:not(.export-mode) #export-ready-screen {
   --duration-fast: 150ms;
   --duration-base: 300ms;
   --duration-entrance: 500ms;
-  
-  /* Retain mapping for dynamic circles */
-  --circle-color: var(--sticker-yellow);
+
+  /* Dynamic circle – charcoal by default */
+  --circle-color: var(--kq-charcoal);
 }
 
 @keyframes stickerPopIn {
-  0% {
-    opacity: 0;
-    transform: scale(0.8) rotate(-5deg);
-  }
-  70% {
-    opacity: 1;
-    transform: scale(1.05) rotate(2deg);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1) rotate(0deg);
-  }
+  0% { opacity: 0; transform: scale(0.8) rotate(-5deg); }
+  70% { opacity: 1; transform: scale(1.05) rotate(2deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0deg); }
 }
 
 .animate-sticker-pop {
   animation: stickerPopIn var(--duration-entrance) var(--ease-out-expo) forwards;
 }
 
-/* Global Typography & Weights */
+/* ─── Global Typography ─── */
 body {
-  color: black;
+  color: var(--kq-charcoal);
 }
 
-.intro-v3-title-1, .intro-v3-title-2, .intro-v3-pill-text, .outro-v3-title, .question-title, .option-text, .option-letter, .intro-v3-start-btn, .outro-v3-cta-btn, .question-number-circle {
-  font-family: 'Fredoka', sans-serif !important;
+/* Display headings: DynaPuff bold (700) – Intro/Outro titles only */
+.intro-v3-title-1, .intro-v3-title-2, .outro-v3-title {
+  font-family: 'DynaPuff', sans-serif !important;
   font-weight: 700 !important;
   text-transform: uppercase;
-  color: black !important;
+  color: var(--kq-charcoal) !important;
+  text-shadow:
+    3px 3px 0px rgba(0, 0, 0, 0.12),
+    0 0 0 transparent;
 }
 
-.intro-v3-panel-text, .intro-v3-rank {
-  font-family: 'Fredoka', sans-serif !important;
-  color: black !important;
+/* Question title: same weight as alternatives (500) */
+.question-title {
+  font-family: 'DynaPuff', sans-serif !important;
+  font-weight: 500 !important;
+  text-transform: uppercase;
+  color: var(--kq-charcoal) !important;
+}
+
+/* UI text: DynaPuff normal (500) */
+.option-text, .option-letter, .intro-v3-pill-text, .intro-v3-start-btn,
+.outro-v3-cta-btn, .question-number-circle, .intro-v3-panel-text, .intro-v3-rank {
+  font-family: 'DynaPuff', sans-serif !important;
+  font-weight: 500 !important;
+  color: var(--kq-charcoal) !important;
 }
 
 .intro-v3-score {
-  font-family: 'Caveat', cursive !important;
-  color: var(--sticker-pink) !important;
+  font-family: 'DynaPuff', sans-serif !important;
+  font-weight: 600 !important;
+  color: var(--kq-amber) !important;
 }
 
-/* Sticker Panels (White, Thick Borders, Hard Shadow) */
-.intro-v3-panel, .outro-v3-panel, .polaroid-frame {
-  background: var(--paper-white) !important;
-  border: 4px solid black !important;
-  border-radius: 20px !important;
-  box-shadow: 6px 6px 0px 0px rgba(0, 0, 0, 1) !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
+/* ─── Option Buttons: Per-option colors (reference style) ─── */
+.option-btn {
+  background: var(--kq-amber) !important;
+  border: 3.5px solid var(--kq-outline) !important;
+  border-radius: 50px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  color: var(--kq-charcoal) !important;
+  transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.2s ease !important;
+}
+
+/* Option A = Amber/Gold */
+.option-btn:nth-child(1) {
+  background: var(--kq-amber) !important;
+}
+
+/* Option B = White/Cream */
+.option-btn:nth-child(2) {
+  background: var(--kq-white) !important;
+}
+
+/* Option C = Lavender (green reserved for correct only) */
+.option-btn:nth-child(3) {
+  background: #C4A8FF !important;
+}
+
+/* Letter circles: Dark charcoal with white text */
+.option-letter {
+  background: var(--kq-charcoal) !important;
+  border: 3px solid var(--kq-outline) !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2) !important;
+  color: white !important;
+}
+
+/* Correct/Incorrect */
+.option-btn.correct {
+  background: var(--kq-green) !important;
+  border: 3.5px solid var(--kq-green-deep) !important;
+  box-shadow: 0 4px 20px rgba(126, 200, 131, 0.5), 0 0 30px rgba(126, 200, 131, 0.3) !important;
+}
+
+.option-btn.correct .option-letter {
+  background: var(--kq-green-deep) !important;
+}
+
+.option-btn.incorrect {
+  background: var(--kq-red) !important;
+  opacity: 0.75 !important;
+  box-shadow: 0 2px 8px rgba(255, 71, 87, 0.3) !important;
+}
+
+/* ─── Panels & Frames ─── */
+.intro-v3-panel, .outro-v3-panel {
+  background: rgba(255, 255, 255, 0.85) !important;
+  border: 3px solid var(--kq-outline) !important;
+  border-radius: 30px !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+}
+
+.polaroid-frame {
+  background: transparent !important;
+  border: 3.5px solid var(--kq-outline) !important;
+  border-radius: 24px !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18) !important;
+  padding: 0 !important;
 }
 
 .quiz-content {
@@ -1722,65 +1802,180 @@ body {
   box-shadow: none !important;
 }
 
-/* Exception: the polaroid doesn't need to be totally clear if it has images, but it needs the border */
-.polaroid-frame {
-  padding: 1.5rem !important;
-  padding-bottom: 4rem !important;
+/* ─── Buttons (Intro/Outro) ─── */
+.intro-v3-start-btn, .outro-v3-cta-btn {
+  background: var(--kq-amber) !important;
+  border: 3.5px solid var(--kq-outline) !important;
+  border-radius: 50px !important;
+  box-shadow: 0 6px 0 var(--kq-amber-deep), 0 10px 20px rgba(0, 0, 0, 0.15) !important;
+  color: var(--kq-charcoal) !important;
 }
 
-/* Sticker Buttons */
-.option-btn, .intro-v3-start-btn, .outro-v3-cta-btn, .intro-v3-pill {
-  background: var(--paper-white) !important;
-  border: 4px solid black !important;
-  border-radius: 12px !important;
-  box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1) !important;
-  color: black !important;
-  transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.2s ease !important;
+.intro-v3-pill {
+  background: rgba(255, 255, 255, 0.85) !important;
+  border: 3px solid var(--kq-outline) !important;
+  border-radius: 50px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+  color: var(--kq-charcoal) !important;
 }
 
-/* Correct/Incorrect Highlight Overrides */
-.option-btn.correct {
-  background: var(--sticker-green) !important;
-  border: 4px solid black !important;
-  box-shadow: 6px 6px 0px 0px rgba(0, 0, 0, 1), 0 0 30px rgba(46, 204, 113, 0.5) !important;
-}
-
-.option-btn.incorrect {
-  background: var(--sticker-pink) !important;
-  opacity: 0.8 !important;
-  box-shadow: 2px 2px 0px 0px rgba(0, 0, 0, 1) !important;
-}
-
-/* Timer Bar */
+/* ─── Timer Bar ─── */
 .timer-container {
-  border: 4px solid black !important;
-  background: white !important;
-  border-radius: 12px !important;
-  box-shadow: 3px 3px 0px 0px rgba(0, 0, 0, 1) !important;
+  border: 3px solid var(--kq-outline) !important;
+  background: rgba(255, 255, 255, 0.6) !important;
+  border-radius: 50px !important;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1) !important;
 }
 
-/* Layout resets */
+/* ─── Question Header ─── */
 .question-header-container {
-  background: var(--sticker-yellow);
-  padding: 10px 25px !important;
-  border: 4px solid black !important;
-  border-radius: 16px !important;
-  box-shadow: 4px 4px 0px 0px rgba(0,0,0,1) !important;
+  background: var(--kq-sky);
+  padding: 14px 30px !important;
+  border: 3.5px solid var(--kq-outline) !important;
+  border-radius: 50px !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12) !important;
   display: inline-flex !important;
   width: fit-content !important;
   margin: 0 auto 20px auto !important;
   justify-content: center;
 }
 
+/* Question Number Circle */
 .question-number-circle {
-  background: var(--paper-white) !important;
-  border: 4px solid black !important;
-  color: black !important;
-  box-shadow: 2px 2px 0px 0px rgba(0,0,0,1) !important;
+  background: var(--kq-charcoal) !important;
+  border: 3px solid var(--kq-outline) !important;
+  color: white !important;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2) !important;
 }
 
-.option-letter {
-  background: var(--sticker-pink) !important;
-  border: 4px solid black !important;
-  box-shadow: 2px 2px 0px 0px rgba(0,0,0,1) !important;
+/* ========================================= */
+/* PERSPECTIVE LAYOUT (Reference Image)       */
+/* ========================================= */
+
+/* Override grid → absolute for horizontal QuestionCard */
+.question-card-fill:not(.vertical) .quiz-content {
+  display: block !important;
 }
+
+/* 1. QUESTION HEADER – top bar, simple positioned (no 3D to avoid text clipping) */
+.perspective-header {
+  position: absolute !important;
+  top: 50px;
+  left: 80px;
+  right: 280px;
+  z-index: 20;
+  display: flex !important;
+  align-items: center;
+  padding: 18px 40px !important;
+  width: auto !important;
+  margin: 0 !important;
+  transform-origin: left center;
+  overflow: visible;
+}
+
+.perspective-header .question-title {
+  font-size: 2.6rem;
+  line-height: 1.15;
+  white-space: normal;
+}
+
+/* 2. QUESTION NUMBER CIRCLE – top-right */
+.perspective-number {
+  position: absolute !important;
+  top: 45px;
+  right: 80px;
+  z-index: 25;
+  width: 100px !important;
+  height: 100px !important;
+  font-size: 3.2rem !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+/* 3. IMAGE – left side, 3D trapezoid: left edge bigger, right edge smaller */
+.perspective-image {
+  position: absolute !important;
+  top: 190px;
+  left: 50px;
+  width: 46%;
+  bottom: 110px;
+  display: flex !important;
+  align-items: stretch;
+  justify-content: stretch;
+  z-index: 10;
+  /* Apply 3D perspective at container level */
+  transform: perspective(900px) rotateY(5deg);
+  transform-origin: left center;
+  transform-style: preserve-3d;
+}
+
+.perspective-image .polaroid-frame {
+  width: 100% !important;
+  height: 100% !important;
+  padding: 0 !important;
+  border-radius: 24px !important;
+  overflow: hidden;
+}
+
+.perspective-image .polaroid-frame img {
+  width: 100% !important;
+  height: 100% !important;
+  aspect-ratio: auto !important;
+  object-fit: cover !important;
+}
+
+/* 4. OPTIONS – right side, 3D trapezoid: right edge bigger, left edge smaller */
+.perspective-options {
+  position: absolute !important;
+  top: 400px;
+  right: 110px;
+  width: 46%;
+  display: flex !important;
+  flex-direction: column;
+  gap: 1.4rem;
+  z-index: 15;
+  /* Apply 3D perspective at container level */
+  transform: perspective(900px) rotateY(-5deg) scale(1.1);
+  transform-origin: right center;
+  transform-style: preserve-3d;
+}
+
+.perspective-options .options-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.8rem;
+}
+
+.perspective-options .option-btn {
+  border-radius: 50px !important;
+  padding: 1.4rem 2.2rem;
+}
+
+.perspective-options .option-text {
+  font-size: 2.8rem;
+}
+
+.perspective-options .option-letter {
+  width: 105px;
+  height: 105px;
+  font-size: 2.8rem;
+  margin-right: 1.8rem;
+}
+
+/* 5. TIMER – inherits perspective from parent .perspective-options */
+.perspective-options .timer-container {
+  margin-top: 1.2rem;
+}
+
+/* 6. LOGO – bottom center */
+.perspective-logo {
+  position: absolute !important;
+  bottom: 30px !important;
+  left: 50% !important;
+  right: auto !important;
+  transform: translateX(-50%) !important;
+  height: 35px !important;
+  z-index: 30;
+}
+

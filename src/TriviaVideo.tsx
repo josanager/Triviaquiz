@@ -20,7 +20,6 @@ export const TriviaVideo: React.FC<{ layout?: 'horizontal' | 'vertical' }> = ({ 
             subscribeLang="es"
             introAudio="intro_es.mp3"
             outroAudio="outro_es.mp3"
-            mainAudio="audio horizontal.wav"
         />
     );
 };

@@ -1,303 +1,182 @@
-// ITZY Trivia Questions - 50 Preguntas para MIDZYs
 export const questions = [
     {
-        question: "¿En qué película de 2017 tuvo Ryujin un papel menor como una estudiante llamada Jimin?",
-        options: ["The Attorney", "The King", "Veteran"],
-        correct: 1,
+        question: "¿Cuál era el nombre del equipo de baile underground de J-Hope en Gwangju?",
+        options: ["Neuron", "D-Town", "Go Arts"],
+        correct: 0,
         image: "https://placehold.co/600x400/7c3aed/white?text=Ryujin+🎬"
     },
     {
-        question: "¿Qué apodo le puso Junho de 2PM a Yeji en el programa The Fan?",
-        options: ["La Perla de JYP", "El Arma Secreta de JYP", "La Futura Reina"],
+        question: "¿Qué nombre artístico usaba Suga como productor en Daegu antes de Big Hit?",
+        options: ["D-Boy", "Gloss", "Agust"],
         correct: 1,
         image: "https://placehold.co/600x400/ef4444/white?text=Yeji+⭐"
     },
     {
-        question: "¿Con qué miembro de BTS fue emparejada Yuna en el Highlight Reel de 'Love Yourself'?",
-        options: ["V", "Jungkook", "Suga"],
-        correct: 1,
+        question: "¿Qué profesión soñaba tener Jungkook antes de querer ser cantante?",
+        options: ["Jugador de Bádminton", "Gamer Pro", "Atleta"],
+        correct: 0,
         image: "https://placehold.co/600x400/ec4899/white?text=Yuna+💜"
     },
     {
-        question: "¿Cuál fue el ranking final de Ryujin entre las chicas en MIXNINE?",
-        options: ["1er Lugar", "3er Lugar", "9no Lugar"],
+        question: "¿Cuál de estos nombres fue una opción real considerada para Jimin antes del debut?",
+        options: ["Baby J", "Ji-Force", "Mochi"],
         correct: 0,
         image: "https://placehold.co/600x400/f59e0b/white?text=MIXNINE+🏆"
     },
     {
-        question: "¿De qué nombre inglés proviene el nombre artístico 'Lia'?",
-        options: ["Julia", "Olivia", "Cecelia"],
-        correct: 0,
+        question: "¿En qué mes y año se publicó el primer tweet oficial en la cuenta @BTS_twt?",
+        options: ["Junio 2013", "Enero 2013", "Diciembre 2012"],
+        correct: 2,
         image: "https://placehold.co/600x400/3b82f6/white?text=Lia+✨"
     },
     {
-        question: "¿En qué programa de 2013 debutaron televisivamente las hermanas Lee (Chaeryeong y Chaeyeon)?",
-        options: ["Superstar K", "K-Pop Star 3", "The Voice Korea"],
+        question: "Título de la pista oculta del álbum Love Yourself: 承 'Her' sobre el miedo al éxito:",
+        options: ["Path", "Sea", "Move"],
         correct: 1,
         image: "https://placehold.co/600x400/10b981/white?text=Chaeryeong+👯"
     },
     {
-        question: "¿Qué tres miembros se graduaron de la Hanlim Multi Art School?",
-        options: ["Yeji, Lia, Ryujin", "Ryujin, Chaeryeong, Yuna", "Lia, Chaeryeong, Yuna"],
-        correct: 1,
+        question: "¿Cuál fue la primera canción original que RM subió a la cuenta de SoundCloud del grupo?",
+        options: ["Rap Monster", "Too Much", "Vote"],
+        correct: 0,
         image: "https://placehold.co/600x400/6366f1/white?text=Hanlim+🎓"
     },
     {
-        question: "¿Quién es la artista original de la canción 'Air' que Yeji versionó en The Fan?",
-        options: ["Dua Lipa", "MØ", "Grimes"],
+        question: "¿Quién reveló una versión descartada del puente de 'Dis-ease' con estilo R&B?",
+        options: ["V", "Jungkook", "Jin"],
         correct: 1,
         image: "https://placehold.co/600x400/8b5cf6/white?text=The+Fan+🎤"
     },
     {
-        question: "¿Cómo se llama el personaje de Ryujin en la película The King?",
-        options: ["Hija del protagonista", "Jimin", "Una abogada"],
-        correct: 1,
+        question: "Fecha exacta y canción con la que BTS obtuvo su primer 'First Win' en un show musical:",
+        options: ["5 Mayo 2015 (I Need U)", "11 Dic 2015 (Run)", "20 Ago 2014 (Danger)"],
+        correct: 0,
         image: "https://placehold.co/600x400/0ea5e9/white?text=The+King+👑"
     },
     {
-        question: "¿Cuántos días tardó ITZY en ganar su primer music show con 'Dalla Dalla'?",
-        options: ["7 días", "9 días", "12 días"],
+        question: "¿En qué ceremonia ganaron su primer Daesang (Mejor Álbum del Año) en 2016?",
+        options: ["MAMA", "MMA (Melon Music Awards)", "Golden Disc"],
         correct: 1,
         image: "https://placehold.co/600x400/f43f5e/white?text=Dalla+Dalla+🏅"
     },
     {
-        question: "¿Cuál fue el primer sencillo original japonés de ITZY (abril 2022)?",
-        options: ["Blah Blah Blah", "Voltage", "Ringo"],
+        question: "¿En qué país de la T1 de Bon Voyage perdió RM su pasaporte y tuvo que volver?",
+        options: ["Noruega", "Suecia", "Finlandia"],
         correct: 1,
         image: "https://placehold.co/600x400/14b8a6/white?text=Japan+🇯🇵"
     },
     {
-        question: "¿Cuál es el título de la canción en solitario de Ryujin en Born To Be?",
-        options: ["Run Away", "Mine", "Crown On My Head"],
+        question: "¿Qué miembro fue olvidado accidentalmente en una gasolinera en Bon Voyage 4?",
+        options: ["J-Hope", "Jin", "Jungkook"],
         correct: 0,
         image: "https://placehold.co/600x400/a855f7/white?text=Ryujin+Solo+🌟"
     },
     {
-        question: "¿Qué equipo de producción trabajó con Yeji en 'Crown On My Head'?",
-        options: ["J.Y. Park", "Galactika", "Black Eyed Pilseung"],
-        correct: 1,
+        question: "Medida 'cómica' que obtuvieron de los hombros de Jin en el Ep. 92 de Run BTS:",
+        options: ["48 cm", "55 cm", "60 cm"],
+        correct: 0,
         image: "https://placehold.co/600x400/eab308/white?text=Crown+👑"
     },
     {
-        question: "¿Qué miembro de Stray Kids colaboró en la canción 'VAY' del álbum Gold?",
-        options: ["Bang Chan", "Han", "Changbin"],
-        correct: 2,
+        question: "¿Por qué premio barato pelearon ferozmente los miembros en el picnic de Run BTS?",
+        options: ["Una cafetera", "Una olla de ramen", "Un peluche"],
+        correct: 1,
         image: "https://placehold.co/600x400/22c55e/white?text=VAY+🎵"
     },
     {
-        question: "¿Cuál es la fecha exacta del lanzamiento de 'Blah Blah Blah' en Japón?",
-        options: ["5 de octubre 2022", "24 de septiembre 2022", "22 de diciembre 2021"],
-        correct: 0,
+        question: "¿Qué número de episodio de Run BTS corresponde al famoso especial de Zombis?",
+        options: ["11", "24", "33"],
+        correct: 1,
         image: "https://placehold.co/600x400/dc2626/white?text=Blah+Blah+📅"
     },
     {
-        question: "¿Quién escribió la letra del B-side 'Surf' del álbum Not Shy?",
-        options: ["J.Y. Park", "danke (lalala studio)", "Earattack"],
-        correct: 1,
+        question: "¿En qué evento acuñó V la frase 'Borahae' (I Purple You)?",
+        options: ["3rd Muster", "KCON LA", "Wings Tour Final"],
+        correct: 0,
         image: "https://placehold.co/600x400/0891b2/white?text=Surf+🏄"
     },
     {
-        question: "¿Qué álbum es oficialmente el '1st Full Album' de ITZY?",
-        options: ["Checkmate", "Crazy in Love", "Guess Who"],
+        question: "¿En qué fecha se anunció oficialmente que el nombre del fandom sería ARMY?",
+        options: ["13 Junio 2013", "9 Julio 2013", "1 Agosto 2013"],
         correct: 1,
         image: "https://placehold.co/600x400/d946ef/white?text=Crazy+in+Love+💕"
     },
     {
-        question: "¿Título de la canción solista de Chaeryeong en Born To Be?",
-        options: ["Blossom", "Mine", "Yet, But"],
-        correct: 1,
+        question: "¿Cómo se llamaban los primeros petauros del azúcar (sugar gliders) de Jin?",
+        options: ["Odeng y Eomuk", "Gukmul y Odeng", "Mickey y Holly"],
+        correct: 0,
         image: "https://placehold.co/600x400/f97316/white?text=Chaeryeong+Solo+💎"
     },
     {
-        question: "¿Qué instrumento inusual se usó en la producción de 'Swipe'?",
-        options: ["Saxofón moderno", "Clarinete retro", "Violín eléctrico"],
-        correct: 1,
+        question: "¿En qué evento Jin se volvió viral como el 'Car Door Guy'?",
+        options: ["MMA 2015", "MAMA 2016", "BBMA 2017"],
+        correct: 0,
         image: "https://placehold.co/600x400/84cc16/white?text=Swipe+🎷"
     },
     {
-        question: "¿Quiénes compusieron 'Dynamite' en el álbum Born To Be?",
-        options: ["Kobee & Holy M", "Earattack", "Kenzie"],
+        question: "¿En qué parte de su cuerpo V forma un 'elefante' usando sus lunares?",
+        options: ["Brazo", "Pierna", "Mejilla"],
         correct: 0,
         image: "https://placehold.co/600x400/06b6d4/white?text=Dynamite+💥"
     },
     {
-        question: "¿Qué marca de autos colaboró con ITZY en el debut de 'Dalla Dalla'?",
-        options: ["Hyundai", "Kia", "Chevrolet"],
+        question: "Miembros que protagonizaron el 'Incidente de los Dumplings' (Mandu):",
+        options: ["Jin y JK", "V y Jimin", "RM y Suga"],
         correct: 1,
         image: "https://placehold.co/600x400/7c3aed/white?text=Dalla+Dalla+🚗"
     },
     {
-        question: "¿Qué mercado de Los Ángeles aparece en el video de 'Icy'?",
-        options: ["Santa Monica Market", "Grand Central Market", "Farmers Market"],
+        question: "Ubicación exacta del tatuaje de la amistad '7' de Jimin:",
+        options: ["Detrás de la oreja", "Interior del dedo índice", "Tobillo"],
         correct: 1,
         image: "https://placehold.co/600x400/2563eb/white?text=Icy+🧊"
     },
     {
-        question: "¿Cómo se llama el modo arcoíris del ITZY Light Ring?",
-        options: ["Party Mode", "Aurora Loop", "Rainbow Flow"],
-        correct: 2,
+        question: "Fecha en la que Jin 'despierta' en el bucle temporal del Bangtan Universe (BU):",
+        options: ["11 de Abril", "22 de Mayo", "13 de Junio"],
+        correct: 0,
         image: "https://placehold.co/600x400/ec4899/white?text=Light+Ring+🌈"
     },
     {
-        question: "¿Cuál de estos NO es un modo oficial del Light Ring?",
-        options: ["Candle Mode", "Blink", "Flicker"],
-        correct: 0,
+        question: "Miembro que cubre los ojos de Jin en el MV de 'Blood Sweat & Tears':",
+        options: ["Suga", "V", "Jimin"],
+        correct: 1,
         image: "https://placehold.co/600x400/f59e0b/white?text=Light+Ring+💡"
     },
     {
-        question: "¿Bajo qué título se lanzaron los teasers conceptuales de Guess Who?",
-        options: ["Mafia Files", "Hidden Film", "Night Mission"],
-        correct: 1,
+        question: "Nombre completo del mentor 'Tony' en American Hustle Life:",
+        options: ["Tony Jones", "Tony Smith", "Tony Brown"],
+        correct: 0,
         image: "https://placehold.co/600x400/10b981/white?text=Guess+Who+🔍"
     },
     {
-        question: "¿Qué teatro de Downtown LA aparece en el MV de 'Icy'?",
-        options: ["The United Theatre", "The Dolby Theatre", "The Chinese Theatre"],
+        question: "¿De dónde saca Jin las fresas que suele regalar a los otros miembros?",
+        options: ["Granja de su tío", "Mercado de Jeju", "Cultivo hidropónico"],
         correct: 0,
         image: "https://placehold.co/600x400/6366f1/white?text=Icy+MV+🎭"
     },
     {
-        question: "¿Cuál es la pista número 1 (Track 01) del álbum Born To Be?",
-        options: ["Untouchable", "Born To Be", "Mr. Vampire"],
+        question: "Instrumento que V tocó durante tres años en la escuela secundaria:",
+        options: ["Violín", "Saxofón", "Clarinete"],
         correct: 1,
         image: "https://placehold.co/600x400/ef4444/white?text=Born+To+Be+🔥"
     },
     {
-        question: "¿Qué pegatina incluye la edición especial de Checkmate?",
-        options: ["Una Corona", "Sneakers", "Pieza de Ajedrez"],
+        question: "¿Quién tiene el tatuaje real de 'Nevermind' en su costado derecho?",
+        options: ["Suga", "Jimin", "RM"],
         correct: 1,
         image: "https://placehold.co/600x400/8b5cf6/white?text=Checkmate+♟️"
     },
     {
-        question: "¿Cuál es la forma distintiva del lightstick de ITZY?",
-        options: ["Una Corona", "Un Anillo/Pandereta", "Una Espada"],
-        correct: 1,
+        question: "¿Quién fue el último miembro en ser confirmado y mudarse al dormitorio?",
+        options: ["V", "Jin", "Jimin"],
+        correct: 2,
         image: "https://placehold.co/600x400/f43f5e/white?text=Lightstick+💫"
     },
     {
-        question: "¿Qué parte del cuerpo protagoniza el baile viral de Ryujin en 'Wannabe'?",
-        options: ["Caderas", "Hombros", "Cabello"],
+        question: "Ganador del desafío de fotografía DIY en el Ep. 106 de Run BTS:",
+        options: ["V", "Suga", "Jungkook"],
         correct: 1,
         image: "https://placehold.co/600x400/14b8a6/white?text=Wannabe+💃"
-    },
-    {
-        question: "¿Qué significa coreanamente la palabra 'MIDZY'?",
-        options: ["Eres tú", "Confiar/Creer", "Locamente enamorado"],
-        correct: 1,
-        image: "https://placehold.co/600x400/a855f7/white?text=MIDZY+💖"
-    },
-    {
-        question: "¿Qué personaje de WDZY diseñó Yeji?",
-        options: ["TUK", "HATT", "CABBIT"],
-        correct: 1,
-        image: "https://placehold.co/600x400/eab308/white?text=WDZY+Yeji+🐱"
-    },
-    {
-        question: "¿Qué animal es 'LYA', el personaje de Lia en WDZY?",
-        options: ["Llama", "Perezoso", "Alpaca"],
-        correct: 1,
-        image: "https://placehold.co/600x400/22c55e/white?text=LYA+🦥"
-    },
-    {
-        question: "¿Cuántos años tiene el Kumiho CHUNG-EE (personaje de Chaeryeong)?",
-        options: ["100 años", "500 años", "900 años"],
-        correct: 2,
-        image: "https://placehold.co/600x400/dc2626/white?text=CHUNG-EE+🦊"
-    },
-    {
-        question: "¿Qué personaje de WDZY representa a Ryujin?",
-        options: ["TUK", "GOMMY", "MOONG-GAE"],
-        correct: 0,
-        image: "https://placehold.co/600x400/0891b2/white?text=TUK+🐧"
-    },
-    {
-        question: "¿Qué animales forman el híbrido 'CABBIT' de Yuna?",
-        options: ["Gato y Conejo", "Gato y Oso", "Vaca y Conejo"],
-        correct: 0,
-        image: "https://placehold.co/600x400/d946ef/white?text=CABBIT+🐱🐰"
-    },
-    {
-        question: "¿En qué fecha exacta se anunció el nombre del fandom 'MIDZY'?",
-        options: ["12 de febrero 2019", "8 de julio 2019", "1 de enero 2020"],
-        correct: 1,
-        image: "https://placehold.co/600x400/f97316/white?text=MIDZY+📅"
-    },
-    {
-        question: "¿A qué alimento se parece el personaje HATT (Yeji)?",
-        options: ["Batata", "Dona", "Melocotón"],
-        correct: 0,
-        image: "https://placehold.co/600x400/84cc16/white?text=HATT+🍠"
-    },
-    {
-        question: "¿Cómo se llama la línea de personajes de ITZY con LINE FRIENDS?",
-        options: ["BT21", "SKZOO", "WDZY"],
-        correct: 2,
-        image: "https://placehold.co/600x400/06b6d4/white?text=LINE+FRIENDS+🎀"
-    },
-    {
-        question: "¿Cuál es la personalidad de TUK (Ryujin)?",
-        options: ["Hiperactivo", "Rígido fuera, suave dentro", "Dormilón"],
-        correct: 1,
-        image: "https://placehold.co/600x400/7c3aed/white?text=TUK+Personalidad+💪"
-    },
-    {
-        question: "¿Quién es conocida por ganar juegos con suerte o 'astucia' en CSI?",
-        options: ["Lia", "Ryujin", "Chaeryeong"],
-        correct: 1,
-        image: "https://placehold.co/600x400/2563eb/white?text=CSI+🎮"
-    },
-    {
-        question: "¿A qué dice Lia que saben los pepinos?",
-        options: ["Zanahorias", "Electricidad", "Brócoli"],
-        correct: 1,
-        image: "https://placehold.co/600x400/ec4899/white?text=Lia+🥒⚡"
-    },
-    {
-        question: "¿Cómo se llama el reality que ITZY grabó en Francia?",
-        options: ["ITZY in Paris", "Paris et ITZY", "Bonjour ITZY"],
-        correct: 1,
-        image: "https://placehold.co/600x400/f59e0b/white?text=Paris+🗼"
-    },
-    {
-        question: "¿De qué marca de Singapur son embajadoras globales desde 2022?",
-        options: ["Gentle Monster", "Charles & Keith", "Jimmy Choo"],
-        correct: 1,
-        image: "https://placehold.co/600x400/10b981/white?text=C&K+👜"
-    },
-    {
-        question: "¿A quiénes se refiere el nombre de pareja '01z' (Gong-ils)?",
-        options: ["Yeji y Lia", "Ryujin y Chaeryeong", "Yuna y Ryujin"],
-        correct: 1,
-        image: "https://placehold.co/600x400/6366f1/white?text=01z+👯‍♀️"
-    },
-    {
-        question: "¿Qué número de código tiene Yeji en las cartas oficiales de CSI?",
-        options: ["#01", "#05", "#07"],
-        correct: 0,
-        image: "https://placehold.co/600x400/ef4444/white?text=CSI+Cards+🃏"
-    },
-    {
-        question: "En una entrevista sobre comer helado, ¿por quién votó Ryujin?",
-        options: ["Ella misma", "Yuna", "Yeji"],
-        correct: 2,
-        image: "https://placehold.co/600x400/8b5cf6/white?text=Ice+Cream+🍦"
-    },
-    {
-        question: "¿Cuál es el título exacto del vlog de artículos favoritos de Yuna?",
-        options: ["Yuna's Cam", "YUNA | Yuna's Favorite Items", "Yuna's Diary"],
-        correct: 1,
-        image: "https://placehold.co/600x400/f43f5e/white?text=Yuna+Vlog+📹"
-    },
-    {
-        question: "¿Qué miembro estuvo en el show de Stray Kids pero no en el Highlight Reel de BTS?",
-        options: ["Yeji", "Lia", "Somi"],
-        correct: 0,
-        image: "https://placehold.co/600x400/14b8a6/white?text=Yeji+SKZ+🌟"
-    },
-    {
-        question: "¿Qué género musical define a la canción '#Twenty' de ITZY?",
-        options: ["Balada", "Hip Hop", "Tropical House"],
-        correct: 1,
-        image: "https://placehold.co/600x400/a855f7/white?text=%23Twenty+🎤"
     }
 ];

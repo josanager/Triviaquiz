@@ -37,6 +37,35 @@ npx remotion render
 npx remotion upgrade
 ```
 
+## Google TTS
+
+Plantilla base de TTS para este proyecto:
+
+```console
+pip install -U google-genai
+python scripts/generate_tts_google.py
+```
+
+El script usa `GOOGLE_API_KEY` desde `.env` o desde el entorno y guarda el audio en `locucion.wav`.
+
+Para regenerar las locuciones reales del proyecto:
+
+```console
+python scripts/generate_tts_google.py
+```
+
+Eso sobrescribe `public/intro_es.mp3`, `public/intro_en.mp3`, `public/outro_es.mp3` y `public/outro_en.mp3` usando Gemini TTS.
+
+### Voiceover rules
+
+Preferencias fijadas para futuras regeneraciones de locucion:
+
+- No usar `whispers` en absoluto.
+- Se permiten cambios de emocion dentro de un mismo texto.
+- Usar como maximo 2 o 3 etiquetas de emocion por audio.
+- Mantener el texto suficientemente corto para que no se corte dentro del video.
+- Aplicar un aumento final de volumen del 10% a todas las voces.
+
 ## Docs
 
 Get started with Remotion by reading the [fundamentals page](https://www.remotion.dev/docs/the-fundamentals).

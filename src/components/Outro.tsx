@@ -18,6 +18,7 @@ interface OutroProps {
     lang?: 'es' | 'en';
 }
 
+
 export const Outro: React.FC<OutroProps> = ({ lang = 'es' }) => {
     const frame = useCurrentFrame();
     const { durationInFrames } = useVideoConfig();
@@ -60,9 +61,52 @@ export const Outro: React.FC<OutroProps> = ({ lang = 'es' }) => {
 
     const titleLines = t.title.split('\n');
 
+    // Helper for floating shapes
+    const f = (speed: number, offset = 0) => Math.sin((frame + offset) / speed);
+    const c = (speed: number, offset = 0) => Math.cos((frame + offset) / speed);
+
     return (
         <AbsoluteFill style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            <div className="outro-v3-container">
+            {/* Floating decorative shapes */}
+            <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none', zIndex: 1 }}>
+                <svg width="170" height="170" viewBox="0 0 100 100" style={{
+                    position: 'absolute', top: '6%', right: '7%',
+                    transform: `translate(${f(55) * 10}px, ${c(40) * 14}px) rotate(${frame / 5}deg)`,
+                    opacity: 0.35,
+                }}><circle cx="50" cy="50" r="40" fill="#FFA800" /></svg>
+
+                <svg width="140" height="140" viewBox="0 0 100 100" style={{
+                    position: 'absolute', top: '12%', left: '6%',
+                    transform: `translate(${c(60, 15) * 12}px, ${f(50, 20) * 10}px) rotate(${-frame / 6}deg)`,
+                    opacity: 0.33,
+                }}><rect x="18" y="18" width="64" height="64" rx="16" fill="#C4A8FF" /></svg>
+
+                <svg width="120" height="120" viewBox="0 0 100 100" style={{
+                    position: 'absolute', bottom: '10%', right: '10%',
+                    transform: `translate(${f(70, 25) * 14}px, ${c(55, 30) * 12}px) rotate(${frame / 7}deg)`,
+                    opacity: 0.32,
+                }}><polygon points="50,10 90,90 10,90" fill="#FF5078" /></svg>
+
+                <svg width="150" height="150" viewBox="0 0 100 100" style={{
+                    position: 'absolute', bottom: '15%', left: '8%',
+                    transform: `translate(${c(50, 35) * 10}px, ${f(65, 40) * 16}px) rotate(${-frame / 4.5}deg)`,
+                    opacity: 0.34,
+                }}><circle cx="50" cy="50" r="36" fill="#50C864" /></svg>
+
+                <svg width="100" height="100" viewBox="0 0 100 100" style={{
+                    position: 'absolute', top: '50%', right: '3%',
+                    transform: `translate(${f(45, 50) * 6}px, ${c(60, 10) * 8}px) rotate(${frame / 8}deg)`,
+                    opacity: 0.28,
+                }}><rect x="22" y="22" width="56" height="56" rx="14" fill="#FFA800" /></svg>
+
+                <svg width="110" height="110" viewBox="0 0 100 100" style={{
+                    position: 'absolute', top: '48%', left: '2%',
+                    transform: `translate(${c(75, 15) * 8}px, ${f(50, 45) * 10}px) rotate(${-frame / 6.5}deg)`,
+                    opacity: 0.30,
+                }}><polygon points="50,5 95,37 77,90 23,90 5,37" fill="#C4A8FF" /></svg>
+            </div>
+
+            <div className="outro-v3-container" style={{ zIndex: 2, position: 'relative' }}>
                 <div
                     style={{
                         transform: `translateX(${interpolate(logoIn, [0, 1], [90, Math.sin(frame / 28) * 6])}px) translateY(${interpolate(logoIn, [0, 1], [-35, logoFloat])}px) scale(${interpolate(logoIn, [0, 0.78, 1], [0.74, 1.04, 1]) * interpolate(logoOut, [0, 1], [1, 0.8])}) rotate(${interpolate(logoIn, [0, 1], [14, 0]) + interpolate(logoOut, [0, 1], [0, -12])}deg)`,
@@ -85,6 +129,7 @@ export const Outro: React.FC<OutroProps> = ({ lang = 'es' }) => {
                             display: 'block',
                             transform: `translateX(${interpolate(titleLine1In, [0, 1], [-180, Math.sin(frame / 31) * 10])}px) translateY(${interpolate(titleLine1In, [0, 1], [-45, titleFloat * 0.75])}px) scale(${interpolate(titleLine1In, [0, 0.72, 1], [0.8, 1.03, 1]) * interpolate(titleLine1Out, [0, 1], [1, 0.86])}) rotate(${interpolate(titleLine1In, [0, 1], [-6, 0]) + titleTilt + interpolate(titleLine1Out, [0, 1], [0, 8])}deg)`,
                             opacity: titleLine1In * (1 - titleLine1Out),
+                            color: 'var(--kq-charcoal)',
                         }}
                     >
                         {titleLines[0]}
@@ -94,6 +139,8 @@ export const Outro: React.FC<OutroProps> = ({ lang = 'es' }) => {
                             display: 'block',
                             transform: `translateX(${interpolate(titleLine2In, [0, 1], [180, Math.cos(frame / 26) * 10])}px) translateY(${interpolate(titleLine2In, [0, 1], [35, titleFloat])}px) scale(${interpolate(titleLine2In, [0, 0.72, 1], [0.8, 1.03, 1]) * interpolate(titleLine2Out, [0, 1], [1, 0.84])}) rotate(${interpolate(titleLine2In, [0, 1], [6, 0]) - titleTilt + interpolate(titleLine2Out, [0, 1], [0, -8])}deg)`,
                             opacity: titleLine2In * (1 - titleLine2Out),
+                            color: 'var(--kq-amber)',
+                            textShadow: '4px 4px 0 #1a1a1a, -4px -4px 0 #1a1a1a, 4px -4px 0 #1a1a1a, -4px 4px 0 #1a1a1a, 0px 4px 0 #1a1a1a, 0px -4px 0 #1a1a1a, 4px 0px 0 #1a1a1a, -4px 0px 0 #1a1a1a',
                         }}
                     >
                         {titleLines[1]}
@@ -107,13 +154,13 @@ export const Outro: React.FC<OutroProps> = ({ lang = 'es' }) => {
                         opacity: panelIn * (1 - panelOut),
                     }}
                 >
-                    <span className="wiggle" style={{ fontSize: '5rem', transform: `translateY(${Math.sin(frame / 12) * 5}px) rotate(${Math.sin(frame / 8) * 4}deg)` }}>🎶</span>
+                    <span className="wiggle" style={{ fontSize: '5rem', transform: `translateY(${Math.sin(frame / 12) * 5}px) rotate(${Math.sin(frame / 8) * 4}deg)` }}>💬</span>
                     <span
                         className="outro-v3-panel-text"
                         style={{
                             transform: `translateY(${Math.cos(frame / 17) * 3}px)`,
-                            color: '#111111',
-                            textShadow: '0 1px 0 rgba(255,255,255,0.45)',
+                            color: 'var(--kq-charcoal)',
+                            textShadow: 'none',
                         }}
                     >
                         {t.commentText}

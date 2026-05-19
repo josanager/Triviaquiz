@@ -1,7 +1,7 @@
 import { AbsoluteFill, Sequence, useCurrentFrame, interpolate, Video, staticFile, Audio } from 'remotion';
 import { Question } from './questions';
 import { QuestionCard } from './components/QuestionCard';
-import { Background } from './components/Background';
+import { Background, PALETTE_KEYS } from './components/Background';
 import { SubscribeAnimation } from './components/SubscribeAnimation';
 import { BgmSequence } from './components/BgmSequence';
 
@@ -11,7 +11,7 @@ const QUESTION_DURATION = SECONDS_PER_QUESTION * FPS;
 const TRANSITION_FRAMES = FPS * 1.5; // 1.5 seconds for fade transition
 const CHANNEL_INTRO_DURATION = 270; // Intro video duration (~4.5s at 60 FPS)
 
-const DEFAULT_THEMES = ['theme-pink', 'theme-rose-gradient', 'theme-blue', 'theme-dark-elegant', 'theme-yellow', 'theme-contrast', 'theme-mint', 'theme-lavender'];
+const DEFAULT_THEMES = PALETTE_KEYS; // ['bg-sky', 'bg-peach', 'bg-mint', 'bg-lavender', 'bg-coral', 'bg-lemon', 'bg-rose', 'bg-aqua']
 
 export interface TriviaVideoBaseProps {
     layout?: 'horizontal' | 'vertical';
@@ -59,11 +59,11 @@ export const TriviaVideoBase: React.FC<TriviaVideoBaseProps> = ({
         // During Channel Intro Video
     } else if (contentFrame <= INTRO_DURATION) {
         // During intro (only horizontal)
-        activeTheme = "theme-purple";
+        activeTheme = 'bg-lavender'; // Intro uses lavender
         if (INTRO_DURATION > 0) {
             const introEndTransitionStart = INTRO_DURATION - TRANSITION_FRAMES;
             if (contentFrame >= introEndTransitionStart) {
-                prevTheme = "theme-purple";
+                prevTheme = 'bg-lavender';
                 activeTheme = THEMES[0];
                 transitionProgress = interpolate(
                     contentFrame,
@@ -95,7 +95,7 @@ export const TriviaVideoBase: React.FC<TriviaVideoBaseProps> = ({
             }
         } else if (index >= activeQuestions.length) {
             // Outro logic
-            activeTheme = "theme-gold";
+            activeTheme = 'bg-coral'; // Outro uses coral
             const outroStartFrame = INTRO_DURATION + (activeQuestions.length * QUESTION_DURATION);
             const frameInOutro = contentFrame - outroStartFrame;
             if (frameInOutro < TRANSITION_FRAMES) {

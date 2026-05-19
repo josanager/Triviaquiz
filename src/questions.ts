@@ -1,4 +1,5 @@
-import { MORAT_IMAGES } from './images';
+import { METALLICA_IMAGES } from './images';
+import { validateUniqueQuestionImages } from './validateQuestionImages';
 
 export interface Question {
     question: string;
@@ -7,218 +8,195 @@ export interface Question {
     image: string;
 }
 
-export const questions: Question[] = [
+export const questions: Question[] = validateUniqueQuestionImages([
     {
-        // Q1: Origen del nombre "Malta" - Grupo
-        question: "¿Cuál es el origen exacto del nombre original 'Malta'?",
-        options: ["Nombre de la perra de un integrante", "Acrónimo de sus padres", "Una bebida tradicional"],
-        correct: 0,
-        image: MORAT_IMAGES.group_1_studio
-    },
-    {
-        // Q2: Por qué abandonaron "Malta" - Grupo
-        question: "¿Por qué tuvieron que abandonar el nombre 'Malta'?",
-        options: ["Marca de refrescos en España", "Banda brasileña con nombre registrado", "Sugerencia de Pedro Malaver"],
+        question: '¿Quién propuso originalmente el nombre "Metallica" antes de que Lars Ulrich lo convenciera de usarlo para la banda?',
+        options: ['James Hetfield', 'Ron Quintana', 'Dave Mustaine'],
         correct: 1,
-        image: MORAT_IMAGES.group_2_urban
+        image: METALLICA_IMAGES.q1,
     },
     {
-        // Q3: Dueño de "La Morat" - Grupo/backstage
-        question: "¿Quién era el dueño de la finca 'La Morat'?",
-        options: ["Padre de Juan Pablo Isaza", "Antonio de Morat (familiar de Alejandro Posada)", "Familia Vargas Morales"],
+        question: '¿Qué errata apareció en el nombre de la banda en los créditos de "Hit the Lights" en el compilatorio Metal Massacre (1982)?',
+        options: ['Metalica', 'Mettallica', 'Metallika'],
         correct: 1,
-        image: MORAT_IMAGES.group_4_backstage
+        image: METALLICA_IMAGES.q2,
     },
     {
-        // Q4: Primer concierto en Bogotá - Concierto
-        question: "¿Dónde fue su primer concierto oficial en Bogotá?",
-        options: ["Bar La Tea", "Restaurante vegano", "Universidad de los Andes"],
+        question: 'En su primer ensayo en 1981, ¿qué deficiencia técnica de la batería de Lars frustró inicialmente a James Hetfield?',
+        options: ['Pedal del bombo oxidado', 'Platillos agrietados e inestables', 'Parche de caja roto'],
+        correct: 1,
+        image: METALLICA_IMAGES.q3,
+    },
+    {
+        question: '¿Qué instrumento estudió formalmente James Hetfield a los 9 años por imposición de su madre?',
+        options: ['El piano', 'El violín', 'La batería'],
         correct: 0,
-        image: MORAT_IMAGES.concert_1_stage
+        image: METALLICA_IMAGES.q4,
     },
     {
-        // Q5: Podcast de Simón - Simón
-        question: "¿Cómo se llama el podcast de Simón Vargas y Nath Campos?",
-        options: ["Simón dice, Nath contradice", "Relatos de la orilla de la luz", "Entre cuentos y música"],
+        question: '¿Qué condición puso Cliff Burton en 1982 para unirse formalmente a Metallica?',
+        options: ['Coautoría instrumental total', 'Que la banda se mudara a San Francisco', 'Un contrato exclusivo con Megaforce'],
+        correct: 1,
+        image: METALLICA_IMAGES.q5,
+    },
+    {
+        question: '¿De qué color inusual se imprimió la carátula de Ride the Lightning en Francia (1984) por un error de distribución?',
+        options: ['Verde', 'Rojo metálico', 'Amarillo mostaza'],
         correct: 0,
-        image: MORAT_IMAGES.simon_1_striped
+        image: METALLICA_IMAGES.q6,
     },
     {
-        // Q6: Productora "Mapache" - Isaza
-        question: "¿Qué integrante fundó la productora 'Mapache'?",
-        options: ["Juan Pablo Villamil", "Simón Vargas", "Juan Pablo Isaza"],
+        question: '¿Quién exclamó "Whoa, that\'s like creeping death!" viendo la película Los diez mandamientos en casa de Cliff Burton?',
+        options: ['James Hetfield', 'Lars Ulrich', 'Cliff Burton'],
         correct: 2,
-        image: MORAT_IMAGES.isaza_1
+        image: METALLICA_IMAGES.q7,
     },
     {
-        // Q7: Marca del banjo - Villamil con banjo
-        question: "¿Cuál es la marca del banjo que usa Juan Pablo Villamil?",
-        options: ["Gibson", "Deering", "Fender"],
+        question: 'El riff de "Die by my hand" (en "Creeping Death") era originalmente de un tema de Kirk Hammett en Exodus. ¿Cómo se titulaba?',
+        options: ['Impaler', 'Die by His Hand', 'Bonded by Blood'],
         correct: 1,
-        image: MORAT_IMAGES.villamil_banjo_1
+        image: METALLICA_IMAGES.q8,
     },
     {
-        // Q8: Alejandro Posada arquitecto - Grupo
-        question: "¿A qué se dedica Alejandro Posada tras dejar la banda?",
-        options: ["Productor en Miami", "Arquitecto", "Director de cine"],
-        correct: 1,
-        image: MORAT_IMAGES.group_3_couch
-    },
-    {
-        // Q9: Marca de diseño de Martín - Martín
-        question: "¿Cómo se llama la marca de diseño de Martín Vargas?",
-        options: ["GNrL Studios", "Mapache Wear", "Morat Fashion Lab"],
+        question: 'Sin contar "(Anesthesia)", ¿cuál es la única canción de Kill \'Em All acreditada exclusivamente a James Hetfield?',
+        options: ['Motorbreath', 'Whiplash', 'Seek & Destroy'],
         correct: 0,
-        image: MORAT_IMAGES.martin_1_cap
+        image: METALLICA_IMAGES.q9,
     },
     {
-        // Q10: Canción en 30 min (Mi nuevo vicio) - Concierto
-        question: "¿Qué canción se compuso en solo 30 minutos?",
-        options: ["Cómo te atreves", "Besos en guerra", "Mi nuevo vicio"],
-        correct: 2,
-        image: MORAT_IMAGES.concert_2_wide
-    },
-    {
-        // Q11: Libro de Simón - Simón
-        question: "¿Cuál es el título del libro de relatos de Simón Vargas?",
-        options: ["Las canciones que no escribimos", "A la orilla de la luz", "Bajo la mesa de Bogotá"],
+        question: '¿Cuál fue el primer álbum de rock que compró Lars Ulrich tras asistir a un concierto en 1973?',
+        options: ['In Rock (Deep Purple)', 'Fireball (Deep Purple)', 'Paranoid (Black Sabbath)'],
         correct: 1,
-        image: MORAT_IMAGES.simon_2_bw
+        image: METALLICA_IMAGES.q10,
     },
     {
-        // Q12: Colegio a los 5 años - Grupo
-        question: "¿En qué colegio se conocieron los integrantes a los 5 años?",
-        options: ["Gimnasio Moderno", "Gimnasio La Montaña", "Colegio Anglo Colombiano"],
-        correct: 1,
-        image: MORAT_IMAGES.group_5_graffiti
-    },
-    {
-        // Q13: Objeto incendiado Argentina - Concierto
-        question: "¿Qué objeto se incendió en una caja en Argentina (2024)?",
-        options: ["Amplificador de Simón", "El telón principal", "Maleta de Isaza"],
-        correct: 1,
-        image: MORAT_IMAGES.concert_3_steps
-    },
-    {
-        // Q14: Ritual antes del escenario - Concierto
-        question: "¿Qué ritual hacen antes de salir al escenario?",
-        options: ["Lanzar gominolas y atraparlas con la boca", "Cantar a Joaquín Sabina", "Brindis con mezcal"],
+        question: 'En su audición de 1986, ¿qué propuesta cómica de improvisación de Les Claypool fue recibida con total seriedad por la banda?',
+        options: ['Un jam de los Isley Brothers', 'Tocar "Orion" en funk slap', 'Invertir las líneas de guitarra'],
         correct: 0,
-        image: MORAT_IMAGES.concert_4_awards
+        image: METALLICA_IMAGES.q11,
     },
     {
-        // Q15: Récord personas en pijama - Concierto
-        question: "¿En qué ciudad rompieron el récord de personas en pijama?",
-        options: ["Bogotá", "Ciudad de México", "Madrid"],
+        question: '¿Cómo iba vestido Les Claypool a su audición con Metallica en 1986, contrastando con el estilo del grupo?',
+        options: ['Traje formal negro', 'Mohawk rubio, pantalones skater y tenis desiguales', 'Chaleco de cuero con remaches'],
         correct: 1,
-        image: MORAT_IMAGES.concert_5_hug
+        image: METALLICA_IMAGES.q12,
     },
     {
-        // Q16: Aficionado al ilusionismo - Isaza
-        question: "¿Quién es aficionado al ilusionismo y la magia?",
-        options: ["Juan Pablo Isaza", "Juan Pablo Villamil", "Martín Vargas"],
+        question: 'Como rito de iniciación a finales de 1986, ¿qué alimento picante obligaron a consumir a Jason Newsted?',
+        options: ['Una cucharada de wasabi puro', 'Chiles jalapeños en vinagre', 'Curry tailandés concentrado'],
         correct: 0,
-        image: MORAT_IMAGES.isaza_2
+        image: METALLICA_IMAGES.q13,
     },
     {
-        // Q17: Colección de Villamil - Villamil
-        question: "¿Qué artículos deportivos colecciona Villamil?",
-        options: ["Gorras de béisbol", "Camisetas de fútbol", "Zapatillas de edición limitada"],
-        correct: 1,
-        image: MORAT_IMAGES.villamil_bw_3
-    },
-    {
-        // Q18: Perrita de Martín - Martín
-        question: "¿Cómo se llamaba la perrita de infancia de Martín?",
-        options: ["Malta", "Rita la perrita", "Nicolás López"],
-        correct: 1,
-        image: MORAT_IMAGES.martin_2_sideways
-    },
-    {
-        // Q19: Diseño Gráfico - Martín
-        question: "¿Qué integrante estudió Diseño Gráfico?",
-        options: ["Simón Vargas", "Juan Pablo Isaza", "Martín Vargas"],
-        correct: 2,
-        image: MORAT_IMAGES.martin_3_flowers
-    },
-    {
-        // Q20: Primer beso de Villamil - Villamil
-        question: "¿A qué edad fue el primer beso de Villamil?",
-        options: ["13 años", "15 años", "18 años"],
+        question: 'El pasaje recitado al final de "To Live Is to Die" ("When a man lies...") es una adaptación de versos de:',
+        options: ['El clérigo alemán Paul Gerhardt', 'El filósofo Friedrich Nietzsche', 'El poeta inglés John Donne'],
         correct: 0,
-        image: MORAT_IMAGES.villamil_guitar_4
+        image: METALLICA_IMAGES.q14,
     },
     {
-        // Q21: Hábito de Simón en librerías - Simón
-        question: "¿Qué hábito tiene Simón en las librerías?",
-        options: ["Leer la última página", "Oler los libros", "Contar la palabra 'amor'"],
-        correct: 1,
-        image: MORAT_IMAGES.simon_3_green
-    },
-    {
-        // Q22: Paulina Rubio cantó - Concierto/performance
-        question: "¿Qué tema cantó Paulina Rubio antes de que ellos fueran famosos?",
-        options: ["Cómo te atreves", "Cuánto me duele", "Mi nuevo vicio"],
-        correct: 2,
-        image: MORAT_IMAGES.villamil_theater_2
-    },
-    {
-        // Q23: Espectadores en La Tea - Grupo
-        question: "¿Quiénes eran los únicos espectadores en sus inicios en La Tea?",
-        options: ["Sus padres", "El personal de seguridad", "Estudiantes de Uniandes"],
-        correct: 1,
-        image: MORAT_IMAGES.group_1_studio
-    },
-    {
-        // Q24: Fecha de formación - Grupo
-        question: "¿Qué fecha se considera la formación oficial (como Malta)?",
-        options: ["13 de diciembre de 2011", "20 de mayo de 2015", "16 de junio de 2016"],
+        question: '¿Qué medida tomó la banda con la película Johnny Got His Gun para evitar los altos costes de licencia del video de "One"?',
+        options: ['Compraron los derechos de la película', 'Firmaron regalías de por vida', 'Recrearon las escenas con actores'],
         correct: 0,
-        image: MORAT_IMAGES.group_2_urban
+        image: METALLICA_IMAGES.q15,
     },
     {
-        // Q25: Carrera de Isaza - Isaza
-        question: "¿Qué carrera estudió Juan Pablo Isaza?",
-        options: ["Ingeniería Industrial", "Administración de Empresas", "Música"],
+        question: '¿Qué baterista de thrash bromeaba con que el pasaje de doble bombo en "One" era un plagio de su banda?',
+        options: ['Mick Hughes', 'Gene Hoglan (Dark Angel)', 'Tom Hunting'],
         correct: 1,
-        image: MORAT_IMAGES.isaza_3
+        image: METALLICA_IMAGES.q16,
     },
     {
-        // Q26: Filtración de Martín en México - Martín
-        question: "¿Qué dato filtró Martín Vargas por error en México?",
-        options: ["Fecha y nombre de 'París'", "Boda de Simón", "Nombre del álbum 'Ya es mañana'"],
+        question: '¿A quién perteneció originalmente el icónico anillo plateado de calavera que James Hetfield usa habitualmente en vivo?',
+        options: ['A su abuelo paterno', 'A Cliff Burton', 'A su primer mentor de guitarra'],
+        correct: 1,
+        image: METALLICA_IMAGES.q17,
+    },
+    {
+        question: 'Lanzada en 72 Seasons (2023), ¿cuál es la canción de estudio original más larga en la discografía de Metallica?',
+        options: ['Suicide & Redemption', 'Inamorata', 'To Live Is to Die'],
+        correct: 1,
+        image: METALLICA_IMAGES.q18,
+    },
+    {
+        question: '¿En qué base científica de la Antártida tocó Metallica su histórico concierto "Freeze \'Em All" en 2013?',
+        options: ['Base McMurdo', 'Base Carlini (argentina)', 'Base Amundsen-Scott'],
+        correct: 1,
+        image: METALLICA_IMAGES.q19,
+    },
+    {
+        question: '¿De dónde proviene la madera con la que Ken Lawrence construyó "Carl", la emblemática guitarra de James Hetfield?',
+        options: ['Del garaje de Carlson Blvd', 'Del autobús del accidente de 1986', 'Del escenario del club "The Stone"'],
         correct: 0,
-        image: MORAT_IMAGES.martin_4_adidas
+        image: METALLICA_IMAGES.q20,
     },
     {
-        // Q27: Reto técnico Guatemala - Concierto
-        question: "¿Qué reto técnico mayor enfrentaron en Guatemala?",
-        options: ["Se quemó una pantalla", "Apagón total una hora antes", "Banjo roto de Villamil"],
-        correct: 1,
-        image: MORAT_IMAGES.villamil_banjo_5_bw
-    },
-    {
-        // Q28: Colaboración Mariachi - Grupo/awards
-        question: "¿Quién colaboró en la versión Mariachi de 'Debí Suponerlo'?",
-        options: ["Alejandro Fernández", "Camila Fernández", "Christian Nodal"],
-        correct: 1,
-        image: MORAT_IMAGES.martin_5_smile
-    },
-    {
-        // Q29: Tatuaje de Simón - Simón
-        question: "¿Qué significa el tatuaje del símbolo creado por Simón?",
-        options: ["Concepto de 'la mala suerte'", "Tributo a Martín", "Constelación de La Morat"],
+        question: '¿En qué famosa obra pictórica del siglo XV se inspira estéticamente el videoclip de "Until It Sleeps" (1996)?',
+        options: ['El jardín de las delicias (El Bosco)', 'El grito (Edvard Munch)', 'El triunfo de la muerte (Brueghel)'],
         correct: 0,
-        image: MORAT_IMAGES.simon_5_misfits
+        image: METALLICA_IMAGES.q21,
     },
     {
-        // Q30: Guitarra de Isaza - Isaza
-        question: "¿Qué modelo de guitarra eléctrica usa Isaza en 'Los Estadios'?",
-        options: ["Fender Player Telecaster", "Gibson Custom 1959 ES-335", "Martin D-42"],
+        question: 'En el proyecto humorístico Spastik Children, ¿qué instrumento tocaba James Hetfield bajo el alias "Bobby Brady"?',
+        options: ['El bajo eléctrico y coros', 'La batería y coros', 'El saxofón tenor'],
         correct: 1,
-        image: MORAT_IMAGES.isaza_5
-    }
-];
+        image: METALLICA_IMAGES.q22,
+    },
+    {
+        question: '¿Qué alias profano usó Kirk Hammett al tocar el bajo en Spastik Children tras el fallecimiento de Cliff Burton?',
+        options: ['Johnny Problem', 'Goddamn It', 'Slucky McDonald'],
+        correct: 1,
+        image: METALLICA_IMAGES.q23,
+    },
+    {
+        question: '¿Cuál es el título real de la polémica foto de Andrés Serrano usada en la portada del álbum Load (1996)?',
+        options: ['Blood and Sperm III', 'Piss and Blood', 'Immersion (Piss Christ)'],
+        correct: 0,
+        image: METALLICA_IMAGES.q24,
+    },
+    {
+        question: 'Siguiendo el concepto de Load, ¿qué obra del fotógrafo Andrés Serrano ilustra la carátula de Reload (1997)?',
+        options: ['Piss and Blood', 'Blood and Urine I', 'Bovine Infusion'],
+        correct: 0,
+        image: METALLICA_IMAGES.q25,
+    },
+    {
+        question: '¿En qué canción de Reload colaboró la cantante británica Marianne Faithfull aportando texturas vocales?',
+        options: ['The Unforgiven II', 'The Memory Remains', 'Fixxxer'],
+        correct: 1,
+        image: METALLICA_IMAGES.q26,
+    },
+    {
+        question: '¿Qué crítica sarcástica hizo Jason Newsted sobre "The Memory Remains" al cuestionar el giro de Reload?',
+        options: [
+            'Dijo que jamás habría comprado el CD si lo oía antes en la radio',
+            'Denunció que silenciaron su bajo',
+            'Dijo que el videoclip parecía una burla',
+        ],
+        correct: 0,
+        image: METALLICA_IMAGES.q27,
+    },
+    {
+        question: '¿En qué festival europeo interpretó Metallica "The Frayed Ends of Sanity" completa por primera vez en vivo (2014)?',
+        options: ['30º Aniversario en el Fillmore', 'Sonisphere (Helsinki)', 'Rock in Rio'],
+        correct: 1,
+        image: METALLICA_IMAGES.q28,
+    },
+    {
+        question: 'En 2004, ¿en qué serie animada de Disney hicieron voces James Hetfield y Lars Ulrich como dragones adolescentes?',
+        options: ['Dave, el bárbaro', 'Jake Long: El dragón occidental', 'Gárgolas'],
+        correct: 0,
+        image: METALLICA_IMAGES.q29,
+    },
+    {
+        question: '¿Qué suceso familiar inspiró la letra de la devastadora canción "The God That Failed"?',
+        options: [
+            'El abandono de su padre a los 13 años',
+            'La muerte de su madre por cáncer al rechazar medicina por dogma religioso',
+            'La muerte de su mejor amigo de infancia',
+        ],
+        correct: 1,
+        image: METALLICA_IMAGES.q30,
+    },
+], 'questions.ts');
 
-// Dynamic: always takes the last 5 questions for vertical format
 export const verticalQuestions: Question[] = questions.slice(-5);

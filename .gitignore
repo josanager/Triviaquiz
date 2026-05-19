@@ -10,3 +10,9 @@ out
 
 # Large files (>100MB) that exceed GitHub limits
 public/audio horizontal.wav
+
+# Local tooling artifacts
+.agent/
+.codex/
+.playwright-cli/
+output/

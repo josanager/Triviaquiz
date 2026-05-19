@@ -9,7 +9,16 @@ import { enableTailwind } from '@remotion/tailwind-v4';
 // Use PNG for better quality and compatibility
 Config.setVideoImageFormat("png");
 Config.setOverwriteOutput(true);
-Config.overrideWebpackConfig(enableTailwind);
+Config.overrideWebpackConfig((config) => {
+  const tailwindConfig = enableTailwind(config);
+  return {
+    ...tailwindConfig,
+    experiments: {
+      ...tailwindConfig.experiments,
+      lazyCompilation: false,
+    },
+  };
+});
 
 // Set explicit codec and encoding settings for stability
 Config.setCodec("h264");
