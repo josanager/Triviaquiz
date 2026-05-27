@@ -157,104 +157,100 @@ def synthesize_prompt_to_mp3(prompt: str, output_mp3: Path, *, voice_name: str =
 def build_spanish_intro_prompt() -> str:
     return """
 # AUDIO PROFILE: Nari
-## "Metallica Trivia Host"
-## THE SCENE: Bright recording booth for a premium rock and metal trivia video
-The host is recording the opening for an expert Metallica trivia video.
-The energy is polished, warm, intense, and expressive, like a charismatic presenter
-speaking directly to Metallica fans.
+## "Geometry Dash Trivia Host"
+## THE SCENE: Bright recording booth for a premium gaming trivia video
+The host is recording the opening for an energetic Geometry Dash trivia video.
+The energy is polished, warm, vibrant, and expressive, like a charismatic presenter
+speaking directly to Geometry Dash fans.
 
 ### DIRECTOR'S NOTES
-Style: confident host, warm vocal smile, energetic, expressive, and slightly epic.
-Pacing: energetic and clear, with punchy emphasis on key Metallica words,
+Style: confident host, big vocal smile, energetic, expressive, and premium.
+ Pacing: energetic and clear, with punchy emphasis on key Geometry Dash words,
 but never rushed.
-Tone: exciting, natural, inviting, premium, social-media-ready, with subtle rock attitude.
+Tone: exciting, natural, inviting, premium, social-media-ready, with bright gaming energy.
 Language: neutral Latin American Spanish.
 Emotion tags: use at most 3 emotional shifts total. Favor rock-friendly emphasis such as
-[gritty excitement], [crowd-hyping], [charged], [amazed], [confidently].
-Timing: keep the final spoken audio under 20 seconds.
+[hyped], [charged], [victorious], [confidently].
+Timing: keep the final spoken audio under 20 seconds. It may be shorter than 17 seconds if needed.
 
 #### TRANSCRIPT
-[crowd-hyping] Bienvenidos a la trivia experta de Metallica.
-[charged] Hoy pondrás a prueba cuánto sabes sobre la banda, sus discos y sus momentos más legendarios.
-[confidently] Tendrás quince segundos para responder cada una de las treinta preguntas.
-[gritty excitement] Veamos si de verdad eres un fan total de Metallica. ¡Empezamos!
+[hyped] Bienvenidos a la gran trivia de Geometry Dash.
+[charged] Hoy vas a demostrar cuánto sabes de sus niveles, creadores, secretos, demons y momentos más icónicos del fandom.
+[victorious] Tendrás quince segundos por pregunta, así que concéntrate, piensa rápido y prepárate para dashear.
 """.strip()
 
 
 def build_english_intro_prompt() -> str:
     return """
 # AUDIO PROFILE: Nari
-## "Metallica Trivia Host"
-## THE SCENE: Bright recording booth for a premium rock and metal trivia video
-The host is recording the opening for an expert Metallica trivia video.
-The energy is polished, warm, intense, and expressive, like a charismatic presenter
-speaking directly to Metallica fans.
+## "Geometry Dash Trivia Host"
+## THE SCENE: Bright recording booth for a premium gaming trivia video
+The host is recording the opening for an energetic Geometry Dash trivia video.
+The energy is polished, warm, vibrant, and expressive, like a charismatic presenter
+speaking directly to Geometry Dash fans.
 
 ### DIRECTOR'S NOTES
-Style: confident host, warm vocal smile, energetic, expressive, and slightly epic.
-Pacing: energetic and clear, with punchy emphasis on key Metallica words,
+Style: confident host, big vocal smile, energetic, expressive, and premium.
+Pacing: energetic and clear, with punchy emphasis on key Geometry Dash words,
 but never rushed.
-Tone: exciting, natural, inviting, premium, social-media-ready, with subtle rock attitude.
+Tone: exciting, natural, inviting, premium, social-media-ready, with bright gaming energy.
 Language: neutral international English.
 Emotion tags: use at most 3 emotional shifts total. Favor rock-friendly emphasis such as
-[gritty excitement], [crowd-hyping], [charged], [amazed], [confidently].
-Timing: keep the final spoken audio under 20 seconds.
+[hyped], [charged], [victorious], [confidently].
+Timing: keep the final spoken audio under 20 seconds. It may be shorter than 17 seconds if needed.
 
 #### TRANSCRIPT
-[crowd-hyping] Welcome to the expert-level Metallica trivia challenge.
-[charged] Test how much you know about the band, the albums, and their most unforgettable moments.
-[confidently] You will have fifteen seconds to answer each of the thirty questions.
-[gritty excitement] Let's see if you are a true Metallica fan. Let's go!
+[hyped] Welcome to the big Geometry Dash trivia challenge.
+[charged] Today you'll prove how much you know about the levels, creators, secrets, demons, and the fandom's most iconic moments.
+[victorious] You get fifteen seconds per question, so lock in, think fast, and get ready to dash.
 """.strip()
 
 
 def build_spanish_outro_prompt() -> str:
     return """
 # AUDIO PROFILE: Nari
-## "Metallica Trivia Host"
-## THE SCENE: Closing lines after an exciting Metallica challenge
-The host is wrapping up a premium Metallica trivia video. The delivery sounds warm,
+## "Geometry Dash Trivia Host"
+## THE SCENE: Closing lines after an exciting Geometry Dash challenge
+The host is wrapping up a premium Geometry Dash trivia video. The delivery sounds warm,
 grateful, energized, and proud of the audience for finishing the challenge.
 
 ### DIRECTOR'S NOTES
-Style: warm presenter, affectionate, natural, expressive, with a victorious rock-show afterglow.
+Style: warm presenter, affectionate, natural, expressive, with a victorious gaming-show afterglow.
 Pacing: calm but engaging, with a polished ending cadence.
-Tone: celebratory, thankful, emotionally warm, with subtle arena-rock energy.
+Tone: celebratory, thankful, emotionally warm, with high-energy arcade spirit.
 Language: neutral Latin American Spanish.
 Emotion tags: use at most 3 emotional shifts total. Favor tags such as
-[triumphant], [warmly], [grateful], [amazed].
-Timing: keep the final spoken audio under 20 seconds.
+[triumphant], [amazed], [grateful], [charged].
+Timing: keep the final spoken audio under 20 seconds. It may be shorter than 17 seconds if needed.
 
 #### TRANSCRIPT
-[triumphant] ¡Felicidades por completar la trivia de Metallica!
-[warmly] Esperamos que hayas disfrutado este viaje por su música, su historia y sus momentos más icónicos.
-[grateful] Cuéntanos cuántas acertaste y suscríbete a Papel Cool para más trivias de rock.
-[amazed] Gracias por jugar y nos vemos en el próximo reto.
+[triumphant] ¡Felicidades por completar la trivia de Geometry Dash!
+[amazed] Esperamos que hayas disfrutado este recorrido por sus niveles, creadores y momentos más legendarios del fandom.
+[grateful] Cuéntanos cuántas acertaste, suscríbete a Papel Cool y nos vemos en el próximo reto.
 """.strip()
 
 
 def build_english_outro_prompt() -> str:
     return """
 # AUDIO PROFILE: Nari
-## "Metallica Trivia Host"
-## THE SCENE: Closing lines after an exciting Metallica challenge
-The host is wrapping up a premium Metallica trivia video. The delivery sounds warm,
+## "Geometry Dash Trivia Host"
+## THE SCENE: Closing lines after an exciting Geometry Dash challenge
+The host is wrapping up a premium Geometry Dash trivia video. The delivery sounds warm,
 grateful, energized, and proud of the audience for finishing the challenge.
 
 ### DIRECTOR'S NOTES
-Style: warm presenter, affectionate, natural, expressive, with a victorious rock-show afterglow.
+Style: warm presenter, affectionate, natural, expressive, with a victorious gaming-show afterglow.
 Pacing: calm but engaging, with a polished ending cadence.
-Tone: celebratory, thankful, emotionally warm, with subtle arena-rock energy.
+Tone: celebratory, thankful, emotionally warm, with high-energy arcade spirit.
 Language: neutral international English.
 Emotion tags: use at most 3 emotional shifts total. Favor tags such as
-[triumphant], [warmly], [grateful], [amazed].
-Timing: keep the final spoken audio under 20 seconds.
+[triumphant], [amazed], [grateful], [charged].
+Timing: keep the final spoken audio under 20 seconds. It may be shorter than 17 seconds if needed.
 
 #### TRANSCRIPT
-[triumphant] Congratulations on finishing the Metallica trivia.
-[warmly] We hope you enjoyed this ride through the music, the history, and the most iconic moments.
-[grateful] Tell us your score, and subscribe to Papel Cool for more rock trivia.
-[amazed] Thanks for playing, and see you in the next challenge.
+[triumphant] Congratulations on finishing the Geometry Dash trivia.
+[amazed] We hope you enjoyed this run through its levels, creators, and the fandom's most legendary moments.
+[grateful] Tell us your score, subscribe to Papel Cool, and we will see you in the next challenge.
 """.strip()
 
 

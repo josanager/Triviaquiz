@@ -11,6 +11,20 @@ out
 # Large files (>100MB) that exceed GitHub limits
 public/audio horizontal.wav
 
+# Local audio assets kept outside the repository
+public/Glass Lemonade (1).mp3
+public/Glass Lemonade.mp3
+public/Glitch Crown.mp3
+public/Paper Cup Moon.mp3
+public/Pixel Runner Pulse (1).mp3
+public/Pixel Runner Pulse.mp3
+public/Tidal Launch (1).mp3
+public/Tidal Launch.mp3
+public/Tuba Parade.mp3
+public/audio 2.mp3
+public/audio 3.mp3
+public/audio1.mp3
+
 # Local tooling artifacts
 .agent/
 .codex/

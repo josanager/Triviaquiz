@@ -26,12 +26,12 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({ question, questionNu
         extrapolateRight: 'clamp',
     });
 
-    // Timer color: smooth green → amber → pink transition via RGB interpolation
-    const timerR = Math.round(interpolate(frame, [30, REVEAL_FRAME - fps * 3, REVEAL_FRAME], [80, 255, 255], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }));
-    const timerG = Math.round(interpolate(frame, [30, REVEAL_FRAME - fps * 3, REVEAL_FRAME], [200, 168, 55], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }));
-    const timerB = Math.round(interpolate(frame, [30, REVEAL_FRAME - fps * 3, REVEAL_FRAME], [100, 0, 66], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }));
+    // Timer color: saturated green -> yellow -> red as the countdown runs out
+    const timerR = Math.round(interpolate(frame, [30, REVEAL_FRAME - fps * 3, REVEAL_FRAME], [0, 255, 255], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }));
+    const timerG = Math.round(interpolate(frame, [30, REVEAL_FRAME - fps * 3, REVEAL_FRAME], [200, 230, 59], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }));
+    const timerB = Math.round(interpolate(frame, [30, REVEAL_FRAME - fps * 3, REVEAL_FRAME], [83, 0, 48], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }));
     const timerLiveColor = `rgb(${timerR}, ${timerG}, ${timerB})`;
-    const timerColor = isRevealed ? '#FF3742' : timerLiveColor;
+    const timerColor = isRevealed ? '#FF3B30' : timerLiveColor;
 
     // Urgency pulse: subtle scale oscillation in the last 2 seconds
     const urgencyIntensity = (!isRevealed && frame > URGENCY_START)

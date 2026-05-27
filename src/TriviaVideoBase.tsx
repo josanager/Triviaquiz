@@ -10,6 +10,12 @@ import { FPS, SECONDS_PER_QUESTION } from './constants';
 const QUESTION_DURATION = SECONDS_PER_QUESTION * FPS;
 const TRANSITION_FRAMES = FPS * 1.5; // 1.5 seconds for fade transition
 const CHANNEL_INTRO_DURATION = 270; // Intro video duration (~4.5s at 60 FPS)
+const AUDIO_DURATIONS_IN_FRAMES: Record<string, number> = {
+    'intro_es.mp3': 1169, // 19.48s
+    'intro_en.mp3': 1114, // 18.56s
+    'outro_es.mp3': 1082, // 18.04s
+    'outro_en.mp3': 1128, // 18.80s
+};
 
 const DEFAULT_THEMES = PALETTE_KEYS; // ['bg-sky', 'bg-peach', 'bg-mint', 'bg-lavender', 'bg-coral', 'bg-lemon', 'bg-rose', 'bg-aqua']
 
@@ -42,6 +48,8 @@ export const TriviaVideoBase: React.FC<TriviaVideoBaseProps> = ({
     // Adjust durations based on layout
     const effectiveChannelIntroDuration = layout === 'vertical' ? 0 : CHANNEL_INTRO_DURATION;
     const INTRO_DURATION = layout === 'vertical' ? 0 : 20 * FPS;
+    const introAudioDuration = AUDIO_DURATIONS_IN_FRAMES[introAudio] ?? INTRO_DURATION;
+    const outroAudioDuration = AUDIO_DURATIONS_IN_FRAMES[outroAudio] ?? INTRO_DURATION;
 
     // Calculate frame relative to the start of the trivia content (after video intro)
     const contentFrame = frame - effectiveChannelIntroDuration;
@@ -113,14 +121,25 @@ export const TriviaVideoBase: React.FC<TriviaVideoBaseProps> = ({
     // Calculate dynamic BGM volume for horizontal layout (Audio Ducking)
     // Only used for horizontal — vertical uses constant volume via its own Audio element
     const outroStart = INTRO_DURATION + (activeQuestions.length * QUESTION_DURATION);
+    const introDuckingEnd = Math.min(introAudioDuration, INTRO_DURATION);
+    const outroDuckingEnd = outroStart + outroAudioDuration;
 
     // Build a safe interpolation range (must be strictly monotonically increasing)
     // When INTRO_DURATION is 0 (vertical), skip the intro ducking range entirely
     const bgmVolume = INTRO_DURATION > 0
         ? interpolate(
             contentFrame,
-            [0, 15, INTRO_DURATION - 15, INTRO_DURATION, outroStart, outroStart + 15],
-            [0.3, 0.3, 0.3, 0.9, 0.9, 0.3],
+            [
+                0,
+                15,
+                Math.max(15, introDuckingEnd - 15),
+                introDuckingEnd,
+                outroStart,
+                outroStart + 15,
+                Math.max(outroStart + 15, outroDuckingEnd - 15),
+                outroDuckingEnd,
+            ],
+            [0.3, 0.3, 0.3, 0.9, 0.9, 0.3, 0.3, 0.9],
             { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }
         )
         : 0.9; // Vertical: constant volume (no intro/outro ducking needed)
@@ -196,13 +215,16 @@ export const TriviaVideoBase: React.FC<TriviaVideoBaseProps> = ({
                 <>
                     <BgmSequence volume={bgmVolume} />
 
-                    {/* AI Intro Voice (20s) */}
-                    <Sequence from={effectiveChannelIntroDuration} durationInFrames={INTRO_DURATION}>
+                    {/* AI Intro Voice */}
+                    <Sequence from={effectiveChannelIntroDuration} durationInFrames={introAudioDuration}>
                         <Audio src={staticFile(introAudio)} volume={0.9} />
                     </Sequence>
 
-                    {/* AI Outro Voice (20s) */}
-                    <Sequence from={effectiveChannelIntroDuration + INTRO_DURATION + (activeQuestions.length * QUESTION_DURATION)}>
+                    {/* AI Outro Voice */}
+                    <Sequence
+                        from={effectiveChannelIntroDuration + INTRO_DURATION + (activeQuestions.length * QUESTION_DURATION)}
+                        durationInFrames={outroAudioDuration}
+                    >
                         <Audio src={staticFile(outroAudio)} volume={0.9} />
                     </Sequence>
                 </>

@@ -9,9 +9,9 @@ export const BgmSequence: React.FC<BgmSequenceProps> = ({ volume }) => {
     const frame = useCurrentFrame();
 
     // Durations in frames for the three current BGM tracks in public/
-    const D0 = 17160; // ~286.00s
-    const D1 = 12151; // ~202.52s
-    const D2 = 13466; // ~224.44s
+    const D0 = 17328; // audio1 ~288.80s
+    const D1 = 9206; // audio 2 ~153.44s
+    const D2 = 16476; // audio 3 ~274.60s
     const FADE = 5 * FPS; // 300 frames
 
     // Offsets
@@ -38,19 +38,19 @@ export const BgmSequence: React.FC<BgmSequenceProps> = ({ volume }) => {
         <>
             <Sequence durationInFrames={D0}>
                 <Audio
-                    src={staticFile("Mapa En La Mochila.mp3")} 
+                    src={staticFile("audio1.mp3")}
                     volume={() => volume * v0}
                 />
             </Sequence>
             <Sequence from={start1} durationInFrames={D1}>
                 <Audio
-                    src={staticFile("Mapa En La Mochila (1).mp3")} 
+                    src={staticFile("audio 2.mp3")}
                     volume={() => volume * v1}
                 />
             </Sequence>
             <Sequence from={start2} durationInFrames={D2}>
                 <Audio
-                    src={staticFile("Mapa En La Mochila (2).mp3")} 
+                    src={staticFile("audio 3.mp3")}
                     volume={() => volume * v2}
                 />
             </Sequence>

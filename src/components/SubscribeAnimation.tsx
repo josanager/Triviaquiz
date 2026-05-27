@@ -70,7 +70,7 @@ export const SubscribeAnimation: React.FC<SubscribeAnimationProps> = ({ lang = '
             gap: '30px',
             padding: '25px 50px',
             background: '#FFFFFF',
-            border: '3.5px solid #3B4A54',
+            border: '3.5px solid #000000',
             borderRadius: '50px',
             boxShadow: '0 6px 20px rgba(0,0,0,0.15)',
             zIndex: 2000,
@@ -85,22 +85,22 @@ export const SubscribeAnimation: React.FC<SubscribeAnimationProps> = ({ lang = '
                     height: '80px',
                     borderRadius: '50%',
                     objectFit: 'cover',
-                    border: '3px solid #3B4A54'
+                    border: '3px solid #000000'
                 }}
             />
 
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                <span style={{ fontSize: '32px', fontWeight: 'bold', color: '#2D3436' }}>Papelcool</span>
+                <span style={{ fontSize: '32px', fontWeight: 'bold', color: '#111827' }}>Papelcool</span>
             </div>
 
             {/* Subscribe Button */}
             <div style={{
                 padding: '18px 40px',
-                background: isClicked ? '#e5e5e5' : '#FFB830',
-                color: isClicked ? '#606060' : '#2D3436',
-                border: '3px solid #3B4A54',
+                background: isClicked ? '#D4D4D8' : '#FFE600',
+                color: isClicked ? '#334155' : '#111827',
+                border: '3px solid #000000',
                 borderRadius: '50px',
-                boxShadow: isClicked ? '0 2px 6px rgba(0,0,0,0.1)' : '0 4px 0 #F5A623, 0 6px 12px rgba(0,0,0,0.12)',
+                boxShadow: isClicked ? '0 2px 6px rgba(0,0,0,0.1)' : '0 4px 0 #FFD400, 0 6px 12px rgba(0,0,0,0.12)',
                 transform: isClicked ? 'translate(2px, 2px)' : 'none',
                 fontWeight: 'bold',
                 fontSize: '26px', // Increased font size
@@ -119,7 +119,7 @@ export const SubscribeAnimation: React.FC<SubscribeAnimationProps> = ({ lang = '
             <div style={{
                 fontSize: '50px',
                 transform: `rotate(${isBellActive ? bellRotation : 0}deg)`,
-                color: isBellActive ? '#333' : '#ccc'
+                color: isBellActive ? '#111827' : '#D4D4D8'
             }}>
                 {isBellActive ? '🔔' : '🔕'}
             </div>

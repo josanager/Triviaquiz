@@ -7,12 +7,36 @@
 }
 
 :root {
-  --bg-workspace: #000000;
-  --bg-controls: #1a1a1a;
-  --bg-timeline: #0f0f0f;
-  --accent-blue: #2c2cff;
-  --accent-green: #15803d;
-  --text-primary: #ffffff;
+  --presets-bg-start: #E0F2FE;
+  --presets-bg-end: #F8FAFC;
+  --presets-preview-mid: #F7FBFF;
+  --presets-preview-end: #EEF6FF;
+
+  --presets-card: #FFFFFF;
+  --presets-border: #000000;
+  --presets-text: #111827;
+  --presets-muted: #334155;
+
+  --presets-thumb-bg: #D1E9FF;
+  --presets-cta: #FFE600;
+  --presets-cta-hover: #FFD400;
+  --presets-pink: #FF4D94;
+  --presets-blue: #407BFF;
+  --presets-favorite: #FFC700;
+  --presets-icon-muted: #D4D4D8;
+  --presets-success: #00C853;
+  --presets-success-deep: #009624;
+  --presets-danger: #FF3B30;
+
+  --presets-tag-bg: #DBEAFE;
+  --presets-tag-text: #1E3A8A;
+
+  --bg-workspace: var(--presets-bg-end);
+  --bg-controls: var(--presets-text);
+  --bg-timeline: var(--presets-border);
+  --accent-blue: var(--presets-blue);
+  --accent-green: var(--presets-blue);
+  --text-primary: var(--presets-text);
   --shadow-medium: 0 8px 24px rgba(0, 0, 0, 0.8);
   --font-family: 'DynaPuff', sans-serif;
 }
@@ -24,41 +48,41 @@ html {
 
 /* MORAT Official Palette (Inspired by 'FALTAS TÚ' cover) */
 :root {
-  --quiz-bg: #263238;
+  --quiz-bg: var(--presets-bg-start);
   /* Dark Blue Grey */
-  --option-bg: rgba(38, 50, 56, 0.85);
-  --option-text: #ffffff;
-  --letter-bg: #FFC83D;
+  --option-bg: rgba(255, 255, 255, 0.85);
+  --option-text: var(--presets-text);
+  --letter-bg: var(--presets-cta);
   /* Mustard Yellow */
-  --letter-text: #1a1a1a;
+  --letter-text: var(--presets-text);
   /* Dark text for contrast on yellow */
-  --glass-bg: rgba(20, 30, 35, 0.85);
-  --glass-border: rgba(255, 200, 61, 0.3);
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --glass-border: rgba(0, 0, 0, 0.3);
 
   /* MORAT Palette */
-  --color-primary: #FFC83D;
+  --color-primary: var(--presets-cta);
   /* Falta Tu Yellow */
-  --color-secondary: #546E7A;
+  --color-secondary: var(--presets-blue);
   /* Shutter Blue-Grey */
-  --color-accent: #CFD8DC;
+  --color-accent: var(--presets-preview-end);
   /* Concrete Grey */
-  --color-dark: #263238;
+  --color-dark: var(--presets-text);
   /* Deep Slate */
-  --color-jeans: #37474F;
+  --color-jeans: var(--presets-muted);
   /* Denim Dark */
 
   /* Legacy variable mapping for compatibility */
-  --color-pink: #FFC83D;
+  --color-pink: var(--presets-cta);
   /* Replaced Pink with Yellow */
-  --color-pink-light: #78909C;
-  --color-pink-pastel: #CFD8DC;
-  --color-purple: #FFA000;
+  --color-pink-light: var(--presets-thumb-bg);
+  --color-pink-pastel: var(--presets-preview-end);
+  --color-purple: var(--presets-favorite);
   /* Darker Yellow */
-  --color-violet: #455A64;
-  --color-cyan: #FFECB3;
+  --color-violet: var(--presets-blue);
+  --color-cyan: var(--presets-tag-bg);
 
   /* Dynamic Circle Color */
-  --circle-color: #FFC83D;
+  --circle-color: var(--presets-cta);
 }
 
 body {
@@ -99,7 +123,7 @@ body {
 .preview-frame {
   width: 100%;
   height: 100%;
-  background: radial-gradient(circle at 50% 50%, #1a0011 0%, #000000 100%);
+  background: radial-gradient(circle at 50% 50%, var(--presets-preview-mid) 0%, var(--presets-preview-end) 100%);
   background-size: 200% 200%;
   position: relative;
   display: flex;
@@ -119,7 +143,7 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background: radial-gradient(ellipse at 50% 50%, rgba(255, 200, 61, 0.15) 0%, transparent 70%);
+  background: radial-gradient(ellipse at 50% 50%, rgba(64, 123, 255, 0.15) 0%, transparent 70%);
   pointer-events: none;
 }
 
@@ -130,74 +154,74 @@ body {
 
 /* 1. Urban Concrete (Grey/Teal) */
 .theme-pink {
-  --circle-color: #FFC83D;
+  --circle-color: var(--presets-cta);
 }
 
 .preview-frame.theme-pink {
-  background: linear-gradient(135deg, #263238 0%, #546E7A 100%);
+  background: linear-gradient(135deg, var(--presets-bg-start) 0%, var(--presets-bg-end) 100%);
 }
 
 /* 2. Golden Hour (Yellow/Black) */
 .theme-blue {
-  --circle-color: #546E7A;
+  --circle-color: var(--presets-blue);
 }
 
 .preview-frame.theme-blue {
-  background: linear-gradient(135deg, #102027 0%, #FFC83D 100%);
+  background: linear-gradient(135deg, var(--presets-preview-mid) 0%, var(--presets-cta) 100%);
 }
 
 /* 3. Faltas Tú (Teal/Yellow) */
 .theme-yellow {
-  --circle-color: #FFFFFF;
+  --circle-color: var(--presets-card);
 }
 
 .preview-frame.theme-yellow {
-  background: linear-gradient(135deg, #37474F 0%, #FFA000 100%);
+  background: linear-gradient(135deg, var(--presets-muted) 0%, var(--presets-favorite) 100%);
 }
 
 /* 4. Denim Style (Blues) */
 .theme-mint {
-  --circle-color: #FFC83D;
+  --circle-color: var(--presets-cta);
 }
 
 .preview-frame.theme-mint {
-  background: linear-gradient(135deg, #212121 0%, #455A64 50%, #263238 100%);
+  background: linear-gradient(135deg, var(--presets-tag-bg) 0%, var(--presets-blue) 50%, var(--presets-preview-end) 100%);
 }
 
 /* 5. Night Vibe (Dark Slate) */
 .theme-lavender {
-  --circle-color: #FFC83D;
+  --circle-color: var(--presets-cta);
 }
 
 .preview-frame.theme-lavender {
-  background: linear-gradient(135deg, #000000 0%, #37474F 100%);
+  background: linear-gradient(135deg, var(--presets-card) 0%, var(--presets-thumb-bg) 100%);
 }
 
 /* 6. Morat Sunset (Orange/Teal) */
 .theme-rose-gradient {
-  --circle-color: #546E7A;
+  --circle-color: var(--presets-blue);
 }
 
 .preview-frame.theme-rose-gradient {
-  background: linear-gradient(135deg, #263238 0%, #FF6F00 100%);
+  background: linear-gradient(135deg, var(--presets-bg-start) 0%, var(--presets-pink) 100%);
 }
 
 /* 7. Industrial (Grey/White) */
 .theme-dark-elegant {
-  --circle-color: #FFC83D;
+  --circle-color: var(--presets-cta);
 }
 
 .preview-frame.theme-dark-elegant {
-  background: linear-gradient(135deg, #424242 0%, #607D8B 100%);
+  background: linear-gradient(135deg, var(--presets-muted) 0%, var(--presets-icon-muted) 100%);
 }
 
 /* 8. Stark Contrast (Black/Yellow) */
 .theme-contrast {
-  --circle-color: #FFFFFF;
+  --circle-color: var(--presets-card);
 }
 
 .preview-frame.theme-contrast {
-  background: linear-gradient(135deg, #000000 0%, #FFEA00 50%, #000000 100%);
+  background: linear-gradient(135deg, var(--presets-border) 0%, var(--presets-cta) 50%, var(--presets-border) 100%);
 }
 
 /* Background Blobs */
@@ -442,7 +466,7 @@ body {
   margin-right: 1.5rem;
   box-shadow: 0 8px 0 rgba(0, 0, 0, 0.3);
   flex-shrink: 0;
-  color: #1a1a1a;
+  color: var(--presets-text);
   /* Dark text for yellow circle */
 }
 
@@ -451,7 +475,7 @@ body {
   font-weight: 800;
   line-height: 1.1;
   text-transform: uppercase;
-  color: #ffffff;
+  color: var(--presets-card);
 }
 
 .quiz-content {
@@ -469,7 +493,7 @@ body {
 }
 
 .polaroid-frame {
-  background: white;
+  background: var(--presets-card);
   padding: 25px;
   padding-bottom: 40px;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
@@ -497,7 +521,7 @@ body {
   width: 100%;
   height: auto;
   aspect-ratio: 1 / 1;
-  background: #f0f0f0;
+  background: var(--presets-preview-end);
   object-fit: cover;
   display: block;
 }
@@ -537,7 +561,7 @@ body {
   width: 110px;
   height: 110px;
   background: var(--circle-color);
-  color: #1a1a1a;
+  color: var(--presets-text);
   /* Dark text for contrast */
   border-radius: 50%;
   display: flex;
@@ -560,7 +584,7 @@ body {
 }
 
 .option-btn.correct {
-  background: #FFC83D;
+  background: var(--presets-success);
 }
 
 .option-btn.correct .option-text {
@@ -568,7 +592,7 @@ body {
 }
 
 .option-btn.incorrect {
-  background: #991b1b;
+  background: var(--presets-danger);
 }
 
 .option-btn.incorrect .option-text {
@@ -586,7 +610,7 @@ body {
 
 .timer-bar {
   height: 100%;
-  background: #FFC83D;
+  background: var(--presets-success);
   width: 100%;
   border-radius: 12px;
   transform-origin: left;
@@ -602,16 +626,16 @@ body {
 @keyframes countdown {
   0% {
     transform: scaleX(1);
-    background: #FFC83D;
+    background: var(--presets-success);
   }
 
   60% {
-    background: #FFAB00;
+    background: var(--presets-cta);
   }
 
   100% {
     transform: scaleX(0);
-    background: #FFA000;
+    background: var(--presets-danger);
   }
 }
 
@@ -829,7 +853,7 @@ body {
 .option-btn.highlight-correct {
   transform: scale(1.05);
   z-index: 10;
-  box-shadow: 0 8px 20px rgba(255, 160, 0, 0.4);
+  box-shadow: 0 8px 20px rgba(0, 200, 83, 0.45);
 }
 
 .quiz-content {
@@ -1656,18 +1680,18 @@ body:not(.export-mode) #export-ready-screen {
 
 :root {
   /* Kawaii Palette – SATURATED */
-  --kq-sky: #7ECEF4;
-  --kq-sky-light: #A8DEFA;
-  --kq-amber: #FFA800;
-  --kq-amber-deep: #E89600;
-  --kq-green: #50C864;
-  --kq-green-deep: #3DAF50;
-  --kq-white: #FFFFFF;
-  --kq-charcoal: #1E272E;
-  --kq-dark: #141C22;
-  --kq-outline: #2D3436;
-  --kq-pink: #FF5078;
-  --kq-red: #FF3742;
+  --kq-sky: var(--presets-thumb-bg);
+  --kq-sky-light: var(--presets-preview-mid);
+  --kq-amber: var(--presets-cta);
+  --kq-amber-deep: var(--presets-cta-hover);
+  --kq-green: var(--presets-success);
+  --kq-green-deep: var(--presets-success-deep);
+  --kq-white: var(--presets-card);
+  --kq-charcoal: var(--presets-text);
+  --kq-dark: var(--presets-muted);
+  --kq-outline: var(--presets-border);
+  --kq-pink: var(--presets-pink);
+  --kq-red: var(--presets-danger);
 
   /* Animation Tokens */
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
@@ -1728,6 +1752,10 @@ body {
   color: var(--kq-amber) !important;
 }
 
+.intro-v3-time-text {
+  color: var(--presets-card) !important;
+}
+
 /* ─── Option Buttons: Per-option colors (reference style) ─── */
 .option-btn {
   background: var(--kq-amber) !important;
@@ -1750,7 +1778,7 @@ body {
 
 /* Option C = Lavender (green reserved for correct only) */
 .option-btn:nth-child(3) {
-  background: #C4A8FF !important;
+  background: var(--presets-thumb-bg) !important;
 }
 
 /* Letter circles: Dark charcoal with white text */
@@ -1765,7 +1793,7 @@ body {
 .option-btn.correct {
   background: var(--kq-green) !important;
   border: 3.5px solid var(--kq-green-deep) !important;
-  box-shadow: 0 4px 20px rgba(126, 200, 131, 0.5), 0 0 30px rgba(126, 200, 131, 0.3) !important;
+  box-shadow: 0 4px 20px rgba(0, 200, 83, 0.5), 0 0 30px rgba(0, 200, 83, 0.32) !important;
 }
 
 .option-btn.correct .option-letter {
@@ -1775,7 +1803,7 @@ body {
 .option-btn.incorrect {
   background: var(--kq-red) !important;
   opacity: 0.75 !important;
-  box-shadow: 0 2px 8px rgba(255, 71, 87, 0.3) !important;
+  box-shadow: 0 2px 8px rgba(255, 59, 48, 0.34) !important;
 }
 
 /* ─── Panels & Frames ─── */
@@ -1978,4 +2006,3 @@ body {
   height: 35px !important;
   z-index: 30;
 }
-
