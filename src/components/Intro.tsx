@@ -4,24 +4,26 @@ import logoPapelcool from '../assets/logo_papelcool.svg';
 // Translations for multi-language support
 const TRANSLATIONS = {
     es: {
-        subtitle: 'PARA FANS DEL FANDOM DE GEOMETRY DASH',
-        questionsLabel: (n: number) => `${n} Preguntas`,
-        timeLabel: '+15s c/u',
-        verticalScore: '5/5 = ¡Fan total de Geometry Dash!',
-        startButton: '¡A DASHEAR!',
-        casualRank: 'Cube',
-        fanRank: 'Dasher',
-        topRank: 'LEYENDA',
+        title: 'CULTURA GENERAL #1',
+        subtitle: 'PON A PRUEBA TU MENTE',
+        questionsLabel: (n: number) => `${n} preguntas para demostrar cuánto sabes`,
+        timeLabel: '+15s por pregunta',
+        verticalScore: '5/5 = ¡Mente maestra!',
+        startButton: '¡QUE EMPIECE!',
+        casualRank: 'Buen inicio',
+        fanRank: 'Muy informado',
+        topRank: 'Mente maestra',
     },
     en: {
-        subtitle: 'FOR THE GEOMETRY DASH FANDOM',
-        questionsLabel: (n: number) => `${n} Questions`,
+        title: 'GENERAL KNOWLEDGE #1',
+        subtitle: 'PUT YOUR MIND TO THE TEST',
+        questionsLabel: (n: number) => `${n} questions to show what you know`,
         timeLabel: '+15s each',
-        verticalScore: '5/5 = True Geometry Dash fan!',
-        startButton: 'START DASHING!',
-        casualRank: 'Cube',
-        fanRank: 'Dasher',
-        topRank: 'LEGEND',
+        verticalScore: '5/5 = Quiz master!',
+        startButton: 'LET IT BEGIN!',
+        casualRank: 'Good start',
+        fanRank: 'Well informed',
+        topRank: 'Quiz master',
     },
 } as const;
 
@@ -183,9 +185,13 @@ export const Intro: React.FC<IntroProps> = ({ layout = 'horizontal', lang = 'es'
                 <div
                     style={{
                         textAlign: 'center',
-                        marginBottom: '0.5rem',
+                        marginBottom: '0.35rem',
                         transform: `translateX(${interpolate(titleIn, [0, 1], [120, titleDriftX])}px) translateY(${interpolate(titleIn, [0, 1], [-65, titleFloat])}px) scale(${titleScale * interpolate(titleOut, [0, 1], [1, 0.84])}) rotate(${interpolate(titleIn, [0, 1], [7, 0]) + titleTilt + interpolate(titleOut, [0, 1], [0, -8])}deg)`,
                         opacity: titleIn * (1 - titleOut),
+                        width: '100%',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
                     }}
                 >
                     <div className="intro-v3-title-1" style={{ color: 'var(--kq-charcoal)', textShadow: '3px 3px 0 rgba(0,0,0,0.1)' }}>
@@ -195,11 +201,17 @@ export const Intro: React.FC<IntroProps> = ({ layout = 'horizontal', lang = 'es'
                         className="intro-v3-title-2"
                         style={{ display: 'inline-block', transform: `rotate(${wiggle}deg)` }}
                     >
-                        <span style={{ color: 'var(--kq-amber)', textShadow: '4px 4px 0 #000000, -4px -4px 0 #000000, 4px -4px 0 #000000, -4px 4px 0 #000000, 0px 4px 0 #000000, 0px -4px 0 #000000, 4px 0px 0 #000000, -4px 0px 0 #000000' }}>GEOMETRY DASH</span>
+                        <span style={{ color: 'var(--kq-amber)', textShadow: '4px 4px 0 #000000, -4px -4px 0 #000000, 4px -4px 0 #000000, -4px 4px 0 #000000, 0px 4px 0 #000000, 0px -4px 0 #000000, 4px 0px 0 #000000, -4px 0px 0 #000000' }}>{t.title}</span>
                     </div>
                     <div
                         className="intro-v3-title-2 intro-v3-title-subtitle"
-                        style={{ display: 'inline-block', marginLeft: '1rem', transform: `translateY(${Math.cos(frame / 18) * 4}px)`, fontSize: '4rem', color: 'var(--kq-charcoal)', opacity: 0.7 }}
+                        style={{
+                            display: 'block',
+                            marginTop: '0.45rem',
+                            transform: `translateY(${Math.cos(frame / 18) * 4}px)`,
+                            color: 'var(--kq-charcoal)',
+                            opacity: 0.72,
+                        }}
                     >
                         {t.subtitle}
                     </div>

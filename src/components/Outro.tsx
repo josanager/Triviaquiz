@@ -1,4 +1,6 @@
 import { AbsoluteFill, staticFile, useCurrentFrame, interpolate, useVideoConfig, Img, Easing } from 'remotion';
+import { promoQrImage } from '../promo';
+import qrArrow from '../assets/qr-arrow.svg';
 
 // Translations for multi-language support
 const TRANSLATIONS = {
@@ -23,6 +25,7 @@ export const Outro: React.FC<OutroProps> = ({ lang = 'es' }) => {
     const frame = useCurrentFrame();
     const { durationInFrames } = useVideoConfig();
     const t = TRANSLATIONS[lang];
+    const supportText = 'entra aqui para apoyar el canal';
 
     const enter = (start: number, duration = 24) =>
         interpolate(frame, [start, start + duration], [0, 1], {
@@ -58,6 +61,13 @@ export const Outro: React.FC<OutroProps> = ({ lang = 'es' }) => {
     const buttonPulse = 1 + Math.sin(frame / 8) * 0.035;
     const buttonSway = Math.sin(frame / 18) * 1.8;
     const titleTilt = Math.sin(frame / 29) * 1.4;
+    const calloutTextFloat = Math.sin(frame / 28) * 6 + Math.cos(frame / 47) * 3;
+    const calloutTextTilt = Math.sin(frame / 36) * 2.4;
+    const calloutTextScale = 1 + Math.sin(frame / 31) * 0.025;
+    const calloutArrowFloatX = Math.sin(frame / 24) * 10;
+    const calloutArrowFloatY = Math.cos(frame / 19) * 7;
+    const calloutArrowTilt = Math.cos(frame / 27) * 5;
+    const calloutArrowScale = 1 + Math.sin(frame / 17) * 0.045;
 
     const titleLines = t.title.split('\n');
 
@@ -107,6 +117,36 @@ export const Outro: React.FC<OutroProps> = ({ lang = 'es' }) => {
             </div>
 
             <div className="outro-v3-container" style={{ zIndex: 2, position: 'relative' }}>
+                <div
+                    className="outro-qr-corner"
+                    style={{
+                        opacity: panelIn * (1 - panelOut),
+                        transform: `translateY(${interpolate(panelIn, [0, 1], [-24, Math.sin(frame / 20) * 4])}px) scale(${interpolate(panelIn, [0, 0.75, 1], [0.84, 1.02, 1]) * interpolate(panelOut, [0, 1], [1, 0.86])})`,
+                    }}
+                >
+                    <div className="outro-qr-callout">
+                        <div
+                            className="outro-qr-callout-text"
+                            style={{
+                                transform: `translateY(${calloutTextFloat}px) rotate(${calloutTextTilt}deg) scale(${calloutTextScale})`,
+                            }}
+                        >
+                            {supportText}
+                        </div>
+                        <Img
+                            src={qrArrow}
+                            alt=""
+                            className="outro-qr-arrow"
+                            style={{
+                                transform: `rotate(180deg) translate(${calloutArrowFloatX}px, ${calloutArrowFloatY}px) rotate(${calloutArrowTilt}deg) scale(${calloutArrowScale})`,
+                            }}
+                        />
+                    </div>
+                    <div className="outro-qr-frame">
+                        <Img src={promoQrImage} alt="QR Papelcool" className="outro-qr-image" />
+                    </div>
+                </div>
+
                 <div
                     style={{
                         transform: `translateX(${interpolate(logoIn, [0, 1], [90, Math.sin(frame / 28) * 6])}px) translateY(${interpolate(logoIn, [0, 1], [-35, logoFloat])}px) scale(${interpolate(logoIn, [0, 0.78, 1], [0.74, 1.04, 1]) * interpolate(logoOut, [0, 1], [1, 0.8])}) rotate(${interpolate(logoIn, [0, 1], [14, 0]) + interpolate(logoOut, [0, 1], [0, -12])}deg)`,

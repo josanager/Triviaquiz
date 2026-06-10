@@ -2,6 +2,7 @@ import { TriviaVideoBase } from './TriviaVideoBase';
 import { questionsEn, verticalQuestions } from './questionsEn';
 import { Intro } from './components/Intro';
 import { Outro } from './components/Outro';
+import { promoContentEn } from './promo';
 
 // English Intro/Outro wrappers (pass lang='en' to the shared components)
 const IntroEn: React.FC<{ layout?: 'horizontal' | 'vertical' }> = ({ layout }) => (
@@ -19,6 +20,8 @@ export const TriviaVideoEn: React.FC<{ layout?: 'horizontal' | 'vertical' }> = (
             OutroComponent={OutroEn}
             subscribeLang="en"
             introAudio="intro_en.mp3"
+            promoContent={promoContentEn}
+            promoAudio="promo_en.mp3"
             outroAudio="outro_en.mp3"
         />
     );

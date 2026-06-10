@@ -1,59 +1,65 @@
-import { Audio, staticFile, useCurrentFrame, interpolate, Sequence } from 'remotion';
+import { Audio, staticFile, useCurrentFrame, interpolate, Sequence, useVideoConfig } from 'remotion';
 import { FPS } from '../constants';
 
 interface BgmSequenceProps {
     volume: number;
 }
 
+const FADE = 5 * FPS;
+const TRACKS = [
+    { src: 'world-cup-bgm-1.mp3', duration: 8177 }, // 136.28s
+    { src: 'world-cup-bgm-2.mp3', duration: 4858 }, // 80.96s
+    { src: 'world-cup-bgm-3.mp3', duration: 7798 }, // 129.96s
+    { src: 'world-cup-bgm-4.mp3', duration: 3290 }, // 54.84s
+] as const;
+
 export const BgmSequence: React.FC<BgmSequenceProps> = ({ volume }) => {
     const frame = useCurrentFrame();
+    const { durationInFrames } = useVideoConfig();
 
-    // Durations in frames for the three current BGM tracks in public/
-    const D0 = 17328; // audio1 ~288.80s
-    const D1 = 9206; // audio 2 ~153.44s
-    const D2 = 16476; // audio 3 ~274.60s
-    const FADE = 5 * FPS; // 300 frames
+    const playlist: Array<{ src: string; start: number; duration: number }> = [];
+    let start = 0;
+    let index = 0;
 
-    // Offsets
-    const start1 = D0 - FADE;
-    const start2 = start1 + D1 - FADE;
-
-    // Volume curves
-    const v0 = interpolate(frame, [start1, D0], [1, 0], {
-        extrapolateLeft: 'clamp',
-        extrapolateRight: 'clamp',
-    });
-
-    const v1 = interpolate(frame, [start1, start1 + FADE, start2, start2 + FADE], [0, 1, 1, 0], {
-        extrapolateLeft: 'clamp',
-        extrapolateRight: 'clamp',
-    });
-
-    const v2 = interpolate(frame, [start2, start2 + FADE], [0, 1], {
-        extrapolateLeft: 'clamp',
-        extrapolateRight: 'clamp',
-    });
+    while (start < durationInFrames) {
+        const track = TRACKS[index % TRACKS.length];
+        playlist.push({
+            src: track.src,
+            start,
+            duration: track.duration,
+        });
+        start += track.duration - FADE;
+        index += 1;
+    }
 
     return (
         <>
-            <Sequence durationInFrames={D0}>
-                <Audio
-                    src={staticFile("audio1.mp3")}
-                    volume={() => volume * v0}
-                />
-            </Sequence>
-            <Sequence from={start1} durationInFrames={D1}>
-                <Audio
-                    src={staticFile("audio 2.mp3")}
-                    volume={() => volume * v1}
-                />
-            </Sequence>
-            <Sequence from={start2} durationInFrames={D2}>
-                <Audio
-                    src={staticFile("audio 3.mp3")}
-                    volume={() => volume * v2}
-                />
-            </Sequence>
+            {playlist.map((track, idx) => {
+                const end = track.start + track.duration;
+                const hasPrev = idx > 0;
+                const hasNext = idx < playlist.length - 1;
+                const fadeIn = hasPrev
+                    ? interpolate(frame, [track.start, track.start + FADE], [0, 1], {
+                        extrapolateLeft: 'clamp',
+                        extrapolateRight: 'clamp',
+                    })
+                    : 1;
+                const fadeOut = hasNext
+                    ? interpolate(frame, [end - FADE, end], [1, 0], {
+                        extrapolateLeft: 'clamp',
+                        extrapolateRight: 'clamp',
+                    })
+                    : 1;
+
+                return (
+                    <Sequence key={`${track.src}-${track.start}`} from={track.start} durationInFrames={track.duration}>
+                        <Audio
+                            src={staticFile(track.src)}
+                            volume={() => volume * Math.min(fadeIn, fadeOut)}
+                        />
+                    </Sequence>
+                );
+            })}
         </>
     );
 };

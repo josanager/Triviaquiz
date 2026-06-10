@@ -1,23 +1,33 @@
 import { AbsoluteFill, Sequence, useCurrentFrame, interpolate, Video, staticFile, Audio } from 'remotion';
 import { Question } from './questions';
 import { QuestionCard } from './components/QuestionCard';
+import { PromoCard } from './components/PromoCard';
 import { Background, PALETTE_KEYS } from './components/Background';
 import { SubscribeAnimation } from './components/SubscribeAnimation';
 import { BgmSequence } from './components/BgmSequence';
+import { PROMO_DURATION_SECONDS, PROMO_INSERT_AFTER_QUESTION, PromoContent } from './promo';
 
 import { FPS, SECONDS_PER_QUESTION } from './constants';
 
 const QUESTION_DURATION = SECONDS_PER_QUESTION * FPS;
-const TRANSITION_FRAMES = FPS * 1.5; // 1.5 seconds for fade transition
-const CHANNEL_INTRO_DURATION = 270; // Intro video duration (~4.5s at 60 FPS)
+const PROMO_DURATION = PROMO_DURATION_SECONDS * FPS;
+const TRANSITION_FRAMES = FPS * 1.5;
+const CHANNEL_INTRO_DURATION = 270;
+const DUCK_RAMP_FRAMES = 6;
 const AUDIO_DURATIONS_IN_FRAMES: Record<string, number> = {
-    'intro_es.mp3': 1169, // 19.48s
-    'intro_en.mp3': 1114, // 18.56s
-    'outro_es.mp3': 1082, // 18.04s
-    'outro_en.mp3': 1128, // 18.80s
+    'intro_es.mp3': 876, // 14.60s
+    'intro_en.mp3': 902, // 15.04s
+    'promo_es.mp3': 1198, // 19.96s
+    'promo_en.mp3': 1116, // 18.60s
+    'outro_es.mp3': 1003, // 16.72s
+    'outro_en.mp3': 914, // 15.24s
 };
 
-const DEFAULT_THEMES = PALETTE_KEYS; // ['bg-sky', 'bg-peach', 'bg-mint', 'bg-lavender', 'bg-coral', 'bg-lemon', 'bg-rose', 'bg-aqua']
+const DEFAULT_THEMES = PALETTE_KEYS;
+
+type TimelineItem =
+    | { kind: 'question'; question: Question; questionNumber: number | string; duration: number }
+    | { kind: 'promo'; content: PromoContent; duration: number };
 
 export interface TriviaVideoBaseProps {
     layout?: 'horizontal' | 'vertical';
@@ -26,9 +36,11 @@ export interface TriviaVideoBaseProps {
     IntroComponent: React.FC<{ layout?: 'horizontal' | 'vertical' }>;
     OutroComponent: React.FC;
     subscribeLang: 'es' | 'en';
-    introAudio: string;   // e.g. "intro_es.mp3"
-    outroAudio: string;   // e.g. "outro_es.mp3"
-    themes?: string[];    // Optional custom theme array for per-artist colors
+    introAudio: string;
+    promoContent?: PromoContent;
+    promoAudio?: string;
+    outroAudio: string;
+    themes?: string[];
 }
 
 export const TriviaVideoBase: React.FC<TriviaVideoBaseProps> = ({
@@ -39,35 +51,73 @@ export const TriviaVideoBase: React.FC<TriviaVideoBaseProps> = ({
     OutroComponent,
     subscribeLang,
     introAudio,
+    promoContent,
+    promoAudio,
     outroAudio,
     themes,
 }) => {
     const THEMES = themes || DEFAULT_THEMES;
     const frame = useCurrentFrame();
+    const hasPromoSlot = layout === 'horizontal' && Boolean(promoContent && promoAudio);
 
-    // Adjust durations based on layout
     const effectiveChannelIntroDuration = layout === 'vertical' ? 0 : CHANNEL_INTRO_DURATION;
     const INTRO_DURATION = layout === 'vertical' ? 0 : 20 * FPS;
     const introAudioDuration = AUDIO_DURATIONS_IN_FRAMES[introAudio] ?? INTRO_DURATION;
+    const promoAudioDuration = hasPromoSlot
+        ? (AUDIO_DURATIONS_IN_FRAMES[promoAudio as string] ?? PROMO_DURATION)
+        : 0;
     const outroAudioDuration = AUDIO_DURATIONS_IN_FRAMES[outroAudio] ?? INTRO_DURATION;
 
-    // Calculate frame relative to the start of the trivia content (after video intro)
     const contentFrame = frame - effectiveChannelIntroDuration;
+    const baseQuestions = layout === 'vertical' ? vertQuestions : horizontalQuestions;
 
-    // Use different questions based on layout
-    const activeQuestions = layout === 'vertical' ? vertQuestions : horizontalQuestions;
+    const timelineItems: TimelineItem[] = hasPromoSlot
+        ? [
+            ...horizontalQuestions.slice(0, PROMO_INSERT_AFTER_QUESTION).map((question, index) => ({
+                kind: 'question' as const,
+                question,
+                questionNumber: index + 1,
+                duration: QUESTION_DURATION,
+            })),
+            {
+                kind: 'promo' as const,
+                content: promoContent as PromoContent,
+                duration: PROMO_DURATION,
+            },
+            ...horizontalQuestions.slice(PROMO_INSERT_AFTER_QUESTION).map((question, index) => ({
+                kind: 'question' as const,
+                question,
+                questionNumber: PROMO_INSERT_AFTER_QUESTION + index + 1,
+                duration: QUESTION_DURATION,
+            })),
+        ]
+        : baseQuestions.map((question, index) => ({
+            kind: 'question' as const,
+            question,
+            questionNumber: index + 1,
+            duration: QUESTION_DURATION,
+        }));
 
-    // Calculate current and previous theme with transition
-    let activeTheme = "theme-purple";
-    let prevTheme: string | undefined = undefined;
+    const timelineStarts = timelineItems.map((_, index) => {
+        let start = 0;
+        for (let i = 0; i < index; i += 1) {
+            start += timelineItems[i].duration;
+        }
+        return start;
+    });
+
+    const totalTimelineDuration = timelineItems.reduce((sum, item) => sum + item.duration, 0);
+    const promoIndex = timelineItems.findIndex((item) => item.kind === 'promo');
+    const promoStart = promoIndex >= 0 ? timelineStarts[promoIndex] : -1;
+
+    let activeTheme = 'theme-purple';
+    let prevTheme: string | undefined;
     let transitionProgress = 1;
 
-    // Logic based on contentFrame
     if (contentFrame < 0) {
-        // During Channel Intro Video
+        // Channel intro video
     } else if (contentFrame <= INTRO_DURATION) {
-        // During intro (only horizontal)
-        activeTheme = 'bg-lavender'; // Intro uses lavender
+        activeTheme = 'bg-lavender';
         if (INTRO_DURATION > 0) {
             const introEndTransitionStart = INTRO_DURATION - TRANSITION_FRAMES;
             if (contentFrame >= introEndTransitionStart) {
@@ -81,33 +131,40 @@ export const TriviaVideoBase: React.FC<TriviaVideoBaseProps> = ({
                 );
             }
         } else {
-            activeTheme = THEMES[0]; // Immediate start for vertical
+            activeTheme = THEMES[0];
         }
     } else {
-        const timeInQuestions = contentFrame - INTRO_DURATION;
-        const index = Math.floor(timeInQuestions / QUESTION_DURATION);
-        const frameInQuestion = timeInQuestions % QUESTION_DURATION;
+        const timeInTimeline = contentFrame - INTRO_DURATION;
+        let activeIndex = -1;
+        let frameInItem = 0;
 
-        if (index >= 0 && index < activeQuestions.length) {
-            activeTheme = THEMES[index % THEMES.length];
+        for (let i = 0; i < timelineItems.length; i += 1) {
+            const start = timelineStarts[i];
+            const end = start + timelineItems[i].duration;
+            if (timeInTimeline >= start && timeInTimeline < end) {
+                activeIndex = i;
+                frameInItem = timeInTimeline - start;
+                break;
+            }
+        }
 
-            // At the START of each question, fade from previous theme
-            if (frameInQuestion < TRANSITION_FRAMES && index > 0) {
-                prevTheme = THEMES[(index - 1) % THEMES.length];
+        if (activeIndex >= 0) {
+            activeTheme = THEMES[activeIndex % THEMES.length];
+            if (frameInItem < TRANSITION_FRAMES && activeIndex > 0) {
+                prevTheme = THEMES[(activeIndex - 1) % THEMES.length];
                 transitionProgress = interpolate(
-                    frameInQuestion,
+                    frameInItem,
                     [0, TRANSITION_FRAMES],
                     [0, 1],
                     { extrapolateRight: 'clamp' }
                 );
             }
-        } else if (index >= activeQuestions.length) {
-            // Outro logic
-            activeTheme = 'bg-coral'; // Outro uses coral
-            const outroStartFrame = INTRO_DURATION + (activeQuestions.length * QUESTION_DURATION);
+        } else if (timeInTimeline >= totalTimelineDuration) {
+            activeTheme = 'bg-coral';
+            const outroStartFrame = INTRO_DURATION + totalTimelineDuration;
             const frameInOutro = contentFrame - outroStartFrame;
             if (frameInOutro < TRANSITION_FRAMES) {
-                prevTheme = THEMES[(activeQuestions.length - 1) % THEMES.length];
+                prevTheme = THEMES[(timelineItems.length - 1) % THEMES.length];
                 transitionProgress = interpolate(
                     frameInOutro,
                     [0, TRANSITION_FRAMES],
@@ -118,42 +175,57 @@ export const TriviaVideoBase: React.FC<TriviaVideoBaseProps> = ({
         }
     }
 
-    // Calculate dynamic BGM volume for horizontal layout (Audio Ducking)
-    // Only used for horizontal — vertical uses constant volume via its own Audio element
-    const outroStart = INTRO_DURATION + (activeQuestions.length * QUESTION_DURATION);
+    const promoStartInContent = promoStart >= 0 ? INTRO_DURATION + promoStart : -1;
+    const promoStartAbsolute = promoStartInContent >= 0
+        ? effectiveChannelIntroDuration + promoStartInContent
+        : -1;
+    const outroStart = INTRO_DURATION + totalTimelineDuration;
     const introDuckingEnd = Math.min(introAudioDuration, INTRO_DURATION);
+    const promoVoiceStart = promoStartAbsolute;
+    const promoVoiceEnd = promoStartAbsolute >= 0
+        ? promoStartAbsolute + promoAudioDuration
+        : -1;
     const outroDuckingEnd = outroStart + outroAudioDuration;
 
-    // Build a safe interpolation range (must be strictly monotonically increasing)
-    // When INTRO_DURATION is 0 (vertical), skip the intro ducking range entirely
-    const bgmVolume = INTRO_DURATION > 0
+    const introDuckCurve = INTRO_DURATION > 0
         ? interpolate(
             contentFrame,
-            [
-                0,
-                15,
-                Math.max(15, introDuckingEnd - 15),
-                introDuckingEnd,
-                outroStart,
-                outroStart + 15,
-                Math.max(outroStart + 15, outroDuckingEnd - 15),
-                outroDuckingEnd,
-            ],
-            [0.3, 0.3, 0.3, 0.9, 0.9, 0.3, 0.3, 0.9],
+            [0, 15, Math.max(15, introDuckingEnd - 15), introDuckingEnd],
+            [0.3, 0.3, 0.3, 0.9],
             { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }
         )
-        : 0.9; // Vertical: constant volume (no intro/outro ducking needed)
+        : 0.9;
+    const promoDuckCurve = hasPromoSlot
+        ? interpolate(
+            frame,
+            [
+                promoVoiceStart,
+                promoVoiceStart + DUCK_RAMP_FRAMES,
+                Math.max(promoVoiceStart + DUCK_RAMP_FRAMES, promoVoiceEnd - DUCK_RAMP_FRAMES),
+                promoVoiceEnd,
+            ],
+            [0.9, 0.3, 0.3, 0.9],
+            { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }
+        )
+        : 0.9;
+    const outroDuckCurve = interpolate(
+        contentFrame,
+        [outroStart, outroStart + 15, Math.max(outroStart + 15, outroDuckingEnd - 15), outroDuckingEnd],
+        [0.9, 0.3, 0.3, 0.9],
+        { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }
+    );
+    const bgmVolume = layout === 'horizontal'
+        ? Math.min(introDuckCurve, promoDuckCurve, outroDuckCurve)
+        : 0.9;
 
     return (
         <AbsoluteFill className={`bg-black text-white font-sans ${layout}`}>
-            {/* 1. Channel Intro Video (Horizontal Only) */}
             {layout === 'horizontal' && (
-                    <Sequence durationInFrames={CHANNEL_INTRO_DURATION}>
-                    <Video src={staticFile("video_intro.mov")} />
+                <Sequence durationInFrames={CHANNEL_INTRO_DURATION}>
+                    <Video src={staticFile('video_intro.mov')} />
                 </Sequence>
             )}
 
-            {/* 2. Main Content Background */}
             <Sequence from={effectiveChannelIntroDuration}>
                 <Background
                     theme={activeTheme}
@@ -162,42 +234,45 @@ export const TriviaVideoBase: React.FC<TriviaVideoBaseProps> = ({
                 />
             </Sequence>
 
-            {/* 3. Trivia Intro (Horizontal Only) */}
             {layout === 'horizontal' && (
                 <Sequence from={effectiveChannelIntroDuration} durationInFrames={INTRO_DURATION}>
                     <IntroComponent layout={layout} />
                 </Sequence>
             )}
 
-            {/* 4. Questions */}
-            {activeQuestions.map((question: Question, index: number) => {
-                const startFrame = effectiveChannelIntroDuration + INTRO_DURATION + (index * QUESTION_DURATION);
+            {timelineItems.map((item, index) => {
+                const startFrame = effectiveChannelIntroDuration + INTRO_DURATION + timelineStarts[index];
                 return (
                     <Sequence
-                        key={index}
+                        key={`${item.kind}-${startFrame}`}
                         from={startFrame}
-                        durationInFrames={QUESTION_DURATION}
+                        durationInFrames={item.duration}
                     >
-                        <QuestionCard
-                            question={question}
-                            questionNumber={index + 1}
-                            layout={layout}
-                        />
+                        {item.kind === 'promo' ? (
+                            <PromoCard content={item.content} layout={layout} />
+                        ) : (
+                            <QuestionCard
+                                question={item.question}
+                                questionNumber={item.questionNumber}
+                                layout={layout}
+                            />
+                        )}
                     </Sequence>
                 );
             })}
 
-            {/* 5. Outro (Horizontal Only) */}
             {layout === 'horizontal' && (
-                <Sequence from={effectiveChannelIntroDuration + INTRO_DURATION + (activeQuestions.length * QUESTION_DURATION)}>
+                <Sequence from={effectiveChannelIntroDuration + INTRO_DURATION + totalTimelineDuration}>
                     <OutroComponent />
                 </Sequence>
             )}
 
-            {/* Subscribe Overlays */}
-            {[0.25, 0.5, 0.75].map((progress, i) => {
-                const totalDuration = activeQuestions.length * QUESTION_DURATION;
-                const showAt = effectiveChannelIntroDuration + INTRO_DURATION + (totalDuration * progress);
+            {(layout === 'horizontal' ? [7, 23, 30] : [1, 2, 4]).map((slotIndex, i) => {
+                const clampedSlot = Math.min(slotIndex, timelineItems.length - 1);
+                const showAt = effectiveChannelIntroDuration
+                    + INTRO_DURATION
+                    + timelineStarts[clampedSlot]
+                    + Math.floor(timelineItems[clampedSlot].duration * 0.55);
                 return (
                     <Sequence
                         key={`sub-${i}`}
@@ -210,19 +285,25 @@ export const TriviaVideoBase: React.FC<TriviaVideoBaseProps> = ({
                 );
             })}
 
-            {/* Audio Layers */}
             {layout === 'horizontal' && (
                 <>
                     <BgmSequence volume={bgmVolume} />
 
-                    {/* AI Intro Voice */}
                     <Sequence from={effectiveChannelIntroDuration} durationInFrames={introAudioDuration}>
                         <Audio src={staticFile(introAudio)} volume={0.9} />
                     </Sequence>
 
-                    {/* AI Outro Voice */}
+                    {hasPromoSlot && promoAudio && promoStart >= 0 && (
+                        <Sequence
+                            from={effectiveChannelIntroDuration + INTRO_DURATION + promoStart}
+                            durationInFrames={promoAudioDuration}
+                        >
+                            <Audio src={staticFile(promoAudio)} volume={0.9} />
+                        </Sequence>
+                    )}
+
                     <Sequence
-                        from={effectiveChannelIntroDuration + INTRO_DURATION + (activeQuestions.length * QUESTION_DURATION)}
+                        from={effectiveChannelIntroDuration + INTRO_DURATION + totalTimelineDuration}
                         durationInFrames={outroAudioDuration}
                     >
                         <Audio src={staticFile(outroAudio)} volume={0.9} />
@@ -230,12 +311,7 @@ export const TriviaVideoBase: React.FC<TriviaVideoBaseProps> = ({
                 </>
             )}
 
-            {/* Vertical Audio Tracks */}
-            {layout === 'vertical' && (
-                <>
-                    <BgmSequence volume={0.9} />
-                </>
-            )}
+            {layout === 'vertical' && <BgmSequence volume={0.9} />}
         </AbsoluteFill>
     );
 };

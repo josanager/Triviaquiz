@@ -4,44 +4,53 @@ import logoPapelcool from '../assets/logo_papelcool.svg';
 
 interface QuestionCardProps {
     question: Question;
-    questionNumber: number;
+    questionNumber: number | string;
     layout: 'horizontal' | 'vertical';
 }
+
+const OPTION_COLOR_COUNT = 6;
 
 export const QuestionCard: React.FC<QuestionCardProps> = ({ question, questionNumber, layout }) => {
     const frame = useCurrentFrame();
     const { fps } = useVideoConfig();
+    const numericQuestionNumber =
+        typeof questionNumber === 'number' ? questionNumber : Number.parseInt(String(questionNumber), 10);
+    const colorRotationBase = Number.isNaN(numericQuestionNumber)
+        ? 0
+        : Math.max(numericQuestionNumber - 1, 0) % OPTION_COLOR_COUNT;
 
     // ── Timings ──────────────────────────────────────────────────────────────
-    const REVEAL_FRAME = 10 * fps;   // Answer revealed at 10 seconds
-    const URGENCY_START = REVEAL_FRAME - fps * 2; // Last 2 seconds: urgency mode
     const duration = 15 * fps;
+    const hasAnswerReveal = question.correct >= 0 && question.correct < question.options.length;
+    const REVEAL_FRAME = 10 * fps;   // Answer revealed at 10 seconds
+    const TIMER_END_FRAME = hasAnswerReveal ? REVEAL_FRAME : duration - 18;
+    const URGENCY_START = TIMER_END_FRAME - fps * 2; // Last 2 seconds: urgency mode
     const exitFrame = duration - 24; // Start exit shortly before end
 
-    const isRevealed = frame >= REVEAL_FRAME;
+    const isRevealed = hasAnswerReveal && frame >= REVEAL_FRAME;
 
     // ── Timer progress (1 = full, 0 = empty) ─────────────────────────────────
-    const progress = interpolate(frame, [8, REVEAL_FRAME], [1, 0], {
+    const progress = interpolate(frame, [8, TIMER_END_FRAME], [1, 0], {
         extrapolateLeft: 'clamp',
         extrapolateRight: 'clamp',
     });
 
     // Timer color: saturated green -> yellow -> red as the countdown runs out
-    const timerR = Math.round(interpolate(frame, [30, REVEAL_FRAME - fps * 3, REVEAL_FRAME], [0, 255, 255], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }));
-    const timerG = Math.round(interpolate(frame, [30, REVEAL_FRAME - fps * 3, REVEAL_FRAME], [200, 230, 59], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }));
-    const timerB = Math.round(interpolate(frame, [30, REVEAL_FRAME - fps * 3, REVEAL_FRAME], [83, 0, 48], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }));
+    const timerR = Math.round(interpolate(frame, [30, TIMER_END_FRAME - fps * 3, TIMER_END_FRAME], [0, 255, 255], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }));
+    const timerG = Math.round(interpolate(frame, [30, TIMER_END_FRAME - fps * 3, TIMER_END_FRAME], [200, 230, 59], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }));
+    const timerB = Math.round(interpolate(frame, [30, TIMER_END_FRAME - fps * 3, TIMER_END_FRAME], [83, 0, 48], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }));
     const timerLiveColor = `rgb(${timerR}, ${timerG}, ${timerB})`;
     const timerColor = isRevealed ? '#FF3B30' : timerLiveColor;
 
     // Urgency pulse: subtle scale oscillation in the last 2 seconds
     const urgencyIntensity = (!isRevealed && frame > URGENCY_START)
-        ? interpolate(frame, [URGENCY_START, REVEAL_FRAME], [0, 0.05], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
+        ? interpolate(frame, [URGENCY_START, TIMER_END_FRAME], [0, 0.05], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
         : 0;
     const urgencyPulse = 1 + Math.sin(frame / 3) * urgencyIntensity;
 
     // Timer glow: intensifies as time runs out
     const timerGlow = (!isRevealed && frame > URGENCY_START)
-        ? interpolate(frame, [URGENCY_START, REVEAL_FRAME], [4, 24], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
+        ? interpolate(frame, [URGENCY_START, TIMER_END_FRAME], [4, 24], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
         : 0;
 
     const timerEnter = interpolate(frame, [0, 18], [0, 1], {
@@ -186,9 +195,10 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({ question, questionNu
                 <div className="options-column perspective-options">
                     <div className="options-container">
                         {question.options.map((opt, i) => {
-                            const isCorrect = i === question.correct;
+                            const isCorrect = hasAnswerReveal && i === question.correct;
                             const entrance_i = optionEntrances[Math.min(i, 2)];
                             const direction = i % 2 === 0 ? -1 : 1;
+                            const paletteIndex = (colorRotationBase + i) % OPTION_COLOR_COUNT;
 
                             const optScale = isRevealed && isCorrect
                                 ? correctPopScale * correctPulse
@@ -208,7 +218,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({ question, questionNu
                             const optTranslateY = isRevealed ? 0
                                 : interpolate(entrance_i, [0, 1], [28, 0]) + Math.cos((frame + i * 7) / 21) * 3;
 
-                            let btnClass = 'option-btn';
+                            let btnClass = `option-btn option-color-${paletteIndex}`;
                             if (isRevealed && isCorrect) btnClass += ' correct highlight-correct';
                             if (isRevealed && !isCorrect) btnClass += ' opacity-50';
 

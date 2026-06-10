@@ -90,14 +90,14 @@ export const SubscribeAnimation: React.FC<SubscribeAnimationProps> = ({ lang = '
             />
 
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                <span style={{ fontSize: '32px', fontWeight: 'bold', color: '#111827' }}>Papelcool</span>
+                <span style={{ fontSize: '32px', fontWeight: 'bold', color: '#101010' }}>Papelcool</span>
             </div>
 
             {/* Subscribe Button */}
             <div style={{
                 padding: '18px 40px',
-                background: isClicked ? '#D4D4D8' : '#FFE600',
-                color: isClicked ? '#334155' : '#111827',
+                background: isClicked ? '#37BDF7' : '#FFD21F',
+                color: isClicked ? '#063B73' : '#101010',
                 border: '3px solid #000000',
                 borderRadius: '50px',
                 boxShadow: isClicked ? '0 2px 6px rgba(0,0,0,0.1)' : '0 4px 0 #FFD400, 0 6px 12px rgba(0,0,0,0.12)',
@@ -119,7 +119,7 @@ export const SubscribeAnimation: React.FC<SubscribeAnimationProps> = ({ lang = '
             <div style={{
                 fontSize: '50px',
                 transform: `rotate(${isBellActive ? bellRotation : 0}deg)`,
-                color: isBellActive ? '#111827' : '#D4D4D8'
+                color: isBellActive ? '#101010' : '#24AEEF'
             }}>
                 {isBellActive ? '🔔' : '🔕'}
             </div>

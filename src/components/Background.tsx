@@ -9,14 +9,14 @@ interface BackgroundProps {
 
 // Background color palettes – each theme maps to a gradient pair
 const BG_PALETTES: Record<string, { from: string; to: string; accent: string }> = {
-    'bg-sky':      { from: '#BFE3FF', to: '#EAF6FF', accent: '#407BFF' },
-    'bg-peach':    { from: '#FFD1E5', to: '#FFF2F8', accent: '#FF4D94' },
-    'bg-mint':     { from: '#C6DFFF', to: '#E7F1FF', accent: '#407BFF' },
-    'bg-lavender': { from: '#CFE7FF', to: '#EEF7FF', accent: '#D1E9FF' },
-    'bg-coral':    { from: '#FFC7DD', to: '#FDEBF5', accent: '#FF4D94' },
-    'bg-lemon':    { from: '#FFF173', to: '#FFF7C4', accent: '#FFE600' },
-    'bg-rose':     { from: '#FFCAE0', to: '#F6EEFF', accent: '#FFC700' },
-    'bg-aqua':     { from: '#BDE7FF', to: '#E6F5FF', accent: '#407BFF' },
+    'bg-sky':      { from: '#24AEEF', to: '#FFFFFF', accent: '#0A92E8' },
+    'bg-peach':    { from: '#FF4CA8', to: '#FFFFFF', accent: '#FFD21F' },
+    'bg-mint':     { from: '#37BDF7', to: '#FFFFFF', accent: '#79D64B' },
+    'bg-lavender': { from: '#7B4DFF', to: '#FFFFFF', accent: '#37BDF7' },
+    'bg-coral':    { from: '#FF4CA8', to: '#37BDF7', accent: '#FFD21F' },
+    'bg-lemon':    { from: '#FFD21F', to: '#FFFFFF', accent: '#24AEEF' },
+    'bg-rose':     { from: '#FF4CA8', to: '#7B4DFF', accent: '#FFFFFF' },
+    'bg-aqua':     { from: '#018CE2', to: '#FFFFFF', accent: '#24AEEF' },
 };
 
 const PALETTE_KEYS = Object.keys(BG_PALETTES);

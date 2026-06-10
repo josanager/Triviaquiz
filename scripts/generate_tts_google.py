@@ -53,6 +53,7 @@ load_dotenv()
 
 API_KEY = os.getenv("GOOGLE_API_KEY", "")
 MODEL_NAME = os.getenv("GEMINI_TTS_MODEL", "gemini-3.1-flash-tts-preview")
+FALLBACK_MODEL_NAME = os.getenv("GEMINI_TTS_FALLBACK_MODEL", "gemini-2.5-flash-preview-tts")
 VOICE_NAME = os.getenv("GEMINI_TTS_VOICE", "Leda")
 VOLUME_MULTIPLIER = 1.1
 
@@ -96,7 +97,13 @@ def wav_to_mp3(wav_path: Path, mp3_path: Path, *, volume_multiplier: float = VOL
     )
 
 
-def synthesize_prompt_to_mp3(prompt: str, output_mp3: Path, *, voice_name: str = VOICE_NAME) -> None:
+def _synthesize_with_model(
+    prompt: str,
+    output_mp3: Path,
+    *,
+    model_name: str,
+    voice_name: str = VOICE_NAME,
+) -> None:
     if not API_KEY:
         raise ValueError("Falta GOOGLE_API_KEY en .env")
 
@@ -108,7 +115,7 @@ def synthesize_prompt_to_mp3(prompt: str, output_mp3: Path, *, voice_name: str =
     for attempt in range(1, 5):
         try:
             response = client.models.generate_content(
-                model=MODEL_NAME,
+                model=model_name,
                 contents=prompt,
                 config=types.GenerateContentConfig(
                     response_modalities=["AUDIO"],
@@ -125,19 +132,21 @@ def synthesize_prompt_to_mp3(prompt: str, output_mp3: Path, *, voice_name: str =
         except Exception as exc:  # SDK envuelve errores HTTP en ClientError
             last_error = exc
             message = str(exc)
-            if "RESOURCE_EXHAUSTED" not in message or attempt == 4:
+            is_quota = "RESOURCE_EXHAUSTED" in message
+            is_internal = "500" in message or "INTERNAL" in message
+            if (not is_quota and not is_internal) or attempt == 4:
                 raise
 
             retry_match = re.search(r"retry in ([0-9.]+)s", message, re.IGNORECASE)
             detail_match = re.search(r"'retryDelay': '([0-9]+)s'", message)
-            wait_seconds = 35.0
+            wait_seconds = 35.0 if is_quota else 8.0 * attempt
             if retry_match:
                 wait_seconds = float(retry_match.group(1)) + 2
             elif detail_match:
                 wait_seconds = float(detail_match.group(1)) + 2
 
             print(
-                f"Quota temporal alcanzada. Reintentando {output_mp3.name} en {wait_seconds:.1f}s...",
+                f"Error transitorio al generar {output_mp3.name}. Reintentando en {wait_seconds:.1f}s...",
                 flush=True,
             )
             time.sleep(wait_seconds)
@@ -154,103 +163,177 @@ def synthesize_prompt_to_mp3(prompt: str, output_mp3: Path, *, voice_name: str =
         wav_to_mp3(wav_path, output_mp3)
 
 
+def synthesize_prompt_to_mp3(prompt: str, output_mp3: Path, *, voice_name: str = VOICE_NAME) -> None:
+    primary_error: Exception | None = None
+    try:
+        _synthesize_with_model(prompt, output_mp3, model_name=MODEL_NAME, voice_name=voice_name)
+        return
+    except Exception as exc:
+        primary_error = exc
+        message = str(exc)
+        if MODEL_NAME == FALLBACK_MODEL_NAME or ("500" not in message and "INTERNAL" not in message):
+            raise
+
+        print(
+            f"{MODEL_NAME} fallo con error interno. Reintentando {output_mp3.name} con {FALLBACK_MODEL_NAME}...",
+            flush=True,
+        )
+
+    try:
+        _synthesize_with_model(prompt, output_mp3, model_name=FALLBACK_MODEL_NAME, voice_name=voice_name)
+    except Exception:
+        if primary_error is not None:
+            raise primary_error
+        raise
+
+
 def build_spanish_intro_prompt() -> str:
     return """
 # AUDIO PROFILE: Nari
-## "Geometry Dash Trivia Host"
-## THE SCENE: Bright recording booth for a premium gaming trivia video
-The host is recording the opening for an energetic Geometry Dash trivia video.
-The energy is polished, warm, vibrant, and expressive, like a charismatic presenter
-speaking directly to Geometry Dash fans.
+## "General Knowledge Trivia Host"
+## THE SCENE: Bright recording booth for a premium general knowledge trivia video
+The host is recording the opening for an energetic culture and general knowledge challenge.
+The energy is polished, vibrant, explosive, and expressive, like a charismatic presenter
+launching a fast, fun, smart challenge for a broad audience.
 
 ### DIRECTOR'S NOTES
 Style: confident host, big vocal smile, energetic, expressive, and premium.
- Pacing: energetic and clear, with punchy emphasis on key Geometry Dash words,
-but never rushed.
-Tone: exciting, natural, inviting, premium, social-media-ready, with bright gaming energy.
+Pacing: energetic and clear, with punchy emphasis on cultura general, mente, and reto,
+but never rushed or sloppy.
+Tone: exciting, natural, inviting, premium, social-media-ready, with game-show energy.
 Language: neutral Latin American Spanish.
-Emotion tags: use at most 3 emotional shifts total. Favor rock-friendly emphasis such as
-[hyped], [charged], [victorious], [confidently].
+Emotion tags: use at most 3 emotional shifts total. Favor energetic emphasis such as
+[hyped], [charged], [victorious].
 Timing: keep the final spoken audio under 20 seconds. It may be shorter than 17 seconds if needed.
 
 #### TRANSCRIPT
-[hyped] Bienvenidos a la gran trivia de Geometry Dash.
-[charged] Hoy vas a demostrar cuánto sabes de sus niveles, creadores, secretos, demons y momentos más icónicos del fandom.
-[victorious] Tendrás quince segundos por pregunta, así que concéntrate, piensa rápido y prepárate para dashear.
+[hyped] Bienvenido a Cultura General numero uno.
+[charged] Prepárate para un reto rapido de historia, ciencia, arte y mucho mas.
+[victorious] Tienes quince segundos por pregunta. Piensa veloz y demuestra cuanto sabes.
 """.strip()
 
 
 def build_english_intro_prompt() -> str:
     return """
 # AUDIO PROFILE: Nari
-## "Geometry Dash Trivia Host"
-## THE SCENE: Bright recording booth for a premium gaming trivia video
-The host is recording the opening for an energetic Geometry Dash trivia video.
-The energy is polished, warm, vibrant, and expressive, like a charismatic presenter
-speaking directly to Geometry Dash fans.
+## "General Knowledge Trivia Host"
+## THE SCENE: Bright recording booth for a premium general knowledge trivia video
+The host is recording the opening for an energetic culture and general knowledge challenge.
+The energy is polished, vibrant, explosive, and expressive, like a charismatic presenter
+launching a fast, fun, smart challenge for a broad audience.
 
 ### DIRECTOR'S NOTES
 Style: confident host, big vocal smile, energetic, expressive, and premium.
-Pacing: energetic and clear, with punchy emphasis on key Geometry Dash words,
+Pacing: energetic and clear, with punchy emphasis on general knowledge, mind, and challenge,
 but never rushed.
-Tone: exciting, natural, inviting, premium, social-media-ready, with bright gaming energy.
+Tone: exciting, natural, inviting, premium, social-media-ready, with game-show energy.
 Language: neutral international English.
-Emotion tags: use at most 3 emotional shifts total. Favor rock-friendly emphasis such as
-[hyped], [charged], [victorious], [confidently].
+Emotion tags: use at most 3 emotional shifts total. Favor energetic emphasis such as
+[hyped], [charged], [victorious].
 Timing: keep the final spoken audio under 20 seconds. It may be shorter than 17 seconds if needed.
 
 #### TRANSCRIPT
-[hyped] Welcome to the big Geometry Dash trivia challenge.
-[charged] Today you'll prove how much you know about the levels, creators, secrets, demons, and the fandom's most iconic moments.
-[victorious] You get fifteen seconds per question, so lock in, think fast, and get ready to dash.
+[hyped] Welcome to General Knowledge number one.
+[charged] Get ready for a fast challenge packed with history, science, art, and more.
+[victorious] You get fifteen seconds per question. Think fast and show how much you know.
+""".strip()
+
+
+def build_spanish_promo_prompt() -> str:
+    return """
+# AUDIO PROFILE: Nari
+## "Adventure Time Trivia Host"
+## THE SCENE: Mid-roll promo inside a premium fandom trivia video
+The host is delivering a fast, exciting promotional break for Papelcool in the middle
+of the trivia. The energy is upbeat, confident, and inviting, like a creator showing
+something genuinely fun and worth opening right now.
+
+### DIRECTOR'S NOTES
+Style: confident host, big vocal smile, energetic, expressive, and premium.
+Pacing: fast, clear, persuasive, and easy to follow without sounding rushed.
+Tone: playful, exciting, sales-ready, and warm.
+Language: neutral Latin American Spanish.
+Emotion tags: use at most 3 emotional shifts total. Favor rock-friendly emphasis such as
+[hyped], [charged], [victorious].
+Timing: keep the final spoken audio under 20 seconds.
+
+#### TRANSCRIPT
+[hyped] ¿Quieres descargar papercraft gratis de tus personajes favoritos?
+[charged] Escanea este QR o entra a papel punto cool y descubre plantillas listas para armar, nuevas colecciones y la pestaña CUSTOM para crear tu propio Papelcool.
+[victorious] Entra ahora, disfruta todo lo que tenemos para ti y ahora sí, volvamos con el juego.
+""".strip()
+
+
+def build_english_promo_prompt() -> str:
+    return """
+# AUDIO PROFILE: Nari
+## "Adventure Time Trivia Host"
+## THE SCENE: Mid-roll promo inside a premium fandom trivia video
+The host is delivering a fast, exciting promotional break for Papelcool in the middle
+of the trivia. The energy is upbeat, confident, and inviting, like a creator showing
+something genuinely fun and worth opening right now.
+
+### DIRECTOR'S NOTES
+Style: confident host, big vocal smile, energetic, expressive, and premium.
+Pacing: fast, clear, persuasive, and easy to follow without sounding rushed.
+Tone: playful, exciting, sales-ready, and warm.
+Language: neutral international English.
+Emotion tags: use at most 3 emotional shifts total. Favor rock-friendly emphasis such as
+[hyped], [charged], [victorious].
+Timing: keep the final spoken audio under 20 seconds.
+
+#### TRANSCRIPT
+[hyped] Want free papercraft templates of your favorite characters?
+[charged] Scan this QR or visit papel dot cool to find ready-to-build templates, fresh collections, and the CUSTOM tab where you can create your own Papelcool.
+[victorious] Jump in now, enjoy everything we made for you, and now let’s get back to the game.
 """.strip()
 
 
 def build_spanish_outro_prompt() -> str:
     return """
 # AUDIO PROFILE: Nari
-## "Geometry Dash Trivia Host"
-## THE SCENE: Closing lines after an exciting Geometry Dash challenge
-The host is wrapping up a premium Geometry Dash trivia video. The delivery sounds warm,
+## "General Knowledge Trivia Host"
+## THE SCENE: Closing lines after an exciting general knowledge challenge
+The host is wrapping up a premium general knowledge trivia video. The delivery sounds warm,
 grateful, energized, and proud of the audience for finishing the challenge.
 
 ### DIRECTOR'S NOTES
 Style: warm presenter, affectionate, natural, expressive, with a victorious gaming-show afterglow.
 Pacing: calm but engaging, with a polished ending cadence.
-Tone: celebratory, thankful, emotionally warm, with high-energy arcade spirit.
+Tone: celebratory, thankful, emotionally warm, with high-energy game-show spirit.
 Language: neutral Latin American Spanish.
 Emotion tags: use at most 3 emotional shifts total. Favor tags such as
-[triumphant], [amazed], [grateful], [charged].
+[triumphant], [amazed], [grateful].
 Timing: keep the final spoken audio under 20 seconds. It may be shorter than 17 seconds if needed.
 
 #### TRANSCRIPT
-[triumphant] ¡Felicidades por completar la trivia de Geometry Dash!
-[amazed] Esperamos que hayas disfrutado este recorrido por sus niveles, creadores y momentos más legendarios del fandom.
-[grateful] Cuéntanos cuántas acertaste, suscríbete a Papel Cool y nos vemos en el próximo reto.
+[triumphant] Felicidades por completar Cultura General numero uno.
+[amazed] Esperamos que hayas disfrutado este viaje de preguntas, datos curiosos y retos para la mente.
+[grateful] Cuéntanos cuantas acertaste, suscríbete a Papel Cool y nos vemos en el siguiente desafío.
 """.strip()
 
 
 def build_english_outro_prompt() -> str:
     return """
 # AUDIO PROFILE: Nari
-## "Geometry Dash Trivia Host"
-## THE SCENE: Closing lines after an exciting Geometry Dash challenge
-The host is wrapping up a premium Geometry Dash trivia video. The delivery sounds warm,
+## "General Knowledge Trivia Host"
+## THE SCENE: Closing lines after an exciting general knowledge challenge
+The host is wrapping up a premium general knowledge trivia video. The delivery sounds warm,
 grateful, energized, and proud of the audience for finishing the challenge.
 
 ### DIRECTOR'S NOTES
 Style: warm presenter, affectionate, natural, expressive, with a victorious gaming-show afterglow.
 Pacing: calm but engaging, with a polished ending cadence.
-Tone: celebratory, thankful, emotionally warm, with high-energy arcade spirit.
+Tone: celebratory, thankful, emotionally warm, with high-energy game-show spirit.
 Language: neutral international English.
 Emotion tags: use at most 3 emotional shifts total. Favor tags such as
-[triumphant], [amazed], [grateful], [charged].
+[triumphant], [amazed], [grateful].
 Timing: keep the final spoken audio under 20 seconds. It may be shorter than 17 seconds if needed.
 
 #### TRANSCRIPT
-[triumphant] Congratulations on finishing the Geometry Dash trivia.
-[amazed] We hope you enjoyed this run through its levels, creators, and the fandom's most legendary moments.
-[grateful] Tell us your score, subscribe to Papel Cool, and we will see you in the next challenge.
+[triumphant] Congratulations on finishing General Knowledge number one.
+[amazed] We hope you enjoyed this round of questions, fun facts, and brainy surprises.
+[grateful] Tell us your score, subscribe to Papel Cool, and see you in the next challenge.
 """.strip()
 
 
@@ -258,6 +341,8 @@ def generate_project_voiceovers() -> None:
     jobs = [
         (build_spanish_intro_prompt(), PUBLIC_DIR / "intro_es.mp3"),
         (build_english_intro_prompt(), PUBLIC_DIR / "intro_en.mp3"),
+        (build_spanish_promo_prompt(), PUBLIC_DIR / "promo_es.mp3"),
+        (build_english_promo_prompt(), PUBLIC_DIR / "promo_en.mp3"),
         (build_spanish_outro_prompt(), PUBLIC_DIR / "outro_es.mp3"),
         (build_english_outro_prompt(), PUBLIC_DIR / "outro_en.mp3"),
     ]
