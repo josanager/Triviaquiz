@@ -4,26 +4,28 @@ import logoPapelcool from '../assets/logo_papelcool.svg';
 // Translations for multi-language support
 const TRANSLATIONS = {
     es: {
-        title: 'CULTURA GENERAL #1',
-        subtitle: 'PON A PRUEBA TU MENTE',
-        questionsLabel: (n: number) => `${n} preguntas para demostrar cuánto sabes`,
+        titleTop: 'PREGUNTAS DEL',
+        titleBottom: 'NUEVO TESTAMENTO',
+        subtitle: 'TRIVIA BIBLICA',
+        questionsLabel: (n: number) => `${n} preguntas del Nuevo Testamento`,
         timeLabel: '+15s por pregunta',
-        verticalScore: '5/5 = ¡Mente maestra!',
-        startButton: '¡QUE EMPIECE!',
-        casualRank: 'Buen inicio',
-        fanRank: 'Muy informado',
-        topRank: 'Mente maestra',
+        verticalScore: '5/5 = ¡Experto biblico!',
+        startButton: '¡A JUGAR!',
+        casualRank: 'Buen comienzo',
+        fanRank: 'Buen conocedor',
+        topRank: 'Experto biblico',
     },
     en: {
-        title: 'GENERAL KNOWLEDGE #1',
-        subtitle: 'PUT YOUR MIND TO THE TEST',
-        questionsLabel: (n: number) => `${n} questions to show what you know`,
+        titleTop: 'NEW TESTAMENT',
+        titleBottom: 'BIBLE QUESTIONS',
+        subtitle: 'SCRIPTURE TRIVIA',
+        questionsLabel: (n: number) => `${n} New Testament questions`,
         timeLabel: '+15s each',
-        verticalScore: '5/5 = Quiz master!',
-        startButton: 'LET IT BEGIN!',
+        verticalScore: '5/5 = Bible expert!',
+        startButton: 'LET\'S PLAY!',
         casualRank: 'Good start',
-        fanRank: 'Well informed',
-        topRank: 'Quiz master',
+        fanRank: 'Strong knowledge',
+        topRank: 'Bible expert',
     },
 } as const;
 
@@ -195,13 +197,13 @@ export const Intro: React.FC<IntroProps> = ({ layout = 'horizontal', lang = 'es'
                     }}
                 >
                     <div className="intro-v3-title-1" style={{ color: 'var(--kq-charcoal)', textShadow: '3px 3px 0 rgba(0,0,0,0.1)' }}>
-                        TRIVIA
+                        {t.titleTop}
                     </div>
                     <div
                         className="intro-v3-title-2"
                         style={{ display: 'inline-block', transform: `rotate(${wiggle}deg)` }}
                     >
-                        <span style={{ color: 'var(--kq-amber)', textShadow: '4px 4px 0 #000000, -4px -4px 0 #000000, 4px -4px 0 #000000, -4px 4px 0 #000000, 0px 4px 0 #000000, 0px -4px 0 #000000, 4px 0px 0 #000000, -4px 0px 0 #000000' }}>{t.title}</span>
+                        <span style={{ color: 'var(--kq-amber)', textShadow: '4px 4px 0 #000000, -4px -4px 0 #000000, 4px -4px 0 #000000, -4px 4px 0 #000000, 0px 4px 0 #000000, 0px -4px 0 #000000, 4px 0px 0 #000000, -4px 0px 0 #000000' }}>{t.titleBottom}</span>
                     </div>
                     <div
                         className="intro-v3-title-2 intro-v3-title-subtitle"

@@ -8,11 +8,13 @@ const TRANSLATIONS = {
         title: '¿CUÁNTAS\nACERTASTE?',
         commentText: '¡Déjalo en los comentarios!',
         ctaButton: '¡SUSCRÍBETE!',
+        supportText: 'entra aqui para apoyar el canal',
     },
     en: {
         title: 'HOW MANY\nDID YOU GET?',
         commentText: 'Leave it in the comments!',
         ctaButton: 'SUBSCRIBE!',
+        supportText: 'enter here to support the channel',
     },
 } as const;
 
@@ -25,7 +27,6 @@ export const Outro: React.FC<OutroProps> = ({ lang = 'es' }) => {
     const frame = useCurrentFrame();
     const { durationInFrames } = useVideoConfig();
     const t = TRANSLATIONS[lang];
-    const supportText = 'entra aqui para apoyar el canal';
 
     const enter = (start: number, duration = 24) =>
         interpolate(frame, [start, start + duration], [0, 1], {
@@ -131,7 +132,7 @@ export const Outro: React.FC<OutroProps> = ({ lang = 'es' }) => {
                                 transform: `translateY(${calloutTextFloat}px) rotate(${calloutTextTilt}deg) scale(${calloutTextScale})`,
                             }}
                         >
-                            {supportText}
+                            {t.supportText}
                         </div>
                         <Img
                             src={qrArrow}

@@ -15,18 +15,21 @@ const TRANSITION_FRAMES = FPS * 1.5;
 const CHANNEL_INTRO_DURATION = 270;
 const DUCK_RAMP_FRAMES = 6;
 const AUDIO_DURATIONS_IN_FRAMES: Record<string, number> = {
-    'intro_es.mp3': 876, // 14.60s
-    'intro_en.mp3': 902, // 15.04s
+    'intro_es.mp3': 907, // 15.12s
+    'intro_en.mp3': 883, // 14.72s
     'promo_es.mp3': 1198, // 19.96s
     'promo_en.mp3': 1116, // 18.60s
-    'outro_es.mp3': 1003, // 16.72s
-    'outro_en.mp3': 914, // 15.24s
+    'bonus_reveal_es.mp3': 274, // 4.56s
+    'bonus_reveal_en.mp3': 202, // 3.36s
+    'outro_es.mp3': 838, // 13.96s
+    'outro_en.mp3': 866, // 14.44s
 };
 
 const DEFAULT_THEMES = PALETTE_KEYS;
 
 type TimelineItem =
     | { kind: 'question'; question: Question; questionNumber: number | string; duration: number }
+    | { kind: 'bonus-reveal'; duration: number }
     | { kind: 'promo'; content: PromoContent; duration: number };
 
 export interface TriviaVideoBaseProps {
@@ -34,11 +37,15 @@ export interface TriviaVideoBaseProps {
     questions: Question[];
     verticalQuestions: Question[];
     IntroComponent: React.FC<{ layout?: 'horizontal' | 'vertical' }>;
+    BonusRevealComponent?: React.FC;
     OutroComponent: React.FC;
     subscribeLang: 'es' | 'en';
     introAudio: string;
     promoContent?: PromoContent;
     promoAudio?: string;
+    bonusQuestion?: Question;
+    bonusQuestionNumber?: number | string;
+    bonusRevealAudio?: string;
     outroAudio: string;
     themes?: string[];
 }
@@ -48,11 +55,15 @@ export const TriviaVideoBase: React.FC<TriviaVideoBaseProps> = ({
     questions: horizontalQuestions,
     verticalQuestions: vertQuestions,
     IntroComponent,
+    BonusRevealComponent,
     OutroComponent,
     subscribeLang,
     introAudio,
     promoContent,
     promoAudio,
+    bonusQuestion,
+    bonusQuestionNumber = 'EXTRA',
+    bonusRevealAudio,
     outroAudio,
     themes,
 }) => {
@@ -66,12 +77,15 @@ export const TriviaVideoBase: React.FC<TriviaVideoBaseProps> = ({
     const promoAudioDuration = hasPromoSlot
         ? (AUDIO_DURATIONS_IN_FRAMES[promoAudio as string] ?? PROMO_DURATION)
         : 0;
+    const bonusRevealAudioDuration = bonusQuestion && bonusRevealAudio
+        ? (AUDIO_DURATIONS_IN_FRAMES[bonusRevealAudio] ?? QUESTION_DURATION)
+        : 0;
     const outroAudioDuration = AUDIO_DURATIONS_IN_FRAMES[outroAudio] ?? INTRO_DURATION;
 
     const contentFrame = frame - effectiveChannelIntroDuration;
     const baseQuestions = layout === 'vertical' ? vertQuestions : horizontalQuestions;
 
-    const timelineItems: TimelineItem[] = hasPromoSlot
+    const coreTimelineItems: TimelineItem[] = hasPromoSlot
         ? [
             ...horizontalQuestions.slice(0, PROMO_INSERT_AFTER_QUESTION).map((question, index) => ({
                 kind: 'question' as const,
@@ -97,6 +111,21 @@ export const TriviaVideoBase: React.FC<TriviaVideoBaseProps> = ({
             questionNumber: index + 1,
             duration: QUESTION_DURATION,
         }));
+
+    const timelineItems: TimelineItem[] = [
+        ...coreTimelineItems,
+        ...(bonusQuestion && bonusRevealAudioDuration > 0
+            ? [{ kind: 'bonus-reveal' as const, duration: bonusRevealAudioDuration }]
+            : []),
+        ...(bonusQuestion
+            ? [{
+                kind: 'question' as const,
+                question: bonusQuestion,
+                questionNumber: bonusQuestionNumber,
+                duration: QUESTION_DURATION,
+            }]
+            : []),
+    ];
 
     const timelineStarts = timelineItems.map((_, index) => {
         let start = 0;
@@ -185,6 +214,13 @@ export const TriviaVideoBase: React.FC<TriviaVideoBaseProps> = ({
     const promoVoiceEnd = promoStartAbsolute >= 0
         ? promoStartAbsolute + promoAudioDuration
         : -1;
+    const bonusRevealIndex = timelineItems.findIndex((item) => item.kind === 'bonus-reveal');
+    const bonusRevealStart = bonusRevealIndex >= 0
+        ? effectiveChannelIntroDuration + INTRO_DURATION + timelineStarts[bonusRevealIndex]
+        : -1;
+    const bonusRevealEnd = bonusRevealStart >= 0
+        ? bonusRevealStart + bonusRevealAudioDuration
+        : -1;
     const outroDuckingEnd = outroStart + outroAudioDuration;
 
     const introDuckCurve = INTRO_DURATION > 0
@@ -214,8 +250,21 @@ export const TriviaVideoBase: React.FC<TriviaVideoBaseProps> = ({
         [0.9, 0.3, 0.3, 0.9],
         { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }
     );
+    const bonusRevealDuckCurve = bonusRevealStart >= 0
+        ? interpolate(
+            frame,
+            [
+                bonusRevealStart,
+                bonusRevealStart + DUCK_RAMP_FRAMES,
+                Math.max(bonusRevealStart + DUCK_RAMP_FRAMES, bonusRevealEnd - DUCK_RAMP_FRAMES),
+                bonusRevealEnd,
+            ],
+            [0.9, 0.3, 0.3, 0.9],
+            { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }
+        )
+        : 0.9;
     const bgmVolume = layout === 'horizontal'
-        ? Math.min(introDuckCurve, promoDuckCurve, outroDuckCurve)
+        ? Math.min(introDuckCurve, promoDuckCurve, bonusRevealDuckCurve, outroDuckCurve)
         : 0.9;
 
     return (
@@ -250,6 +299,8 @@ export const TriviaVideoBase: React.FC<TriviaVideoBaseProps> = ({
                     >
                         {item.kind === 'promo' ? (
                             <PromoCard content={item.content} layout={layout} />
+                        ) : item.kind === 'bonus-reveal' ? (
+                            BonusRevealComponent ? <BonusRevealComponent /> : null
                         ) : (
                             <QuestionCard
                                 question={item.question}
@@ -299,6 +350,15 @@ export const TriviaVideoBase: React.FC<TriviaVideoBaseProps> = ({
                             durationInFrames={promoAudioDuration}
                         >
                             <Audio src={staticFile(promoAudio)} volume={0.9} />
+                        </Sequence>
+                    )}
+
+                    {bonusRevealAudio && bonusRevealStart >= 0 && (
+                        <Sequence
+                            from={bonusRevealStart}
+                            durationInFrames={bonusRevealAudioDuration}
+                        >
+                            <Audio src={staticFile(bonusRevealAudio)} volume={0.9} />
                         </Sequence>
                     )}
 

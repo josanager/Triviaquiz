@@ -10,10 +10,11 @@ Uso:
 
 El script:
     - lee GOOGLE_API_KEY y GEMINI_TTS_MODEL desde .env
-    - usa Gemini 3.1 Flash TTS Preview
+    - usa solo Gemini 3.1 Flash TTS Preview
     - aplica prompting avanzado + audio tags
-    - genera intro/outro en ES y EN
+    - genera solo intro/outro en ES y EN
     - sube el volumen final un 10%
+    - si hay cuota agotada, conserva el audio existente en lugar de usar otro modelo
     - guarda WAV temporal y exporta MP3 final en public/
 """
 
@@ -53,7 +54,6 @@ load_dotenv()
 
 API_KEY = os.getenv("GOOGLE_API_KEY", "")
 MODEL_NAME = os.getenv("GEMINI_TTS_MODEL", "gemini-3.1-flash-tts-preview")
-FALLBACK_MODEL_NAME = os.getenv("GEMINI_TTS_FALLBACK_MODEL", "gemini-2.5-flash-preview-tts")
 VOICE_NAME = os.getenv("GEMINI_TTS_VOICE", "Leda")
 VOLUME_MULTIPLIER = 1.1
 
@@ -164,78 +164,72 @@ def _synthesize_with_model(
 
 
 def synthesize_prompt_to_mp3(prompt: str, output_mp3: Path, *, voice_name: str = VOICE_NAME) -> None:
-    primary_error: Exception | None = None
-    try:
-        _synthesize_with_model(prompt, output_mp3, model_name=MODEL_NAME, voice_name=voice_name)
-        return
-    except Exception as exc:
-        primary_error = exc
-        message = str(exc)
-        if MODEL_NAME == FALLBACK_MODEL_NAME or ("500" not in message and "INTERNAL" not in message):
-            raise
-
-        print(
-            f"{MODEL_NAME} fallo con error interno. Reintentando {output_mp3.name} con {FALLBACK_MODEL_NAME}...",
-            flush=True,
-        )
-
-    try:
-        _synthesize_with_model(prompt, output_mp3, model_name=FALLBACK_MODEL_NAME, voice_name=voice_name)
-    except Exception:
-        if primary_error is not None:
-            raise primary_error
-        raise
+    _synthesize_with_model(prompt, output_mp3, model_name=MODEL_NAME, voice_name=voice_name)
 
 
 def build_spanish_intro_prompt() -> str:
     return """
-# AUDIO PROFILE: Nari
-## "General Knowledge Trivia Host"
-## THE SCENE: Bright recording booth for a premium general knowledge trivia video
-The host is recording the opening for an energetic culture and general knowledge challenge.
-The energy is polished, vibrant, explosive, and expressive, like a charismatic presenter
-launching a fast, fun, smart challenge for a broad audience.
+# AUDIO PROFILE: Leda
+## "Nuevo Testamento Trivia Host"
+## THE SCENE: Bright recording booth for a premium Bible trivia challenge about the New Testament
+The host is recording the opening for a fast, exciting New Testament trivia challenge.
+The energy is polished, vibrant, bold, uplifting, and expressive, like a charismatic presenter
+launching a high-energy Bible challenge for viewers who want to prove what they know.
 
 ### DIRECTOR'S NOTES
-Style: confident host, big vocal smile, energetic, expressive, and premium.
-Pacing: energetic and clear, with punchy emphasis on cultura general, mente, and reto,
-but never rushed or sloppy.
-Tone: exciting, natural, inviting, premium, social-media-ready, with game-show energy.
+Style: magnetic host, big vocal smile, energetic, expressive, premium, and full of momentum.
+Pacing: dynamic. Hit the welcome line hard, explain the rules fast and clearly, then launch the challenge with a victorious finish.
+Do not keep the same cadence across all 3 lines.
+Delivery notes:
+- Line 1 should sound like an exciting welcome with instant impact.
+- Line 2 should explain the rule quickly and still feel lively.
+- Line 3 should sound punchy, triumphant, and like the challenge is officially starting.
+Emphasis words: Nuevo Testamento, quince segundos, pregunta, reto, Biblia.
+Avoid: flat reading, sleepy delivery, teacher voice, calm narration, or repeating the same melody in each line.
+Use short pauses for impact, especially after Nuevo Testamento and before the final launch line.
+Tone: exciting, natural, inviting, social-media-ready, with premium game-show energy.
 Language: neutral Latin American Spanish.
 Emotion tags: use at most 3 emotional shifts total. Favor energetic emphasis such as
 [hyped], [charged], [victorious].
-Timing: keep the final spoken audio under 20 seconds. It may be shorter than 17 seconds if needed.
+Timing: keep the final spoken audio under 20 seconds. Aim for 13 to 17 seconds total.
 
 #### TRANSCRIPT
-[hyped] Bienvenido a Cultura General numero uno.
-[charged] Prepárate para un reto rapido de historia, ciencia, arte y mucho mas.
-[victorious] Tienes quince segundos por pregunta. Piensa veloz y demuestra cuanto sabes.
+[hyped] ¡Ey! Ya llegó la trivia del Nuevo Testamento.
+[charged] Tienes quince segundos por pregunta para pensar rápido y elegir la respuesta correcta.
+[victorious] Quédate hasta el final y demuestra si de verdad tienes nivel experto en la Biblia.
 """.strip()
 
 
 def build_english_intro_prompt() -> str:
     return """
-# AUDIO PROFILE: Nari
-## "General Knowledge Trivia Host"
-## THE SCENE: Bright recording booth for a premium general knowledge trivia video
-The host is recording the opening for an energetic culture and general knowledge challenge.
-The energy is polished, vibrant, explosive, and expressive, like a charismatic presenter
-launching a fast, fun, smart challenge for a broad audience.
+# AUDIO PROFILE: Leda
+## "New Testament Trivia Host"
+## THE SCENE: Bright recording booth for a premium Bible trivia challenge about the New Testament
+The host is recording the opening for a fast, exciting New Testament trivia challenge.
+The energy is polished, vibrant, bold, uplifting, and expressive, like a charismatic presenter
+launching a high-energy Bible challenge for viewers ready to prove what they know.
 
 ### DIRECTOR'S NOTES
-Style: confident host, big vocal smile, energetic, expressive, and premium.
-Pacing: energetic and clear, with punchy emphasis on general knowledge, mind, and challenge,
-but never rushed.
-Tone: exciting, natural, inviting, premium, social-media-ready, with game-show energy.
+Style: magnetic host, big vocal smile, energetic, expressive, premium, and full of momentum.
+Pacing: dynamic. Open with a sharp hook, explain the rule quickly, and land with a victorious launch.
+Do not keep the same melody or sentence shape on every line.
+Delivery notes:
+- Line 1 should feel like a strong welcome with instant energy.
+- Line 2 should explain the rule quickly and still sound lively.
+- Line 3 should sound victorious and make the challenge feel live.
+Emphasis words: New Testament, fifteen seconds, question, challenge, Bible.
+Avoid: flat reading, polished-but-boring delivery, sleepy narration, or the same tone repeated 3 times.
+Use short pauses for impact, especially after New Testament and before the final launch line.
+Tone: exciting, natural, inviting, social-media-ready, with premium game-show energy.
 Language: neutral international English.
 Emotion tags: use at most 3 emotional shifts total. Favor energetic emphasis such as
 [hyped], [charged], [victorious].
-Timing: keep the final spoken audio under 20 seconds. It may be shorter than 17 seconds if needed.
+Timing: keep the final spoken audio under 20 seconds. Aim for 13 to 17 seconds total.
 
 #### TRANSCRIPT
-[hyped] Welcome to General Knowledge number one.
-[charged] Get ready for a fast challenge packed with history, science, art, and more.
-[victorious] You get fifteen seconds per question. Think fast and show how much you know.
+[hyped] Hey! The New Testament trivia challenge is here.
+[charged] You get fifteen seconds for each question, so think fast and pick the right answer.
+[victorious] Stay to the end and prove you really have expert-level Bible knowledge.
 """.strip()
 
 
@@ -289,51 +283,113 @@ Timing: keep the final spoken audio under 20 seconds.
 """.strip()
 
 
-def build_spanish_outro_prompt() -> str:
+def build_spanish_bonus_reveal_prompt() -> str:
     return """
 # AUDIO PROFILE: Nari
-## "General Knowledge Trivia Host"
-## THE SCENE: Closing lines after an exciting general knowledge challenge
-The host is wrapping up a premium general knowledge trivia video. The delivery sounds warm,
+## "Digital Circus Trivia Host"
+## THE SCENE: Surprise twist right after question thirty
+The host is delivering a very short, energetic surprise line right after question thirty.
+The performance should feel explosive, playful, and punchy, like a fast game show fake-out.
+
+### DIRECTOR'S NOTES
+Style: mischievous host, huge vocal smile, energetic, dramatic, premium.
+Pacing: very fast, punchy, and crystal clear.
+Tone: teasing, triumphant, playful, and high-energy.
+Language: neutral Latin American Spanish.
+Emotion tags: use at most 3 emotional shifts total. Favor tags such as
+[playful], [charged], [victorious].
+Timing: keep the final spoken audio under 5 seconds.
+
+#### TRANSCRIPT
+[playful] Y por quedarte hasta el final,
+[victorious] pregunta extra.
+""".strip()
+
+
+def build_english_bonus_reveal_prompt() -> str:
+    return """
+# AUDIO PROFILE: Nari
+## "Digital Circus Trivia Host"
+## THE SCENE: Surprise twist right after question thirty
+The host is delivering a very short, energetic surprise line right after question thirty.
+The performance should feel explosive, playful, and punchy, like a fast game show fake-out.
+
+### DIRECTOR'S NOTES
+Style: mischievous host, huge vocal smile, energetic, dramatic, premium.
+Pacing: very fast, punchy, and crystal clear.
+Tone: teasing, triumphant, playful, and high-energy.
+Language: neutral international English.
+Emotion tags: use at most 3 emotional shifts total. Favor tags such as
+[playful], [charged], [victorious].
+Timing: keep the final spoken audio under 5 seconds.
+
+#### TRANSCRIPT
+[playful] And for staying till the end,
+[victorious] bonus question.
+""".strip()
+
+
+def build_spanish_outro_prompt() -> str:
+    return """
+# AUDIO PROFILE: Leda
+## "Nuevo Testamento Trivia Host"
+## THE SCENE: Closing lines after an exciting Bible challenge about the New Testament
+The host is wrapping up a premium New Testament trivia video. The delivery should sound warm,
 grateful, energized, and proud of the audience for finishing the challenge.
 
 ### DIRECTOR'S NOTES
-Style: warm presenter, affectionate, natural, expressive, with a victorious gaming-show afterglow.
-Pacing: calm but engaging, with a polished ending cadence.
-Tone: celebratory, thankful, emotionally warm, with high-energy game-show spirit.
+Style: confident host, warm presenter, expressive, proud, and slightly playful on the close.
+Pacing: shaped ending. Start strong, soften the middle line a little, then rise again on the sign-off.
+Do not read all 3 lines with the same intensity.
+Delivery notes:
+- Line 1 should sound celebratory and impressed.
+- Line 2 should feel direct and conversational.
+- Line 3 should lift again and close with bright creator energy.
+Emphasis words: Nuevo Testamento, comentarios, suscríbete, Biblia, reto.
+Avoid: sleepy gratitude, flat politeness, or a generic corporate outro.
+Use one or two intentional pauses to give the outro emotional shape.
+Tone: celebratory, thankful, warm, and high-energy without sounding robotic.
 Language: neutral Latin American Spanish.
 Emotion tags: use at most 3 emotional shifts total. Favor tags such as
-[triumphant], [amazed], [grateful].
-Timing: keep the final spoken audio under 20 seconds. It may be shorter than 17 seconds if needed.
+[triumphant], [warm], [grateful].
+Timing: keep the final spoken audio under 20 seconds. Aim for 11 to 15 seconds total.
 
 #### TRANSCRIPT
-[triumphant] Felicidades por completar Cultura General numero uno.
-[amazed] Esperamos que hayas disfrutado este viaje de preguntas, datos curiosos y retos para la mente.
-[grateful] Cuéntanos cuantas acertaste, suscríbete a Papel Cool y nos vemos en el siguiente desafío.
+[triumphant] ¡Increíble! Ya terminaste este reto del Nuevo Testamento.
+[warm] Cuéntame en los comentarios cuántas respuestas acertaste.
+[grateful] Suscríbete a Papel Cool y nos vemos en la próxima trivia bíblica.
 """.strip()
 
 
 def build_english_outro_prompt() -> str:
     return """
-# AUDIO PROFILE: Nari
-## "General Knowledge Trivia Host"
-## THE SCENE: Closing lines after an exciting general knowledge challenge
-The host is wrapping up a premium general knowledge trivia video. The delivery sounds warm,
+# AUDIO PROFILE: Leda
+## "New Testament Trivia Host"
+## THE SCENE: Closing lines after an exciting Bible challenge about the New Testament
+The host is wrapping up a premium New Testament trivia video. The delivery should sound warm,
 grateful, energized, and proud of the audience for finishing the challenge.
 
 ### DIRECTOR'S NOTES
-Style: warm presenter, affectionate, natural, expressive, with a victorious gaming-show afterglow.
-Pacing: calm but engaging, with a polished ending cadence.
-Tone: celebratory, thankful, emotionally warm, with high-energy game-show spirit.
+Style: confident host, warm presenter, expressive, proud, and slightly playful on the close.
+Pacing: shaped ending. Hit the first line strong, soften the middle line, then rise again for the sign-off.
+Do not read all 3 lines with the same energy curve.
+Delivery notes:
+- Line 1 should sound celebratory and impressed.
+- Line 2 should feel direct and conversational.
+- Line 3 should lift again and end with a bright creator-style finish.
+Emphasis words: New Testament, comments, subscribe, Bible, challenge.
+Avoid: monotone gratitude, calm narration, or repeating the same upbeat rhythm every time.
+Use brief pauses to create contrast and make the outro feel alive.
+Tone: celebratory, thankful, warm, and high-energy without sounding stiff.
 Language: neutral international English.
 Emotion tags: use at most 3 emotional shifts total. Favor tags such as
-[triumphant], [amazed], [grateful].
-Timing: keep the final spoken audio under 20 seconds. It may be shorter than 17 seconds if needed.
+[triumphant], [warm], [grateful].
+Timing: keep the final spoken audio under 20 seconds. Aim for 11 to 15 seconds total.
 
 #### TRANSCRIPT
-[triumphant] Congratulations on finishing General Knowledge number one.
-[amazed] We hope you enjoyed this round of questions, fun facts, and brainy surprises.
-[grateful] Tell us your score, subscribe to Papel Cool, and see you in the next challenge.
+[triumphant] Incredible! You just finished this New Testament challenge.
+[warm] Tell me in the comments how many answers you got right.
+[grateful] Subscribe to Papel Cool, and I will see you in the next Bible trivia challenge.
 """.strip()
 
 
@@ -341,16 +397,26 @@ def generate_project_voiceovers() -> None:
     jobs = [
         (build_spanish_intro_prompt(), PUBLIC_DIR / "intro_es.mp3"),
         (build_english_intro_prompt(), PUBLIC_DIR / "intro_en.mp3"),
-        (build_spanish_promo_prompt(), PUBLIC_DIR / "promo_es.mp3"),
-        (build_english_promo_prompt(), PUBLIC_DIR / "promo_en.mp3"),
         (build_spanish_outro_prompt(), PUBLIC_DIR / "outro_es.mp3"),
         (build_english_outro_prompt(), PUBLIC_DIR / "outro_en.mp3"),
     ]
 
     for prompt, output in jobs:
         print(f"Generando {output.name} con {MODEL_NAME} / voz {VOICE_NAME}...")
-        synthesize_prompt_to_mp3(prompt, output)
-        print(f"Listo: {output}")
+        try:
+            synthesize_prompt_to_mp3(prompt, output)
+            print(f"Listo: {output}")
+        except Exception as exc:
+            message = str(exc)
+            is_quota = "RESOURCE_EXHAUSTED" in message or "429" in message
+            if is_quota and output.exists():
+                print(
+                    f"Cuota agotada para {output.name}. "
+                    f"Se conserva el audio existente porque este proyecto solo permite {MODEL_NAME}.",
+                    flush=True,
+                )
+                continue
+            raise
 
 
 if __name__ == "__main__":

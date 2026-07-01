@@ -15,3 +15,9 @@ These rules are mandatory for any agent editing this project.
 - Spanish and English trivia banks must represent the same question set.
 - If option order changes in one language, mirror that change in the other language.
 - Do not change a correct answer just to vary letters; reorder options instead.
+
+## Intro Layout
+
+- In both language versions, the gray intro subtitle must always be placed below the main large yellow title, never on the same line.
+- Preserve that stacked title order in future intro edits for both horizontal and vertical layouts.
+- When resizing intro text or UI elements, keep the composition filling the frame cleanly without overflow or crowding.
