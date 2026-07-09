@@ -13,7 +13,7 @@ export const SubscribeAnimation: React.FC<SubscribeAnimationProps> = ({ lang = '
     const subscribeText = lang === 'en' ? 'SUBSCRIBE' : 'SUSCRIBIRSE';
     const subscribedText = lang === 'en' ? 'SUBSCRIBED' : 'SUSCRITO';
     const channelName = lang === 'en' ? 'Papelcool Games' : 'Papelcool Juegos';
-    const channelLogo = lang === 'en' ? 'logo-papelcool-games.png' : 'logo-papelcool-juegos.png';
+    const channelLogo = lang === 'en' ? 'logo_papelcool_games.png' : 'logo_papelcool_juegos.png';
 
     // Animation phases (Total ~250 frames / 4.1s)
     // 0-30: Scale In (Slower)
@@ -87,11 +87,14 @@ export const SubscribeAnimation: React.FC<SubscribeAnimationProps> = ({ lang = '
                     height: '80px',
                     borderRadius: '50%',
                     objectFit: 'cover',
+                    border: '3px solid #000000'
                 }}
             />
 
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                <span style={{ fontSize: '32px', fontWeight: 'bold', color: '#101010' }}>{channelName}</span>
+                <span style={{ fontSize: '32px', fontWeight: 'bold', color: '#101010', textTransform: 'none' }}>
+                    {channelName}
+                </span>
             </div>
 
             {/* Subscribe Button */}

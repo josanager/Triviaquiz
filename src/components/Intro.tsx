@@ -1,44 +1,61 @@
 import { AbsoluteFill, useCurrentFrame, interpolate, useVideoConfig, Img, Easing } from 'remotion';
 import logoPapelcool from '../assets/logo_papelcool.svg';
+import { HORIZONTAL_DESIGN_WIDTH } from '../constants';
+
+let measurementCanvas: HTMLCanvasElement | null = null;
+
+const measureTextWidth = (text: string, fontSizePx: number, fontWeight: number) => {
+    if (typeof document === 'undefined') {
+        return text.length * fontSizePx * 0.62;
+    }
+
+    measurementCanvas ??= document.createElement('canvas');
+    const context = measurementCanvas.getContext('2d');
+
+    if (!context) {
+        return text.length * fontSizePx * 0.62;
+    }
+
+    context.font = `${fontWeight} ${fontSizePx}px Arial`;
+    return context.measureText(text).width;
+};
 
 // Translations for multi-language support
 const TRANSLATIONS = {
     es: {
-        titleTop: 'PREGUNTAS DEL',
-        titleBottom: 'NUEVO TESTAMENTO',
-        subtitle: 'TRIVIA BIBLICA',
-        questionsLabel: (n: number) => `${n} preguntas del Nuevo Testamento`,
-        timeLabel: '+15s por pregunta',
-        verticalScore: '5/5 = ¡Experto biblico!',
-        startButton: '¡A JUGAR!',
-        casualRank: 'Buen comienzo',
-        fanRank: 'Buen conocedor',
-        topRank: 'Experto biblico',
+        title: 'BAD BUNNY',
+        subtitle: 'ADIVINALA EN 3 SEGUNDOS',
+        questionsLabel: (n: number) => `${n} canciones para reconocer`,
+        verticalScore: '5/5 = oido de oro',
+        startButton: '¡DALE PLAY AL RETO!',
+        stepOne: 'ESCUCHA',
+        stepTwo: 'PIENSA',
+        stepThree: 'REVEAL',
     },
     en: {
-        titleTop: 'NEW TESTAMENT',
-        titleBottom: 'BIBLE QUESTIONS',
-        subtitle: 'SCRIPTURE TRIVIA',
-        questionsLabel: (n: number) => `${n} New Testament questions`,
-        timeLabel: '+15s each',
-        verticalScore: '5/5 = Bible expert!',
-        startButton: 'LET\'S PLAY!',
-        casualRank: 'Good start',
-        fanRank: 'Strong knowledge',
-        topRank: 'Bible expert',
+        title: 'BAD BUNNY',
+        subtitle: 'GUESS IT IN 3 SECONDS',
+        questionsLabel: (n: number) => `${n} songs to recognize`,
+        verticalScore: '5/5 = golden ear',
+        startButton: 'START THE AUDIO CHALLENGE!',
+        stepOne: 'LISTEN',
+        stepTwo: 'THINK',
+        stepThree: 'REVEAL',
     },
 } as const;
 
 interface IntroProps {
     layout?: 'horizontal' | 'vertical';
     lang?: 'es' | 'en';
+    questionCount?: number;
 }
 
 
-export const Intro: React.FC<IntroProps> = ({ layout = 'horizontal', lang = 'es' }) => {
+export const Intro: React.FC<IntroProps> = ({ layout = 'horizontal', lang = 'es', questionCount = 63 }) => {
     const frame = useCurrentFrame();
-    const { durationInFrames } = useVideoConfig();
+    const { durationInFrames, width } = useVideoConfig();
     const t = TRANSLATIONS[lang];
+    const effectiveWidth = layout === 'horizontal' ? HORIZONTAL_DESIGN_WIDTH : width;
 
     const enter = (start: number, duration = 24) =>
         interpolate(frame, [start, start + duration], [0, 1], {
@@ -104,76 +121,29 @@ export const Intro: React.FC<IntroProps> = ({ layout = 'horizontal', lang = 'es'
         extrapolateRight: 'clamp',
     });
 
-    // Helper for floating shapes
-    const f = (speed: number, offset = 0) => Math.sin((frame + offset) / speed);
-    const c = (speed: number, offset = 0) => Math.cos((frame + offset) / speed);
+    const scoreItems = [
+        { emoji: '🎧', score: '3s', rank: t.stepOne, inProgress: itemAIn, transform: `translateX(${interpolate(itemAIn, [0, 1], [-100, 0])}px) translateY(${Math.sin(frame / 18) * 4}px) scale(${interpolate(itemAIn, [0, 1], [0.78, 1])}) rotate(${interpolate(itemAIn, [0, 1], [-8, 0]) + Math.sin(frame / 19) * 1.2}deg)` },
+        { emoji: '⏱️', score: '5s', rank: t.stepTwo, inProgress: itemBIn, transform: `translateY(${Math.cos(frame / 17) * 4}px) scale(${interpolate(itemBIn, [0, 1], [0.82, 1])}) rotate(${Math.sin(frame / 20) * 1.1}deg)` },
+        { emoji: '💿', score: '5s', rank: t.stepThree, inProgress: itemCIn, transform: `translateX(${interpolate(itemCIn, [0, 1], [100, 0])}px) translateY(${Math.sin(frame / 21) * 4}px) scale(${interpolate(itemCIn, [0, 1], [0.78, 1])}) rotate(${interpolate(itemCIn, [0, 1], [8, 0]) - Math.sin(frame / 22) * 1.2}deg)` },
+    ];
+
+    const panelItemWidths = scoreItems.map((item) => {
+        const rankWidth = measureTextWidth(item.rank, 19, 700);
+        const scoreWidth = measureTextWidth(item.score, 54, 900);
+        return Math.max(360, Math.ceil(rankWidth + scoreWidth + 220));
+    });
+    const panelGap = 16;
+    const dividerWidth = 2;
+    const dividerCount = scoreItems.length - 1;
+    const totalMeasuredWidth = panelItemWidths.reduce((sum, itemWidth) => sum + itemWidth, 0)
+        + (panelGap * dividerCount * 2)
+        + (dividerWidth * dividerCount);
+    const panelHorizontalPadding = 56;
+    const maxPanelContentWidth = Math.min(1340, effectiveWidth * 0.92) - panelHorizontalPadding;
+    const panelFitScale = Math.min(1, maxPanelContentWidth / totalMeasuredWidth);
 
     return (
         <AbsoluteFill style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            {/* Floating decorative shapes */}
-            <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none', zIndex: 1 }}>
-                <svg width="280" height="280" viewBox="0 0 100 100" style={{
-                    position: 'absolute', top: '5%', left: '2%',
-                    transform: `translate(${f(60) * 15}px, ${c(45) * 20}px) rotate(${frame / 5}deg)`,
-                    opacity: 0.35,
-                }}><circle cx="50" cy="50" r="42" fill="#FFE600" /></svg>
-
-                <svg width="250" height="250" viewBox="0 0 100 100" style={{
-                    position: 'absolute', top: '8%', right: '4%',
-                    transform: `translate(${c(55, 20) * 12}px, ${f(70, 15) * 18}px) rotate(${-frame / 6}deg)`,
-                    opacity: 0.30,
-                }}><rect x="18" y="18" width="64" height="64" rx="16" fill="#D1E9FF" /></svg>
-
-                <svg width="220" height="220" viewBox="0 0 100 100" style={{
-                    position: 'absolute', bottom: '8%', left: '5%',
-                    transform: `translate(${f(75, 30) * 18}px, ${c(50, 25) * 15}px) rotate(${frame / 7}deg)`,
-                    opacity: 0.32,
-                }}><polygon points="50,10 90,90 10,90" fill="#FF4D94" /></svg>
-
-                <svg width="260" height="260" viewBox="0 0 100 100" style={{
-                    position: 'absolute', bottom: '5%', right: '5%',
-                    transform: `translate(${c(65, 40) * 15}px, ${f(55, 35) * 20}px) rotate(${-frame / 4.5}deg)`,
-                    opacity: 0.34,
-                }}><circle cx="50" cy="50" r="38" fill="#407BFF" /></svg>
-
-                <svg width="180" height="180" viewBox="0 0 100 100" style={{
-                    position: 'absolute', top: '40%', left: '0%',
-                    transform: `translate(${f(50, 50) * 10}px, ${c(70, 20) * 12}px) rotate(${frame / 8}deg)`,
-                    opacity: 0.28,
-                }}><rect x="20" y="20" width="60" height="60" rx="12" fill="#FFE600" /></svg>
-
-                <svg width="160" height="160" viewBox="0 0 100 100" style={{
-                    position: 'absolute', top: '35%', right: '2%',
-                    transform: `translate(${c(80, 10) * 10}px, ${f(60, 45) * 12}px) rotate(${-frame / 6.5}deg)`,
-                    opacity: 0.30,
-                }}><polygon points="50,5 95,37 77,90 23,90 5,37" fill="#D1E9FF" /></svg>
-                
-                {/* Nuevas formas añadidas */}
-                <svg width="200" height="200" viewBox="0 0 100 100" style={{
-                    position: 'absolute', top: '65%', left: '20%',
-                    transform: `translate(${c(45, 15) * 12}px, ${f(55, 10) * 14}px) rotate(${frame / 5.5}deg)`,
-                    opacity: 0.31,
-                }}><circle cx="50" cy="50" r="40" fill="#E0F2FE" /></svg>
-                
-                <svg width="190" height="190" viewBox="0 0 100 100" style={{
-                    position: 'absolute', top: '70%', right: '25%',
-                    transform: `translate(${f(65, 20) * 15}px, ${c(50, 30) * 10}px) rotate(${-frame / 7.5}deg)`,
-                    opacity: 0.29,
-                }}><rect x="25" y="25" width="50" height="50" rx="10" fill="#FF4D94" /></svg>
-                
-                <svg width="240" height="240" viewBox="0 0 100 100" style={{
-                    position: 'absolute', top: '25%', left: '30%',
-                    transform: `translate(${c(75, 40) * 14}px, ${f(65, 25) * 18}px) rotate(${frame / 6}deg)`,
-                    opacity: 0.33,
-                }}><polygon points="50,15 85,85 15,85" fill="#407BFF" /></svg>
-                
-                <svg width="210" height="210" viewBox="0 0 100 100" style={{
-                    position: 'absolute', top: '20%', right: '35%',
-                    transform: `translate(${f(55, 30) * 16}px, ${c(45, 10) * 12}px) rotate(${-frame / 5}deg)`,
-                    opacity: 0.27,
-                }}><circle cx="50" cy="50" r="35" fill="#FFE600" /></svg>
-            </div>
-
             <div className="intro-v3-container" style={{ zIndex: 2, position: 'relative' }}>
                 <div
                     style={{
@@ -197,13 +167,13 @@ export const Intro: React.FC<IntroProps> = ({ layout = 'horizontal', lang = 'es'
                     }}
                 >
                     <div className="intro-v3-title-1" style={{ color: 'var(--kq-charcoal)', textShadow: '3px 3px 0 rgba(0,0,0,0.1)' }}>
-                        {t.titleTop}
+                        TRIVIA
                     </div>
                     <div
                         className="intro-v3-title-2"
                         style={{ display: 'inline-block', transform: `rotate(${wiggle}deg)` }}
                     >
-                        <span style={{ color: 'var(--kq-amber)', textShadow: '4px 4px 0 #000000, -4px -4px 0 #000000, 4px -4px 0 #000000, -4px 4px 0 #000000, 0px 4px 0 #000000, 0px -4px 0 #000000, 4px 0px 0 #000000, -4px 0px 0 #000000' }}>{t.titleBottom}</span>
+                        <span style={{ color: 'var(--kq-amber)', textShadow: '4px 4px 0 #000000, -4px -4px 0 #000000, 4px -4px 0 #000000, -4px 4px 0 #000000, 0px 4px 0 #000000, 0px -4px 0 #000000, 4px 0px 0 #000000, -4px 0px 0 #000000' }}>{t.title}</span>
                     </div>
                     <div
                         className="intro-v3-title-2 intro-v3-title-subtitle"
@@ -212,7 +182,7 @@ export const Intro: React.FC<IntroProps> = ({ layout = 'horizontal', lang = 'es'
                             marginTop: '0.45rem',
                             transform: `translateY(${Math.cos(frame / 18) * 4}px)`,
                             color: 'var(--kq-charcoal)',
-                            opacity: 0.72,
+                            opacity: 1,
                         }}
                     >
                         {t.subtitle}
@@ -226,12 +196,15 @@ export const Intro: React.FC<IntroProps> = ({ layout = 'horizontal', lang = 'es'
                         opacity: pillIn * (1 - pillOut),
                     }}
                 >
-                    <span className="intro-v3-pill-text">{t.questionsLabel(layout === 'vertical' ? 5 : 30)}</span>
                     <span
-                        className="intro-v3-pill-text intro-v3-time-text"
-                        style={{ fontSize: '1.8rem', textShadow: '3px 3px 0 #000000, -3px -3px 0 #000000, 3px -3px 0 #000000, -3px 3px 0 #000000, 0px 3px 0 #000000, 0px -3px 0 #000000, 3px 0px 0 #000000, -3px 0px 0 #000000', transform: `translateY(${Math.sin(frame / 16) * 2}px)` }}
+                        className="intro-v3-pill-text"
+                        style={{
+                            fontSize: layout === 'vertical' ? '2.3rem' : '2.75rem',
+                            lineHeight: 1.05,
+                            textAlign: 'center',
+                        }}
                     >
-                        {t.timeLabel}
+                        {t.questionsLabel(questionCount)}
                     </span>
                 </div>
 
@@ -260,43 +233,40 @@ export const Intro: React.FC<IntroProps> = ({ layout = 'horizontal', lang = 'es'
                         }}
                     >
                         <div
-                            className="intro-v3-panel-item"
                             style={{
-                                transform: `translateX(${interpolate(itemAIn, [0, 1], [-100, 0])}px) translateY(${Math.sin(frame / 18) * 4}px) scale(${interpolate(itemAIn, [0, 1], [0.78, 1])}) rotate(${interpolate(itemAIn, [0, 1], [-8, 0]) + Math.sin(frame / 19) * 1.2}deg)`,
-                                opacity: itemAIn,
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: `${panelGap}px`,
+                                transform: `scale(${panelFitScale})`,
+                                transformOrigin: 'center center',
                             }}
                         >
-                            <span className="intro-v3-emoji wiggle">🤔</span>
-                            <span className="intro-v3-score">+8</span>
-                            <span className="intro-v3-rank">{t.casualRank}</span>
-                        </div>
-
-                        <div className="intro-v3-divider" />
-
-                        <div
-                            className="intro-v3-panel-item"
-                            style={{
-                                transform: `translateY(${Math.cos(frame / 17) * 4}px) scale(${interpolate(itemBIn, [0, 1], [0.82, 1])}) rotate(${Math.sin(frame / 20) * 1.1}deg)`,
-                                opacity: itemBIn,
-                            }}
-                        >
-                            <span className="intro-v3-emoji wiggle">🎤</span>
-                            <span className="intro-v3-score">+18</span>
-                            <span className="intro-v3-rank">{t.fanRank}</span>
-                        </div>
-
-                        <div className="intro-v3-divider" />
-
-                        <div
-                            className="intro-v3-panel-item"
-                            style={{
-                                transform: `translateX(${interpolate(itemCIn, [0, 1], [100, 0])}px) translateY(${Math.sin(frame / 21) * 4}px) scale(${interpolate(itemCIn, [0, 1], [0.78, 1])}) rotate(${interpolate(itemCIn, [0, 1], [8, 0]) - Math.sin(frame / 22) * 1.2}deg)`,
-                                opacity: itemCIn,
-                            }}
-                        >
-                            <span className="intro-v3-emoji wiggle">✨</span>
-                            <span className="intro-v3-score">+28</span>
-                            <span className="intro-v3-rank">{t.topRank}</span>
+                            {scoreItems.map((item, index) => (
+                                <div
+                                    key={`${lang}-${item.score}-${item.rank}`}
+                                    style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        minWidth: 0,
+                                        gap: `${panelGap}px`,
+                                    }}
+                                >
+                                    <div
+                                        className="intro-v3-panel-item"
+                                        style={{
+                                            width: `${panelItemWidths[index]}px`,
+                                            transform: item.transform,
+                                            opacity: item.inProgress,
+                                        }}
+                                    >
+                                        <span className="intro-v3-emoji wiggle">{item.emoji}</span>
+                                        <span className="intro-v3-score">{item.score}</span>
+                                        <span className="intro-v3-rank">{item.rank}</span>
+                                    </div>
+                                    {index < scoreItems.length - 1 ? <div className="intro-v3-divider" /> : null}
+                                </div>
+                            ))}
                         </div>
                     </div>
                 )}

@@ -6,8 +6,11 @@ export interface PromoContent {
     badge: string;
 }
 
-export const PROMO_INSERT_AFTER_QUESTION = 15;
-export const PROMO_DURATION_SECONDS = 20;
+export const PROMO_DURATION_SECONDS = 1205 / 60;
+
+export const getPromoInsertAfterQuestion = (questionCount: number) => {
+    return Math.max(1, Math.floor(questionCount / 2));
+};
 
 export const promoContentEs: PromoContent = {
     title: 'DESCARGA PAPELCRAFT GRATIS ENTRANDO A PAPEL.COOL',

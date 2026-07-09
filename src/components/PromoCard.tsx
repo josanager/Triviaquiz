@@ -1,6 +1,6 @@
-import { AbsoluteFill, Img, interpolate, useCurrentFrame, Video } from 'remotion';
+import { AbsoluteFill, Img, interpolate, useCurrentFrame, useVideoConfig, Video } from 'remotion';
 import logoPapelcool from '../assets/logo_papelcool.svg';
-import { PromoContent, promoBackgroundVideo, promoQrImage } from '../promo';
+import { PROMO_DURATION_SECONDS, PromoContent, promoBackgroundVideo, promoQrImage } from '../promo';
 
 interface PromoCardProps {
     content: PromoContent;
@@ -9,7 +9,8 @@ interface PromoCardProps {
 
 export const PromoCard: React.FC<PromoCardProps> = ({ content, layout }) => {
     const frame = useCurrentFrame();
-    const duration = 20 * 60;
+    const {fps} = useVideoConfig();
+    const duration = Math.round(PROMO_DURATION_SECONDS * fps);
     const transitionFrames = 12;
     const titleMotionFrames = 18;
     const sceneOpacity = interpolate(frame, [0, transitionFrames, duration - transitionFrames, duration], [0, 1, 1, 0], {

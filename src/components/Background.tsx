@@ -7,63 +7,269 @@ interface BackgroundProps {
     transitionProgress?: number;
 }
 
-// Background color palettes – each theme maps to a gradient pair
-const BG_PALETTES: Record<string, { from: string; to: string; accent: string }> = {
-    'bg-sky':      { from: '#24AEEF', to: '#FFFFFF', accent: '#0A92E8' },
-    'bg-peach':    { from: '#FF4CA8', to: '#FFFFFF', accent: '#FFD21F' },
-    'bg-mint':     { from: '#37BDF7', to: '#FFFFFF', accent: '#79D64B' },
-    'bg-lavender': { from: '#7B4DFF', to: '#FFFFFF', accent: '#37BDF7' },
-    'bg-coral':    { from: '#FF4CA8', to: '#37BDF7', accent: '#FFD21F' },
-    'bg-lemon':    { from: '#FFD21F', to: '#FFFFFF', accent: '#24AEEF' },
-    'bg-rose':     { from: '#FF4CA8', to: '#7B4DFF', accent: '#FFFFFF' },
-    'bg-aqua':     { from: '#018CE2', to: '#FFFFFF', accent: '#24AEEF' },
+type Palette = {
+    base: string;
+    surface: string;
+    shadow: string;
+    glow: string;
+};
+
+const BG_PALETTES: Record<string, Palette> = {
+    'bg-sky':      { base: '#67C7FF', surface: '#91DBFF', shadow: '#2E9CDE', glow: '#C9F0FF' },
+    'bg-peach':    { base: '#FF8BC1', surface: '#FFC0DD', shadow: '#E45A99', glow: '#FFE0F0' },
+    'bg-mint':     { base: '#63DABF', surface: '#8BE9D1', shadow: '#2BAA93', glow: '#C8FFF0' },
+    'bg-lavender': { base: '#9C83FF', surface: '#C7BAFF', shadow: '#7157DC', glow: '#ECE7FF' },
+    'bg-coral':    { base: '#FF7DA0', surface: '#FFB1C3', shadow: '#E35176', glow: '#FFE1E7' },
+    'bg-lemon':    { base: '#FFD54F', surface: '#FFE48A', shadow: '#E8B929', glow: '#FFF4C5' },
+    'bg-rose':     { base: '#F58BD7', surface: '#FBC0EA', shadow: '#D864B6', glow: '#FFE2F8' },
+    'bg-aqua':     { base: '#57B6F2', surface: '#89D4FF', shadow: '#248ECF', glow: '#D6F2FF' },
 };
 
 const PALETTE_KEYS = Object.keys(BG_PALETTES);
 const DEFAULT_PALETTE = BG_PALETTES['bg-sky'];
 
 function getPalette(theme?: string) {
-    if (!theme || !BG_PALETTES[theme]) return DEFAULT_PALETTE;
+    if (!theme || !BG_PALETTES[theme]) {
+        return DEFAULT_PALETTE;
+    }
     return BG_PALETTES[theme];
 }
 
 function hexToRgb(hex: string) {
-    const r = parseInt(hex.slice(1, 3), 16);
-    const g = parseInt(hex.slice(3, 5), 16);
-    const b = parseInt(hex.slice(5, 7), 16);
+    const clean = hex.replace('#', '');
+    const r = parseInt(clean.slice(0, 2), 16);
+    const g = parseInt(clean.slice(2, 4), 16);
+    const b = parseInt(clean.slice(4, 6), 16);
     return { r, g, b };
 }
 
-function colorToRgb(color: string) {
-    if (color.startsWith('#')) {
-        return hexToRgb(color);
-    }
-
-    const match = color.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/i);
-    if (match) {
-        return {
-            r: Number.parseInt(match[1], 10),
-            g: Number.parseInt(match[2], 10),
-            b: Number.parseInt(match[3], 10),
-        };
-    }
-
-    return hexToRgb(DEFAULT_PALETTE.accent);
-}
-
 function lerpColor(a: string, b: string, t: number) {
-    const ca = colorToRgb(a);
-    const cb = colorToRgb(b);
-    const r = Math.round(ca.r + (cb.r - ca.r) * t);
-    const g = Math.round(ca.g + (cb.g - ca.g) * t);
-    const bl = Math.round(ca.b + (cb.b - ca.b) * t);
-    return `rgb(${r}, ${g}, ${bl})`;
+    const from = hexToRgb(a);
+    const to = hexToRgb(b);
+    const r = Math.round(from.r + (to.r - from.r) * t);
+    const g = Math.round(from.g + (to.g - from.g) * t);
+    const bValue = Math.round(from.b + (to.b - from.b) * t);
+    return `rgb(${r}, ${g}, ${bValue})`;
 }
 
-function withAlpha(color: string, alpha: number) {
-    const { r, g, b } = colorToRgb(color);
-    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+// 8 unique pattern styles — one per palette
+type PatternStyle =
+    | 'topography'
+    | 'papercut'
+    | 'ripples'
+    | 'burst'
+    | 'waves-vertical'
+    | 'stripes-diagonal'
+    | 'zigzag'
+    | 'dots-wave';
+
+function getPatternStyle(themeName?: string): PatternStyle {
+    if (!themeName) return 'topography';
+    if (themeName === 'bg-sky') return 'topography';
+    if (themeName === 'bg-peach') return 'papercut';
+    if (themeName === 'bg-mint') return 'ripples';
+    if (themeName === 'bg-lavender') return 'zigzag';
+    if (themeName === 'bg-coral') return 'burst';
+    if (themeName === 'bg-lemon') return 'stripes-diagonal';
+    if (themeName === 'bg-rose') return 'waves-vertical';
+    if (themeName === 'bg-aqua') return 'dots-wave';
+    return 'topography';
 }
+
+// ── STYLE 1: Topography — thick wavy horizontal bands ──
+const renderTopography = (palette: Palette, t: number) => (
+    <>
+        {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => {
+            const phase = t * 1.8 + i * 0.7;
+            const yOff = -50 + i * 280;
+            const amp = 55 + Math.sin(t * 1.2 + i) * 22;
+            const p1 = yOff + Math.sin(phase) * amp;
+            const c1 = yOff + Math.cos(phase + 1) * amp - 70;
+            const c2 = yOff + Math.sin(phase + 2) * amp + 70;
+            const p2 = yOff + Math.sin(phase + 3.5) * amp;
+            return (
+                <path key={i}
+                    d={`M -200,${p1} C 360,${c1} 720,${c2} 1280,${p2}`}
+                    fill="none" stroke={palette.surface}
+                    strokeWidth="105" strokeLinecap="round" opacity="0.95"
+                />
+            );
+        })}
+    </>
+);
+
+// ── STYLE 2: Paper-cut — horizontal wave bands, many and bold ──
+const renderPapercut = (palette: Palette, t: number) => (
+    <>
+        {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((i) => {
+            const phase = t * 2 + i * 0.65;
+            const yOff = -80 + i * 260;
+            const amp = 70 + Math.sin(t * 1.5 + i * 0.8) * 30;
+            const p1 = yOff + Math.sin(phase) * amp;
+            const c1 = yOff + Math.cos(phase + 0.8) * amp - 80;
+            const c2 = yOff + Math.sin(phase + 1.6) * amp + 80;
+            const p2 = yOff + Math.cos(phase + 2.4) * amp;
+            return (
+                <path key={i}
+                    d={`M -200,${p1} C 360,${c1} 720,${c2} 1280,${p2}`}
+                    fill="none" stroke={palette.surface}
+                    strokeWidth="115" strokeLinecap="round" opacity="0.95"
+                />
+            );
+        })}
+    </>
+);
+
+// ── STYLE 3: Ripples — expanding concentric rings from center ──
+const renderRipples = (palette: Palette, t: number) => (
+    <>
+        {[0, 1, 2, 3, 4, 5, 6].map((i) => {
+            const progress = ((t * 0.3 + i / 7) % 1);
+            const r = progress * 1400;
+            const opacity = Math.sin(progress * Math.PI) * 0.92;
+            return (
+                <circle key={i} cx="540" cy="960" r={r}
+                    fill="none" stroke={palette.surface}
+                    strokeWidth="100" opacity={opacity}
+                />
+            );
+        })}
+    </>
+);
+
+// ── STYLE 4: Burst — alternating ray sectors, slow rotation ──
+const renderBurst = (palette: Palette, t: number) => {
+    const rayCount = 16;
+    const step = 360 / rayCount;
+    const rot = t * 10;
+    return (
+        <g transform={`rotate(${rot} 540 960)`}>
+            {Array.from({ length: rayCount }).map((_, i) => {
+                if (i % 2 === 0) return null;
+                const a1 = i * step;
+                const a2 = a1 + step;
+                const r1 = (a1 * Math.PI) / 180;
+                const r2 = (a2 * Math.PI) / 180;
+                const R = 2500;
+                const x1 = 540 + Math.cos(r1) * R;
+                const y1 = 960 + Math.sin(r1) * R;
+                const x2 = 540 + Math.cos(r2) * R;
+                const y2 = 960 + Math.sin(r2) * R;
+                return (
+                    <polygon key={i}
+                        points={`540,960 ${x1},${y1} ${x2},${y2}`}
+                        fill={palette.surface} opacity="0.95"
+                    />
+                );
+            })}
+        </g>
+    );
+};
+
+// ── STYLE 5: Vertical waves — serpentine vertical lines ──
+const renderWavesVertical = (palette: Palette, t: number) => (
+    <>
+        {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => {
+            const phase = t * 1.6 + i * 0.8;
+            const xOff = -50 + i * 170;
+            const amp = 50 + Math.sin(t + i) * 18;
+            const p1 = xOff + Math.sin(phase) * amp;
+            const c1 = xOff + Math.cos(phase + 1) * amp - 60;
+            const c2 = xOff + Math.sin(phase + 2) * amp + 60;
+            const p2 = xOff + Math.cos(phase + 3) * amp;
+            return (
+                <path key={i}
+                    d={`M ${p1},-200 C ${c1},640 ${c2},1280 ${p2},2120`}
+                    fill="none" stroke={palette.surface}
+                    strokeWidth="105" strokeLinecap="round" opacity="0.95"
+                />
+            );
+        })}
+    </>
+);
+
+// ── STYLE 6: Diagonal stripes — clean parallel lines, constant motion ──
+const renderStripesDiagonal = (palette: Palette, t: number) => {
+    const spacing = 300;
+    const move = (t * 40) % spacing;
+    const count = 14;
+    const startOffset = -2000;
+    return (
+        <>
+            {Array.from({ length: count }).map((_, i) => {
+                const offset = startOffset + i * spacing + move;
+                return (
+                    <line key={i}
+                        x1={offset} y1="-400"
+                        x2={offset + 2400} y2="2400"
+                        stroke={palette.surface} strokeWidth="120"
+                        strokeLinecap="round" opacity="0.95"
+                    />
+                );
+            })}
+        </>
+    );
+};
+
+// ── STYLE 7: Zigzag — continuous zigzag bands across the screen ──
+const renderZigzag = (palette: Palette, t: number) => (
+    <>
+        {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => {
+            const yOff = -50 + i * 280;
+            const shift = Math.sin(t * 1.5 + i) * 40;
+            const points: string[] = [];
+            for (let x = -200; x <= 1280; x += 140) {
+                const peak = (Math.floor((x + 200) / 140) % 2 === 0) ? -80 : 80;
+                points.push(`${x + shift},${yOff + peak}`);
+            }
+            return (
+                <polyline key={i}
+                    points={points.join(' ')}
+                    fill="none" stroke={palette.surface}
+                    strokeWidth="105" strokeLinejoin="round" strokeLinecap="round"
+                    opacity="0.95"
+                />
+            );
+        })}
+    </>
+);
+
+// ── STYLE 8: Dot waves — rows of large circles that undulate ──
+const renderDotsWave = (palette: Palette, t: number) => {
+    const dots: React.ReactNode[] = [];
+    const cols = 6;
+    const rows = 10;
+    const spacingX = 1280 / (cols - 1);
+    const spacingY = 2120 / (rows - 1);
+    for (let row = 0; row < rows; row++) {
+        for (let col = 0; col < cols; col++) {
+            const cx = -100 + col * spacingX;
+            const cy = -100 + row * spacingY;
+            const wave = Math.sin(t * 1.5 + col * 0.5 + row * 0.3) * 35;
+            dots.push(
+                <circle key={`${row}-${col}`}
+                    cx={cx + wave} cy={cy + wave}
+                    r="80" fill={palette.surface} opacity="0.85"
+                />
+            );
+        }
+    }
+    return <>{dots}</>;
+};
+
+// ── Render dispatcher ──
+const renderPattern = (style: PatternStyle, palette: Palette, t: number) => {
+    switch (style) {
+        case 'topography': return renderTopography(palette, t);
+        case 'papercut': return renderPapercut(palette, t);
+        case 'ripples': return renderRipples(palette, t);
+        case 'burst': return renderBurst(palette, t);
+        case 'waves-vertical': return renderWavesVertical(palette, t);
+        case 'stripes-diagonal': return renderStripesDiagonal(palette, t);
+        case 'zigzag': return renderZigzag(palette, t);
+        case 'dots-wave': return renderDotsWave(palette, t);
+    }
+};
 
 export const Background: React.FC<BackgroundProps> = ({
     children,
@@ -73,148 +279,41 @@ export const Background: React.FC<BackgroundProps> = ({
 }) => {
     const frame = useCurrentFrame();
 
-    const palette = getPalette(theme);
+    const activePalette = getPalette(theme);
+    const activeStyle = getPatternStyle(theme);
+
     const prevPalette = prevTheme ? getPalette(prevTheme) : null;
-    let bgFrom = palette.from;
-    let bgTo = palette.to;
+    const prevStyle = prevTheme ? getPatternStyle(prevTheme) : null;
 
-    if (prevPalette && transitionProgress < 1) {
-        bgFrom = lerpColor(prevPalette.from, palette.from, transitionProgress);
-        bgTo = lerpColor(prevPalette.to, palette.to, transitionProgress);
-    }
+    const baseColor = prevPalette && transitionProgress < 1
+        ? lerpColor(prevPalette.base, activePalette.base, transitionProgress)
+        : activePalette.base;
 
-    const f = (speed: number, offset = 0) => Math.sin((frame + offset) / speed);
-    const c = (speed: number, offset = 0) => Math.cos((frame + offset) / speed);
-    const isTransitioning = Boolean(prevPalette && transitionProgress < 1);
-
-    const renderShapes = (accentColor: string, layerOpacity: number) => (
-        <div
-            style={{
-                position: 'absolute',
-                inset: 0,
-                overflow: 'hidden',
-                pointerEvents: 'none',
-                opacity: layerOpacity,
-            }}
-        >
-            <div style={{
-                position: 'absolute', top: '5%', left: '5%',
-                width: 380, height: 380, borderRadius: '50%',
-                background: withAlpha(accentColor, 0.16),
-                transform: `translate(${f(80) * 15}px, ${f(60) * 20}px)`,
-            }} />
-            <div style={{
-                position: 'absolute', bottom: '8%', right: '5%',
-                width: 450, height: 450, borderRadius: '50%',
-                background: withAlpha(accentColor, 0.13),
-                transform: `translate(${c(70) * 12}px, ${c(50) * 18}px)`,
-            }} />
-            <div style={{
-                position: 'absolute', top: '45%', left: '55%',
-                width: 300, height: 300, borderRadius: '50%',
-                background: withAlpha(accentColor, 0.11),
-                transform: `translate(${f(90, 20) * 18}px, ${c(65, 10) * 22}px)`,
-            }} />
-            <div style={{
-                position: 'absolute', top: '15%', right: '25%',
-                width: 220, height: 220, borderRadius: '50%',
-                background: withAlpha(accentColor, 0.125),
-                transform: `translate(${c(55, 30) * 14}px, ${f(75, 15) * 16}px)`,
-            }} />
-            <div style={{
-                position: 'absolute', bottom: '25%', left: '30%',
-                width: 260, height: 260, borderRadius: '50%',
-                background: withAlpha(accentColor, 0.10),
-                transform: `translate(${f(85, 50) * 20}px, ${c(60, 40) * 15}px)`,
-            }} />
-
-            <svg width="220" height="220" viewBox="0 0 100 100" style={{
-                position: 'absolute', top: '12%', right: '12%',
-                transform: `translate(${f(80) * 10}px, ${c(55) * 14}px) rotate(${frame / 4}deg)`,
-                opacity: 0.14,
-            }}>
-                <circle cx="50" cy="50" r="45" fill={accentColor} />
-            </svg>
-
-            <svg width="180" height="180" viewBox="0 0 100 100" style={{
-                position: 'absolute', bottom: '18%', left: '15%',
-                transform: `translate(${c(70, 10) * 12}px, ${f(50, 20) * 16}px) rotate(${-frame / 5}deg)`,
-                opacity: 0.12,
-            }}>
-                <rect x="15" y="15" width="70" height="70" rx="18" fill={accentColor} />
-            </svg>
-
-            <svg width="160" height="160" viewBox="0 0 100 100" style={{
-                position: 'absolute', top: '55%', right: '20%',
-                transform: `translate(${f(65, 30) * 14}px, ${c(80, 10) * 18}px) rotate(${frame / 6}deg)`,
-                opacity: 0.12,
-            }}>
-                <polygon points="50,10 90,90 10,90" fill={accentColor} />
-            </svg>
-
-            <svg width="140" height="140" viewBox="0 0 100 100" style={{
-                position: 'absolute', top: '8%', left: '40%',
-                transform: `translate(${c(75, 40) * 10}px, ${f(55, 25) * 12}px) rotate(${-frame / 7}deg)`,
-                opacity: 0.10,
-            }}>
-                <circle cx="50" cy="50" r="40" fill={accentColor} />
-            </svg>
-
-            <svg width="200" height="200" viewBox="0 0 100 100" style={{
-                position: 'absolute', bottom: '5%', right: '35%',
-                transform: `translate(${f(90, 15) * 16}px, ${c(60, 35) * 14}px) rotate(${frame / 8}deg)`,
-                opacity: 0.11,
-            }}>
-                <rect x="20" y="20" width="60" height="60" rx="14" fill={accentColor} />
-            </svg>
-
-            <svg width="120" height="120" viewBox="0 0 100 100" style={{
-                position: 'absolute', top: '70%', left: '8%',
-                transform: `translate(${c(60, 50) * 8}px, ${f(45, 30) * 10}px) rotate(${-frame / 4.5}deg)`,
-                opacity: 0.13,
-            }}>
-                <polygon points="50,5 95,37 77,90 23,90 5,37" fill={accentColor} />
-            </svg>
-
-            <svg width="100" height="100" viewBox="0 0 100 100" style={{
-                position: 'absolute', top: '30%', left: '85%',
-                transform: `translate(${f(50, 60) * 6}px, ${c(70, 45) * 8}px) rotate(${frame / 5.5}deg)`,
-                opacity: 0.10,
-            }}>
-                <circle cx="50" cy="50" r="35" fill={accentColor} />
-            </svg>
-
-            {[
-                { x: '92%', y: '18%', size: 16, sp: 30, off: 0 },
-                { x: '4%', y: '42%', size: 12, sp: 25, off: 10 },
-                { x: '76%', y: '78%', size: 14, sp: 35, off: 20 },
-                { x: '38%', y: '12%', size: 10, sp: 28, off: 30 },
-                { x: '62%', y: '90%', size: 12, sp: 32, off: 40 },
-                { x: '18%', y: '68%', size: 11, sp: 22, off: 50 },
-                { x: '85%', y: '45%', size: 13, sp: 27, off: 60 },
-                { x: '50%', y: '5%',  size: 9,  sp: 33, off: 70 },
-                { x: '28%', y: '88%', size: 10, sp: 26, off: 80 },
-                { x: '72%', y: '30%', size: 11, sp: 29, off: 90 },
-            ].map((dot, i) => (
-                <div key={i} style={{
-                    position: 'absolute', left: dot.x, top: dot.y,
-                    width: dot.size, height: dot.size, borderRadius: '50%',
-                    background: accentColor,
-                    opacity: 0.25,
-                    transform: `translateY(${f(dot.sp, dot.off) * 10}px)`,
-                }} />
-            ))}
-        </div>
-    );
+    // Continuous time value — slow enough to feel relaxing
+    const t = frame * 0.008;
 
     return (
-        <AbsoluteFill style={{
-            background: `linear-gradient(150deg, ${bgFrom} 0%, ${bgTo} 40%, ${bgFrom} 100%)`,
-        }}>
-            {isTransitioning && prevPalette ? renderShapes(prevPalette.accent, 1 - transitionProgress) : null}
-            {renderShapes(palette.accent, isTransitioning ? transitionProgress : 1)}
+        <AbsoluteFill style={{ backgroundColor: baseColor }}>
+            <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none' }}>
+                {/* Prev theme pattern during cross-fade */}
+                {prevPalette && prevStyle && transitionProgress < 1 && (
+                    <svg width="100%" height="100%" viewBox="0 0 1080 1920"
+                        preserveAspectRatio="none"
+                        style={{ position: 'absolute', inset: 0, opacity: 1 - transitionProgress }}
+                    >
+                        {renderPattern(prevStyle, prevPalette, t)}
+                    </svg>
+                )}
 
-            {/* Content container */}
+                {/* Active theme pattern */}
+                <svg width="100%" height="100%" viewBox="0 0 1080 1920"
+                    preserveAspectRatio="none"
+                    style={{ position: 'absolute', inset: 0, opacity: prevPalette ? transitionProgress : 1 }}
+                >
+                    {renderPattern(activeStyle, activePalette, t)}
+                </svg>
+            </div>
+
             <div style={{ position: 'relative', width: '100%', height: '100%', zIndex: 10 }}>
                 {children}
             </div>
@@ -222,5 +321,4 @@ export const Background: React.FC<BackgroundProps> = ({
     );
 };
 
-// Export palette keys for use in TriviaVideoBase
 export { PALETTE_KEYS };

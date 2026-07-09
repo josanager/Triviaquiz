@@ -12,7 +12,7 @@ El script:
     - lee GOOGLE_API_KEY y GEMINI_TTS_MODEL desde .env
     - usa solo Gemini 3.1 Flash TTS Preview
     - aplica prompting avanzado + audio tags
-    - genera solo intro/outro en ES y EN
+    - genera intro/outro en ES y EN
     - sube el volumen final un 10%
     - si hay cuota agotada, conserva el audio existente en lugar de usar otro modelo
     - guarda WAV temporal y exporta MP3 final en public/
@@ -134,7 +134,11 @@ def _synthesize_with_model(
             message = str(exc)
             is_quota = "RESOURCE_EXHAUSTED" in message
             is_internal = "500" in message or "INTERNAL" in message
-            if (not is_quota and not is_internal) or attempt == 4:
+            is_connection_reset = (
+                "Server disconnected without sending a response" in message
+                or "RemoteProtocolError" in message
+            )
+            if (not is_quota and not is_internal and not is_connection_reset) or attempt == 4:
                 raise
 
             retry_match = re.search(r"retry in ([0-9.]+)s", message, re.IGNORECASE)
@@ -144,6 +148,8 @@ def _synthesize_with_model(
                 wait_seconds = float(retry_match.group(1)) + 2
             elif detail_match:
                 wait_seconds = float(detail_match.group(1)) + 2
+            elif is_connection_reset:
+                wait_seconds = 10.0 * attempt
 
             print(
                 f"Error transitorio al generar {output_mp3.name}. Reintentando en {wait_seconds:.1f}s...",
@@ -170,66 +176,68 @@ def synthesize_prompt_to_mp3(prompt: str, output_mp3: Path, *, voice_name: str =
 def build_spanish_intro_prompt() -> str:
     return """
 # AUDIO PROFILE: Leda
-## "Nuevo Testamento Trivia Host"
-## THE SCENE: Bright recording booth for a premium Bible trivia challenge about the New Testament
-The host is recording the opening for a fast, exciting New Testament trivia challenge.
-The energy is polished, vibrant, bold, uplifting, and expressive, like a charismatic presenter
-launching a high-energy Bible challenge for viewers who want to prove what they know.
+## "Bad Bunny Audio Challenge Host"
+## THE SCENE: Bright recording booth for a premium audio challenge about Bad Bunny songs
+The host is recording the opening for a fast, exciting song-recognition challenge built around
+a large Bad Bunny song list.
+The energy is polished, vibrant, explosive, and expressive, like a charismatic presenter
+launching a fun, high-energy game for real pop fans.
 
 ### DIRECTOR'S NOTES
-Style: magnetic host, big vocal smile, energetic, expressive, premium, and full of momentum.
-Pacing: dynamic. Hit the welcome line hard, explain the rules fast and clearly, then launch the challenge with a victorious finish.
+Style: magnetic host, big vocal smile, playful swagger, sharp attitude, emotional warmth, and premium presence.
+Pacing: dynamic. Start with an inviting hit, rise harder in the middle, and finish with a strong launch.
 Do not keep the same cadence across all 3 lines.
 Delivery notes:
-- Line 1 should sound like an exciting welcome with instant impact.
-- Line 2 should explain the rule quickly and still feel lively.
-- Line 3 should sound punchy, triumphant, and like the challenge is officially starting.
-Emphasis words: Nuevo Testamento, quince segundos, pregunta, reto, Biblia.
-Avoid: flat reading, sleepy delivery, teacher voice, calm narration, or repeating the same melody in each line.
-Use short pauses for impact, especially after Nuevo Testamento and before the final launch line.
-Tone: exciting, natural, inviting, social-media-ready, with premium game-show energy.
+- Line 1 should sound like an exciting welcome with instant attitude.
+- Line 2 should explain the rules quickly and sound lively.
+- Line 3 should sound triumphant, punchy, and like the challenge is officially starting.
+Emphasis words: Bad Bunny, tres segundos, cinco segundos, cancion, reto.
+Avoid: flat reading, teacher voice, sleepy delivery, calm narration, or repeating the same melody in each sentence.
+Use small pauses for impact, especially after tres segundos and before the final call to play.
+Tone: exciting, natural, inviting, social-media-ready, with bold game-show energy.
 Language: neutral Latin American Spanish.
 Emotion tags: use at most 3 emotional shifts total. Favor energetic emphasis such as
-[hyped], [charged], [victorious].
-Timing: keep the final spoken audio under 20 seconds. Aim for 13 to 17 seconds total.
+[playful], [charged], [victorious].
+Timing: keep the final spoken audio under 20 seconds. Aim for 14 to 17 seconds total.
 
 #### TRANSCRIPT
-[hyped] ¡Ey! Ya llegó la trivia del Nuevo Testamento.
-[charged] Tienes quince segundos por pregunta para pensar rápido y elegir la respuesta correcta.
-[victorious] Quédate hasta el final y demuestra si de verdad tienes nivel experto en la Biblia.
+[playful] ¡Ey! Llegó el reto de Bad Bunny... escucha la cancion y adivina en tres segundos.
+[charged] Primero suena el fragmento, luego tienes cinco segundos para pensar, y al final ves la respuesta con cinco segundos mas de la cancion.
+[victorious] Quédate hasta el final y demuestra cuantas reconoces de verdad.
 """.strip()
 
 
 def build_english_intro_prompt() -> str:
     return """
 # AUDIO PROFILE: Leda
-## "New Testament Trivia Host"
-## THE SCENE: Bright recording booth for a premium Bible trivia challenge about the New Testament
-The host is recording the opening for a fast, exciting New Testament trivia challenge.
-The energy is polished, vibrant, bold, uplifting, and expressive, like a charismatic presenter
-launching a high-energy Bible challenge for viewers ready to prove what they know.
+## "Bad Bunny Audio Challenge Host"
+## THE SCENE: Bright recording booth for a premium audio challenge about Bad Bunny songs
+The host is recording the opening for a fast, exciting song-recognition challenge built around
+a large Bad Bunny song list.
+The energy is polished, vibrant, explosive, and expressive, like a charismatic presenter
+launching a fun, high-energy game for real pop fans.
 
 ### DIRECTOR'S NOTES
-Style: magnetic host, big vocal smile, energetic, expressive, premium, and full of momentum.
-Pacing: dynamic. Open with a sharp hook, explain the rule quickly, and land with a victorious launch.
+Style: magnetic host, big vocal smile, playful swagger, sharp attitude, emotional warmth, and premium presence.
+Pacing: dynamic. Open with a hook, push harder in the middle, and land with a bold launch.
 Do not keep the same melody or sentence shape on every line.
 Delivery notes:
-- Line 1 should feel like a strong welcome with instant energy.
-- Line 2 should explain the rule quickly and still sound lively.
+- Line 1 should feel like a fast, stylish welcome.
+- Line 2 should explain the rules quickly and still feel lively.
 - Line 3 should sound victorious and make the challenge feel live.
-Emphasis words: New Testament, fifteen seconds, question, challenge, Bible.
+Emphasis words: Bad Bunny, three seconds, five seconds, song, challenge.
 Avoid: flat reading, polished-but-boring delivery, sleepy narration, or the same tone repeated 3 times.
-Use short pauses for impact, especially after New Testament and before the final launch line.
-Tone: exciting, natural, inviting, social-media-ready, with premium game-show energy.
+Use short pauses for impact, especially after three seconds and before the final launch line.
+Tone: exciting, natural, inviting, social-media-ready, with bold game-show energy.
 Language: neutral international English.
 Emotion tags: use at most 3 emotional shifts total. Favor energetic emphasis such as
-[hyped], [charged], [victorious].
-Timing: keep the final spoken audio under 20 seconds. Aim for 13 to 17 seconds total.
+[playful], [charged], [victorious].
+Timing: keep the final spoken audio under 20 seconds. Aim for 14 to 17 seconds total.
 
 #### TRANSCRIPT
-[hyped] Hey! The New Testament trivia challenge is here.
-[charged] You get fifteen seconds for each question, so think fast and pick the right answer.
-[victorious] Stay to the end and prove you really have expert-level Bible knowledge.
+[playful] Hey! The Bad Bunny challenge is here... hear the song and guess it in three seconds.
+[charged] First you hear the clip, then you get five seconds to think, and after that the answer shows up with five more seconds of the song.
+[victorious] Stay to the end and prove how many you can really recognize.
 """.strip()
 
 
@@ -283,91 +291,45 @@ Timing: keep the final spoken audio under 20 seconds.
 """.strip()
 
 
-def build_spanish_bonus_reveal_prompt() -> str:
-    return """
-# AUDIO PROFILE: Nari
-## "Digital Circus Trivia Host"
-## THE SCENE: Surprise twist right after question thirty
-The host is delivering a very short, energetic surprise line right after question thirty.
-The performance should feel explosive, playful, and punchy, like a fast game show fake-out.
-
-### DIRECTOR'S NOTES
-Style: mischievous host, huge vocal smile, energetic, dramatic, premium.
-Pacing: very fast, punchy, and crystal clear.
-Tone: teasing, triumphant, playful, and high-energy.
-Language: neutral Latin American Spanish.
-Emotion tags: use at most 3 emotional shifts total. Favor tags such as
-[playful], [charged], [victorious].
-Timing: keep the final spoken audio under 5 seconds.
-
-#### TRANSCRIPT
-[playful] Y por quedarte hasta el final,
-[victorious] pregunta extra.
-""".strip()
-
-
-def build_english_bonus_reveal_prompt() -> str:
-    return """
-# AUDIO PROFILE: Nari
-## "Digital Circus Trivia Host"
-## THE SCENE: Surprise twist right after question thirty
-The host is delivering a very short, energetic surprise line right after question thirty.
-The performance should feel explosive, playful, and punchy, like a fast game show fake-out.
-
-### DIRECTOR'S NOTES
-Style: mischievous host, huge vocal smile, energetic, dramatic, premium.
-Pacing: very fast, punchy, and crystal clear.
-Tone: teasing, triumphant, playful, and high-energy.
-Language: neutral international English.
-Emotion tags: use at most 3 emotional shifts total. Favor tags such as
-[playful], [charged], [victorious].
-Timing: keep the final spoken audio under 5 seconds.
-
-#### TRANSCRIPT
-[playful] And for staying till the end,
-[victorious] bonus question.
-""".strip()
-
-
 def build_spanish_outro_prompt() -> str:
     return """
 # AUDIO PROFILE: Leda
-## "Nuevo Testamento Trivia Host"
-## THE SCENE: Closing lines after an exciting Bible challenge about the New Testament
-The host is wrapping up a premium New Testament trivia video. The delivery should sound warm,
-grateful, energized, and proud of the audience for finishing the challenge.
+## "Bad Bunny Audio Challenge Host"
+## THE SCENE: Closing lines after an exciting audio challenge about Bad Bunny songs
+The host is wrapping up a premium Bad Bunny audio challenge video. The delivery sounds warm,
+grateful, highly energized, and proud of the audience for finishing the challenge.
 
 ### DIRECTOR'S NOTES
-Style: confident host, warm presenter, expressive, proud, and slightly playful on the close.
-Pacing: shaped ending. Start strong, soften the middle line a little, then rise again on the sign-off.
-Do not read all 3 lines with the same intensity.
+Style: confident host, warm presenter, expressive, proud, and slightly playful at the end.
+Pacing: shaped ending. Start big, soften briefly in the middle, then rise again on the sign-off.
+Do not read every line with the same intensity.
 Delivery notes:
-- Line 1 should sound celebratory and impressed.
-- Line 2 should feel direct and conversational.
-- Line 3 should lift again and close with bright creator energy.
-Emphasis words: Nuevo Testamento, comentarios, suscríbete, Biblia, reto.
+- Line 1 should sound impressed and celebratory.
+- Line 2 should sound direct and conversational, like talking to the viewer.
+- Line 3 should lift again and close with a bright creator-style sendoff.
+Emphasis words: increible, score, suscribete, Bad Bunny, reto.
 Avoid: sleepy gratitude, flat politeness, or a generic corporate outro.
-Use one or two intentional pauses to give the outro emotional shape.
+Use one or two intentional pauses to create contrast and emotional shape.
 Tone: celebratory, thankful, warm, and high-energy without sounding robotic.
 Language: neutral Latin American Spanish.
 Emotion tags: use at most 3 emotional shifts total. Favor tags such as
 [triumphant], [warm], [grateful].
-Timing: keep the final spoken audio under 20 seconds. Aim for 11 to 15 seconds total.
+Timing: keep the final spoken audio under 20 seconds. Aim for 12 to 15 seconds total.
 
 #### TRANSCRIPT
-[triumphant] ¡Increíble! Ya terminaste este reto del Nuevo Testamento.
-[warm] Cuéntame en los comentarios cuántas respuestas acertaste.
-[grateful] Suscríbete a Papel Cool y nos vemos en la próxima trivia bíblica.
+[triumphant] ¡Increible! Ya terminaste este reto de canciones de Bad Bunny.
+[warm] Cuéntame en los comentarios cuantas acertaste y cual reconociste mas rapido.
+[grateful] Suscribete, deja tu score y nos vemos en el proximo challenge.
 """.strip()
 
 
 def build_english_outro_prompt() -> str:
     return """
 # AUDIO PROFILE: Leda
-## "New Testament Trivia Host"
-## THE SCENE: Closing lines after an exciting Bible challenge about the New Testament
-The host is wrapping up a premium New Testament trivia video. The delivery should sound warm,
-grateful, energized, and proud of the audience for finishing the challenge.
+## "Bad Bunny Audio Challenge Host"
+## THE SCENE: Closing lines after an exciting audio challenge about Bad Bunny songs
+The host is wrapping up a premium Bad Bunny audio challenge video. The delivery sounds warm,
+grateful, highly energized, and proud of the audience for finishing the challenge.
 
 ### DIRECTOR'S NOTES
 Style: confident host, warm presenter, expressive, proud, and slightly playful on the close.
@@ -377,19 +339,19 @@ Delivery notes:
 - Line 1 should sound celebratory and impressed.
 - Line 2 should feel direct and conversational.
 - Line 3 should lift again and end with a bright creator-style finish.
-Emphasis words: New Testament, comments, subscribe, Bible, challenge.
+Emphasis words: incredible, score, subscribe, Bad Bunny, challenge.
 Avoid: monotone gratitude, calm narration, or repeating the same upbeat rhythm every time.
 Use brief pauses to create contrast and make the outro feel alive.
 Tone: celebratory, thankful, warm, and high-energy without sounding stiff.
 Language: neutral international English.
 Emotion tags: use at most 3 emotional shifts total. Favor tags such as
 [triumphant], [warm], [grateful].
-Timing: keep the final spoken audio under 20 seconds. Aim for 11 to 15 seconds total.
+Timing: keep the final spoken audio under 20 seconds. Aim for 12 to 15 seconds total.
 
 #### TRANSCRIPT
-[triumphant] Incredible! You just finished this New Testament challenge.
-[warm] Tell me in the comments how many answers you got right.
-[grateful] Subscribe to Papel Cool, and I will see you in the next Bible trivia challenge.
+[triumphant] Incredible! You just finished this Bad Bunny audio challenge.
+[warm] Tell me in the comments how many you got right and which one you recognized the fastest.
+[grateful] Subscribe, drop your score, and I will see you in the next challenge!
 """.strip()
 
 

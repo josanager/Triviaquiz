@@ -6,8 +6,8 @@ import { Outro } from './components/Outro';
 import { promoContentEn } from './promo';
 
 // English Intro/Outro wrappers (pass lang='en' to the shared components)
-const IntroEn: React.FC<{ layout?: 'horizontal' | 'vertical' }> = ({ layout }) => (
-    <Intro layout={layout} lang="en" />
+const IntroEn: React.FC<{ layout?: 'horizontal' | 'vertical'; questionCount?: number }> = ({ layout, questionCount }) => (
+    <Intro layout={layout} lang="en" questionCount={questionCount} />
 );
 const BonusRevealEn: React.FC = () => <BonusReveal lang="en" />;
 const OutroEn: React.FC = () => <Outro lang="en" />;

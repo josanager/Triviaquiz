@@ -1,70 +1,56 @@
-import { AbsoluteFill, useCurrentFrame, interpolate, spring, useVideoConfig, Img, Easing } from 'remotion';
+import { AbsoluteFill, Easing, Img, interpolate, spring, staticFile, useCurrentFrame, useVideoConfig } from 'remotion';
 import { Question } from '../questions';
-import logoPapelcool from '../assets/logo_papelcool.svg';
+
+import { SECONDS_PER_QUESTION } from '../constants';
 
 interface QuestionCardProps {
     question: Question;
     questionNumber: number | string;
     layout: 'horizontal' | 'vertical';
+    lang?: 'es' | 'en';
 }
 
-const OPTION_COLOR_COUNT = 6;
+const AUDIO_RING_PALETTES = [
+    {primary: '#ff4fa3', secondary: '#ffcf2f'},
+    {primary: '#34d399', secondary: '#60a5fa'},
+    {primary: '#fb7185', secondary: '#f59e0b'},
+    {primary: '#a78bfa', secondary: '#22d3ee'},
+    {primary: '#f97316', secondary: '#facc15'},
+    {primary: '#2dd4bf', secondary: '#f472b6'},
+];
 
-export const QuestionCard: React.FC<QuestionCardProps> = ({ question, questionNumber, layout }) => {
+const truncateRevealTitle = (title: string, maxChars: number) => {
+    if (title.length <= maxChars) {
+        return title;
+    }
+
+    const shortened = title.slice(0, maxChars).trimEnd();
+    const lastSpace = shortened.lastIndexOf(' ');
+
+    if (lastSpace > Math.floor(maxChars * 0.55)) {
+        return `${shortened.slice(0, lastSpace)}...`;
+    }
+
+    return `${shortened}...`;
+};
+
+export const QuestionCard: React.FC<QuestionCardProps> = ({ question, questionNumber, layout, lang = 'es' }) => {
     const frame = useCurrentFrame();
     const { fps } = useVideoConfig();
-    const numericQuestionNumber =
-        typeof questionNumber === 'number' ? questionNumber : Number.parseInt(String(questionNumber), 10);
-    const colorRotationBase = Number.isNaN(numericQuestionNumber)
-        ? 0
-        : Math.max(numericQuestionNumber - 1, 0) % OPTION_COLOR_COUNT;
+    const numericQuestionNumber = typeof questionNumber === 'number'
+        ? questionNumber
+        : Number.parseInt(String(questionNumber), 10) || 1;
+    const ringPalette = AUDIO_RING_PALETTES[(numericQuestionNumber - 1) % AUDIO_RING_PALETTES.length];
 
-    // ── Timings ──────────────────────────────────────────────────────────────
-    const duration = 15 * fps;
-    const hasAnswerReveal = question.correct >= 0 && question.correct < question.options.length;
-    const REVEAL_FRAME = 10 * fps;   // Answer revealed at 10 seconds
-    const TIMER_END_FRAME = hasAnswerReveal ? REVEAL_FRAME : duration - 18;
-    const URGENCY_START = TIMER_END_FRAME - fps * 2; // Last 2 seconds: urgency mode
-    const exitFrame = duration - 24; // Start exit shortly before end
+    const duration = SECONDS_PER_QUESTION * fps;
+    const LISTEN_END_FRAME = 3 * fps;
+    const THINK_END_FRAME = 8 * fps;
+    const REVEAL_START_FRAME = THINK_END_FRAME;
+    const EXIT_START_FRAME = duration - 24;
 
-    const isRevealed = hasAnswerReveal && frame >= REVEAL_FRAME;
-
-    // ── Timer progress (1 = full, 0 = empty) ─────────────────────────────────
-    const progress = interpolate(frame, [8, TIMER_END_FRAME], [1, 0], {
-        extrapolateLeft: 'clamp',
-        extrapolateRight: 'clamp',
-    });
-
-    // Timer color: saturated green -> yellow -> red as the countdown runs out
-    const timerR = Math.round(interpolate(frame, [30, TIMER_END_FRAME - fps * 3, TIMER_END_FRAME], [0, 255, 255], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }));
-    const timerG = Math.round(interpolate(frame, [30, TIMER_END_FRAME - fps * 3, TIMER_END_FRAME], [200, 230, 59], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }));
-    const timerB = Math.round(interpolate(frame, [30, TIMER_END_FRAME - fps * 3, TIMER_END_FRAME], [83, 0, 48], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }));
-    const timerLiveColor = `rgb(${timerR}, ${timerG}, ${timerB})`;
-    const timerColor = isRevealed ? '#FF3B30' : timerLiveColor;
-
-    // Urgency pulse: subtle scale oscillation in the last 2 seconds
-    const urgencyIntensity = (!isRevealed && frame > URGENCY_START)
-        ? interpolate(frame, [URGENCY_START, TIMER_END_FRAME], [0, 0.05], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
-        : 0;
-    const urgencyPulse = 1 + Math.sin(frame / 3) * urgencyIntensity;
-
-    // Timer glow: intensifies as time runs out
-    const timerGlow = (!isRevealed && frame > URGENCY_START)
-        ? interpolate(frame, [URGENCY_START, TIMER_END_FRAME], [4, 24], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
-        : 0;
-
-    const timerEnter = interpolate(frame, [0, 18], [0, 1], {
-        easing: Easing.bezier(0.18, 1, 0.3, 1),
-        extrapolateLeft: 'clamp',
-        extrapolateRight: 'clamp',
-    });
-    const timerExit = interpolate(frame, [duration - 18, duration], [0, 1], {
-        easing: Easing.bezier(0.7, 0, 0.84, 0),
-        extrapolateLeft: 'clamp',
-        extrapolateRight: 'clamp',
-    });
-    const timerWidth = `${Math.max(progress, 0.015) * 100}%`;
-    const timerOpacity = timerEnter * (1 - timerExit);
+    const isListening = frame < LISTEN_END_FRAME;
+    const isThinking = frame >= LISTEN_END_FRAME && frame < THINK_END_FRAME;
+    const isRevealed = frame >= REVEAL_START_FRAME;
 
     const stagedEnter = (start: number, durationFrames = 18) =>
         interpolate(frame, [start, start + durationFrames], [0, 1], {
@@ -74,195 +60,421 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({ question, questionNu
         });
 
     const headerEntrance = stagedEnter(0, 18);
-    const imageEntrance = stagedEnter(8, 20);
+    const bodyEntrance = stagedEnter(8, 22);
 
-    const optA = stagedEnter(22, 16);
-    const optB = stagedEnter(29, 16);
-    const optC = stagedEnter(36, 16);
-    const optionEntrances = [optA, optB, optC];
-    const timerEntrance = stagedEnter(43, 16);
-
-    // ── Correct answer reveal: pop + continuous pulse ─────────────────────────
-    const revealBounce = spring({
-        frame: frame - REVEAL_FRAME,
-        fps,
-        config: { damping: 7, stiffness: 220, mass: 0.35 }, // overshoots = pop!
-    });
-    const correctPopScale = isRevealed
-        ? interpolate(revealBounce, [0, 1], [1, 1.06])
-        : 1;
-    const correctPulse = isRevealed ? (1 + Math.sin(frame / 9) * 0.027) : 1;
-
-    // Wrong answers: smooth animated fade to dim
-    const wrongOpacity = isRevealed
-        ? interpolate(frame, [REVEAL_FRAME, REVEAL_FRAME + 30], [1, 0.28], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
-        : 1;
-
-
-
-    // ── Card exit ─────────────────────────────────────────────────────────────
-    const exitProgress = interpolate(frame, [exitFrame, duration], [0, 1], {
+    const exitProgress = interpolate(frame, [EXIT_START_FRAME, duration], [0, 1], {
         easing: Easing.bezier(0.7, 0, 0.84, 0),
         extrapolateLeft: 'clamp',
         extrapolateRight: 'clamp',
     });
-    const scaleExit = interpolate(exitProgress, [0, 1], [1, 0.84]);
-    const opacityExit = interpolate(exitProgress, [0, 1], [1, 0]);
-    const peelX = interpolate(exitProgress, [0, 1], [0, -70]);
-    const peelY = interpolate(exitProgress, [0, 1], [0, -25]);
-    const peelRotate = interpolate(exitProgress, [0, 1], [0, -5]);
+
+    const contentScale = interpolate(exitProgress, [0, 1], [1, 0.86]);
+    const contentOpacity = interpolate(exitProgress, [0, 1], [1, 0]);
+    const contentX = interpolate(exitProgress, [0, 1], [0, -70]);
+    const contentY = interpolate(exitProgress, [0, 1], [0, -28]);
+    const contentRotate = interpolate(exitProgress, [0, 1], [0, -4]);
 
     const headerScale = interpolate(headerEntrance, [0, 0.78, 1], [0.84, 1.03, 1]);
     const headerOpacity = interpolate(headerEntrance, [0, 1], [0, 1]);
     const headerY = interpolate(headerEntrance, [0, 1], [-45, 0]);
-    const headerX = interpolate(headerEntrance, [0, 1], [-90, 0]);
-    const headerTilt = interpolate(headerEntrance, [0, 1], [-7, 0]);
+    const bodyOpacity = interpolate(bodyEntrance, [0, 1], [0, 1]);
+    const bodyScale = interpolate(bodyEntrance, [0, 0.75, 1], [0.82, 1.03, 1]);
+    const bodyY = interpolate(bodyEntrance, [0, 1], [55, 0]);
 
-    const imageScale = interpolate(imageEntrance, [0, 0.75, 1], [0.72, 1.04, 1]);
-    const imageRotate = interpolate(imageEntrance, [0, 1], [-16, 0]);
-    const imageX = interpolate(imageEntrance, [0, 1], [-130, 0]);
-    const imageY = interpolate(imageEntrance, [0, 1], [35, 0]);
+    const timerProgress = interpolate(frame, [LISTEN_END_FRAME, THINK_END_FRAME], [1, 0], {
+        extrapolateLeft: 'clamp',
+        extrapolateRight: 'clamp',
+    });
+    const timerWidth = `${Math.max(timerProgress, 0.02) * 100}%`;
+    const timerRed = Math.round(interpolate(timerProgress, [0, 1], [255, 120], {
+        extrapolateLeft: 'clamp',
+        extrapolateRight: 'clamp',
+    }));
+    const timerGreen = Math.round(interpolate(timerProgress, [0, 1], [59, 214], {
+        extrapolateLeft: 'clamp',
+        extrapolateRight: 'clamp',
+    }));
+    const timerBlue = Math.round(interpolate(timerProgress, [0, 1], [48, 60], {
+        extrapolateLeft: 'clamp',
+        extrapolateRight: 'clamp',
+    }));
+    const timerColor = `rgb(${timerRed}, ${timerGreen}, ${timerBlue})`;
+    const timerOpacity = isThinking
+        ? interpolate(frame, [LISTEN_END_FRAME, LISTEN_END_FRAME + 12], [0, 1], {
+              extrapolateLeft: 'clamp',
+              extrapolateRight: 'clamp',
+          })
+        : 0;
+    const timerGlow = isThinking ? 14 + Math.sin(frame / 4) * 6 : 0;
 
-    const contentScale = scaleExit;
-    const contentOpacity = opacityExit;
+    const revealPop = spring({
+        frame: frame - REVEAL_START_FRAME,
+        fps,
+        config: { damping: 9, stiffness: 200, mass: 0.4 },
+    });
+    const revealScale = isRevealed ? interpolate(revealPop, [0, 1], [0.92, 1.04]) : 1;
+    const revealPulse = isRevealed ? 1 + Math.sin(frame / 12) * 0.02 : 1;
+    const revealTitleFloatY = isRevealed ? Math.sin(frame / 11) * 12 + Math.cos(frame / 19) * 5 : 0;
+    const revealTitleRotate = isRevealed ? Math.sin(frame / 18) * 1.6 : 0;
+    const revealTitleScale = isRevealed
+        ? interpolate(revealPop, [0, 1], [0.88, 1.02]) + Math.sin(frame / 14) * 0.015
+        : 1;
+    const revealTitleMaxChars = layout === 'vertical' ? 22 : 26;
+    const revealTitle = truncateRevealTitle(question.title, revealTitleMaxChars);
+    const revealTitleLength = revealTitle.length;
+    const revealTitleFontSize = layout === 'vertical'
+        ? revealTitleLength > 18 ? '4.1rem' : '4.4rem'
+        : revealTitleLength > 22 ? '6.2rem' : '6.8rem';
 
-    const swayBase = Math.sin(frame / 22) * 1.6;
-    const swayAccent = Math.sin(frame / 7) * 0.45;
-    const sway = swayBase + swayAccent;
-    const imageFloat = Math.sin(frame / 17) * 8 + Math.cos(frame / 29) * 4;
-    const headerFloat = Math.sin(frame / 20) * 4;
-    const contentParallaxX = Math.sin(frame / 45) * 8;
-    const contentParallaxY = Math.cos(frame / 34) * 5;
-    const timerContainerX = interpolate(timerEntrance, [0, 1], [120, 0]);
-    const timerContainerY = interpolate(timerEntrance, [0, 1], [28, 0]);
-    const timerContainerScale = interpolate(timerEntrance, [0, 0.78, 1], [0.82, 1.04, 1]);
-    const timerContainerRotate = interpolate(timerEntrance, [0, 1], [4, 0]);
+    const vinylPulseBase = isListening ? 1 : isThinking ? 0.97 : 1.02;
+    const vinylPulse = vinylPulseBase + Math.sin(frame / 5) * (isListening ? 0.035 : 0.018);
+    const ringRotation = frame * (isListening ? 1.9 : isThinking ? 0.8 : 1.2);
+    const ringAccent = isListening ? ringPalette.primary : isThinking ? ringPalette.secondary : 'var(--kq-green)';
+
+    const headerTitle = isRevealed
+        ? (lang === 'en' ? 'The song is...' : 'La canción es...')
+        : isThinking
+            ? (lang === 'en' ? 'Time to think' : 'Tiempo para pensar')
+            : (lang === 'en' ? 'Listen closely' : 'Escucha bien');
+
+
+
+    const centerCardWidth = layout === 'vertical' ? 880 : 1900;
+
+    const phaseTransitionProgress = isRevealed
+        ? interpolate(frame, [REVEAL_START_FRAME, REVEAL_START_FRAME + 12], [0, 1], {
+              extrapolateLeft: 'clamp',
+              extrapolateRight: 'clamp',
+          })
+        : 0;
+
+    const showListenThink = frame < REVEAL_START_FRAME + 12;
+    const showReveal = frame >= REVEAL_START_FRAME;
+
+    const listenThinkOpacity = isRevealed ? 1 - phaseTransitionProgress : 1;
+    const listenThinkBlur = isRevealed ? phaseTransitionProgress * 24 : 0;
+    const listenThinkScale = isRevealed ? 1 + phaseTransitionProgress * 0.1 : 1;
+
+    const revealOpacity = phaseTransitionProgress;
+    const revealBlur = (1 - phaseTransitionProgress) * 24;
+
+    const headerEntranceBlur = (1 - headerEntrance) * 14;
+    const bodyEntranceBlur = (1 - bodyEntrance) * 14;
+    const cardExitBlur = exitProgress > 0 && exitProgress < 1 ? Math.sin(exitProgress * Math.PI) * 16 : 0;
+
+    const headerBlur = headerEntranceBlur + cardExitBlur;
+    const generalBodyBlur = bodyEntranceBlur + cardExitBlur;
 
     return (
         <AbsoluteFill
             className={`question-card-fill ${layout === 'vertical' ? 'vertical' : ''}`}
-            style={{
-                overflow: 'hidden',
-            }}
+            style={{ overflow: 'hidden' }}
         >
-            {/* ── Whole-scene exit wrapper ──────────────────────────── */}
             <div
                 style={{
                     position: 'absolute',
                     inset: 0,
-                    transform: `translateX(${contentParallaxX + peelX}px) translateY(${contentParallaxY + peelY}px) scale(${contentScale}) rotate(${peelRotate}deg)`,
+                    transform: `translateX(${contentX}px) translateY(${contentY}px) scale(${contentScale}) rotate(${contentRotate}deg)`,
                     opacity: contentOpacity,
                 }}
             >
-                {/* ── 1. QUESTION HEADER (top bar, full width, slight skew) ── */}
                 <div
-                    className="question-header-container perspective-header"
+                    className={`question-header-container ${isRevealed ? 'revealed' : ''}`}
                     style={{
-                        transform: `translateX(${headerX}px) translateY(${headerY + headerFloat}px) scale(${headerScale}) rotate(${headerTilt + Math.sin(frame / 23) * 1.2}deg)`,
+                        position: 'absolute',
+                        top: layout === 'vertical' ? '120px' : '80px',
+                        left: '50%',
+                        transform: `translateX(-50%) translateY(${headerY}px) scale(${headerScale})`,
                         opacity: headerOpacity,
+                        filter: headerBlur > 0.1 ? `blur(${headerBlur}px)` : undefined,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        background: isRevealed ? 'var(--kq-green)' : 'var(--kq-amber)',
+                        borderColor: isRevealed ? 'var(--kq-green-deep)' : 'var(--kq-outline)',
+                        padding: '18px 45px',
+                        zIndex: 20,
                     }}
                 >
-                    <div className="question-title">{question.question}</div>
+                    <div
+                        className={`question-title ${isRevealed ? 'revealed' : ''}`}
+                        style={{
+                            fontSize: layout === 'vertical' ? '2.4rem' : '3.6rem',
+                            color: isRevealed ? '#ffffff' : 'var(--kq-charcoal)',
+                        }}
+                    >
+                        {headerTitle}
+                    </div>
                 </div>
 
-                {/* ── 2. QUESTION NUMBER CIRCLE (top-right corner) ── */}
                 <div
-                    className="question-number-circle perspective-number"
+                    className="question-number-circle"
                     style={{
-                        transform: `translateY(${headerFloat * 0.5}px) scale(${headerScale})`,
+                        position: 'absolute',
+                        top: layout === 'vertical' ? '40px' : '35px',
+                        right: layout === 'vertical' ? '45px' : '40px',
+                        zIndex: 25,
+                        width: layout === 'vertical' ? '110px' : '145px',
+                        height: layout === 'vertical' ? '110px' : '145px',
+                        fontSize: layout === 'vertical' ? '3.6rem' : '5.2rem',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        transform: `scale(${headerScale})`,
                         opacity: headerOpacity,
+                        filter: headerBlur > 0.1 ? `blur(${headerBlur}px)` : undefined,
                     }}
                 >
                     {questionNumber}
                 </div>
 
-                {/* ── 3. IMAGE (left side, trapezoid perspective) ── */}
                 <div
-                    className="image-column perspective-image"
+                    style={{
+                        position: 'absolute',
+                        top: layout === 'vertical' ? '250px' : '205px',
+                        bottom: layout === 'vertical' ? '210px' : '175px',
+                        left: '40px',
+                        right: '40px',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        zIndex: 10,
+                    }}
                 >
-                    <div
-                        className="polaroid-frame"
-                        style={{
-                            transform: `translateX(${imageX}px) translateY(${imageY + imageFloat}px) scale(${imageScale}) rotate(${sway + imageRotate}deg)`,
-                            opacity: imageEntrance,
-                        }}
-                    >
-                        <Img src={question.image} alt="Question" />
-                    </div>
-                </div>
-
-                {/* ── 4. OPTIONS (right side, stacked with perspective skew) ── */}
-                <div className="options-column perspective-options">
-                    <div className="options-container">
-                        {question.options.map((opt, i) => {
-                            const isCorrect = hasAnswerReveal && i === question.correct;
-                            const entrance_i = optionEntrances[Math.min(i, 2)];
-                            const direction = i % 2 === 0 ? -1 : 1;
-                            const paletteIndex = (colorRotationBase + i) % OPTION_COLOR_COUNT;
-
-                            const optScale = isRevealed && isCorrect
-                                ? correctPopScale * correctPulse
-                                : isRevealed
-                                    ? 1
-                                    : interpolate(entrance_i, [0, 0.78, 1], [0.82, 1.04, 1]);
-
-                            const optOpacity = isRevealed && !isCorrect
-                                ? wrongOpacity
-                                : isRevealed ? 1
-                                    : interpolate(entrance_i, [0, 1], [0, 1]);
-
-                            const optRotate = interpolate(entrance_i, [0, 1], [direction * 7, 0]) + Math.sin((frame + i * 6) / 18) * 0.9;
-                            const optTranslateX = isRevealed
-                                ? Math.sin((frame + i * 8) / 26) * 4
-                                : interpolate(entrance_i, [0, 1], [direction * 120, Math.sin((frame + i * 8) / 26) * 4]);
-                            const optTranslateY = isRevealed ? 0
-                                : interpolate(entrance_i, [0, 1], [28, 0]) + Math.cos((frame + i * 7) / 21) * 3;
-
-                            let btnClass = `option-btn option-color-${paletteIndex}`;
-                            if (isRevealed && isCorrect) btnClass += ' correct highlight-correct';
-                            if (isRevealed && !isCorrect) btnClass += ' opacity-50';
-
-                            return (
+                    {showListenThink && (
+                        <div
+                            style={{
+                                position: 'absolute',
+                                width: `${centerCardWidth}px`,
+                                maxWidth: '100%',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                gap: layout === 'vertical' ? '22px' : '28px',
+                                transform: `translateY(${bodyY}px) scale(${bodyScale * listenThinkScale})`,
+                                opacity: bodyOpacity * listenThinkOpacity,
+                                filter: (generalBodyBlur + listenThinkBlur) > 0.1 ? `blur(${generalBodyBlur + listenThinkBlur}px)` : undefined,
+                            }}
+                        >
+                            {isListening && (
                                 <div
-                                    key={i}
-                                    className={btnClass}
                                     style={{
-                                        transform: `translateX(${optTranslateX}px) translateY(${optTranslateY}px) scale(${optScale}) rotate(${optRotate}deg)`,
-                                        opacity: optOpacity,
+                                        position: 'relative',
+                                        width: layout === 'vertical' ? '560px' : '760px',
+                                        height: layout === 'vertical' ? '560px' : '760px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
                                     }}
                                 >
-                                    <div className="option-letter">{String.fromCharCode(65 + i)}</div>
-                                    <div className="option-text">{opt}</div>
-                                </div>
-                            );
-                        })}
-                    </div>
+                                    {Array.from({length: 18}).map((_, index) => {
+                                        const angle = (360 / 18) * index;
+                                        const distance = layout === 'vertical' ? 214 : 286;
+                                        const barHeight = (layout === 'vertical' ? 76 : 102) + Math.abs(Math.sin((frame / 7) + index)) * (layout === 'vertical' ? 68 : 92);
+                                        return (
+                                            <div
+                                                key={index}
+                                                style={{
+                                                    position: 'absolute',
+                                                    left: '50%',
+                                                    top: '50%',
+                                                    width: layout === 'vertical' ? '22px' : '32px',
+                                                    height: `${barHeight}px`,
+                                                    borderRadius: '999px',
+                                                    background: index % 2 === 0 ? ringPalette.secondary : ringPalette.primary,
+                                                    border: '3px solid #000000',
+                                                    opacity: 0.92,
+                                                    transform: `translate(-50%, -50%) rotate(${angle + ringRotation}deg) translateY(-${distance}px)`,
+                                                    transformOrigin: 'center center',
+                                                }}
+                                            />
+                                        );
+                                    })}
 
-                    {/* ── 5. TIMER BAR (same perspective as options) ── */}
-                    <div
-                        className="timer-container"
-                        style={{
-                            transform: `translateX(${timerContainerX}px) translateY(${timerContainerY}px) scale(${timerContainerScale}) rotate(${timerContainerRotate + Math.sin(frame / 24) * 0.5}deg)`,
-                            opacity: timerEntrance,
-                        }}
-                    >
+                                    {/* DETAILED SVG VINYL RECORD */}
+                                    <svg
+                                        width={layout === 'vertical' ? 392 : 520}
+                                        height={layout === 'vertical' ? 392 : 520}
+                                        viewBox="0 0 200 200"
+                                        style={{
+                                            position: 'absolute',
+                                            transform: `scale(${vinylPulse})`,
+                                            filter: 'drop-shadow(0 24px 60px rgba(0,0,0,0.32))',
+                                            overflow: 'visible',
+                                        }}
+                                    >
+                                        {/* Entire disc rotates as one unit */}
+                                        <g transform={`rotate(${-ringRotation} 100 100)`}>
+                                            {/* Outer rim */}
+                                            <circle cx="100" cy="100" r="99" fill="none" stroke="#000000" strokeWidth="3" />
+                                            <circle cx="100" cy="100" r="97.5" fill="none" stroke="#ffffff" strokeWidth="2" />
+
+                                            {/* Main vinyl body */}
+                                            <circle cx="100" cy="100" r="96" fill="#161616" stroke="#0e0e0e" strokeWidth="1" />
+
+                                            {/* Concentric grooves */}
+                                            {[92, 88, 84, 80, 76, 72, 68, 64, 60, 56, 52, 48].map((r, i) => (
+                                                <circle key={i} cx="100" cy="100" r={r}
+                                                    fill="none" stroke="rgba(255, 255, 255, 0.06)"
+                                                    strokeWidth={i % 3 === 0 ? '0.9' : '0.45'}
+                                                />
+                                            ))}
+
+                                            {/* Light sheen wedges (rotate with the disc) */}
+                                            <path d="M 100 100 L 45 -5 A 110 110 0 0 1 155 -5 Z"
+                                                fill="rgba(255, 255, 255, 0.07)" />
+                                            <path d="M 100 100 L 155 205 A 110 110 0 0 1 45 205 Z"
+                                                fill="rgba(255, 255, 255, 0.07)" />
+
+                                            {/* Paper center label */}
+                                            <circle cx="100" cy="100" r="38" fill={ringAccent}
+                                                stroke="#ffffff" strokeWidth="3.5" />
+                                            <circle cx="100" cy="100" r="32" fill="none"
+                                                stroke="rgba(255, 255, 255, 0.3)" strokeWidth="1.5"
+                                                strokeDasharray="4 2" />
+                                            <circle cx="100" cy="100" r="22" fill="none"
+                                                stroke="rgba(0, 0, 0, 0.15)" strokeWidth="1" />
+                                        </g>
+
+                                        {/* Center spindle hole (stays static) */}
+                                        <circle cx="100" cy="100" r="8" fill="#ffffff"
+                                            stroke="#000000" strokeWidth="3.5" />
+                                    </svg>
+                                </div>
+                            )}
+
+                            {isThinking && (
+                                <div
+                                    style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        width: '100%',
+                                        minHeight: layout === 'vertical' ? '340px' : '420px',
+                                        textAlign: 'center',
+                                        padding: layout === 'vertical' ? '0 40px' : '0 80px',
+                                    }}
+                                >
+                                    <div
+                                        style={{
+                                            fontFamily: "'DynaPuff', sans-serif",
+                                            fontSize: layout === 'vertical' ? '5.4rem' : '8.5rem',
+                                            lineHeight: 1,
+                                            color: '#ffffff',
+                                            textTransform: 'uppercase',
+                                            fontWeight: 900,
+                                            textShadow: '5px 5px 0 #000000, -5px -5px 0 #000000, 5px -5px 0 #000000, -5px 5px 0 #000000, 0 5px 0 #000000, 0 -5px 0 #000000, 5px 0 0 #000000, -5px 0 0 #000000',
+                                            transform: `translateY(${Math.sin(frame / 10) * 10 + Math.cos(frame / 21) * 4}px) rotate(${Math.sin(frame / 15) * 1.5}deg) scale(${interpolate(bodyEntrance, [0, 0.8, 1], [0.82, 1.05, 1]) * interpolate(exitProgress, [0, 1], [1, 0.9])})`,
+                                            opacity: bodyOpacity * interpolate(exitProgress, [0, 1], [1, 0]),
+                                        }}
+                                    >
+                                        {lang === 'en' ? 'What song is it?' : '¿Que cancion es?'}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    )}
+
+                    {showReveal && (
                         <div
-                            className="timer-bar"
                             style={{
-                                width: timerWidth,
-                                transform: `scaleY(${urgencyPulse}) translateY(${Math.sin(frame / 15) * 0.8}px)`,
-                                background: timerColor,
-                                boxShadow: timerGlow > 0
-                                    ? `0 0 ${timerGlow}px ${timerColor}, 0 0 ${timerGlow * 2}px ${timerColor}50`
-                                    : 'none',
-                                opacity: timerOpacity,
+                                position: 'absolute',
+                                width: layout === 'vertical' ? '100%' : '2100px',
+                                maxWidth: '100%',
+                                display: 'flex',
+                                flexDirection: layout === 'vertical' ? 'column' : 'row',
+                                alignItems: 'center',
+                                justifyContent: layout === 'vertical' ? 'center' : 'space-between',
+                                gap: layout === 'vertical' ? '34px' : '120px',
+                                padding: layout === 'vertical' ? '42px' : '30px 120px',
+                                opacity: revealOpacity,
+                                filter: (generalBodyBlur + revealBlur) > 0.1 ? `blur(${generalBodyBlur + revealBlur}px)` : undefined,
                             }}
-                        />
-                    </div>
+                        >
+                            <div
+                                style={{
+                                    width: layout === 'vertical' ? '450px' : '760px',
+                                    height: layout === 'vertical' ? '450px' : '760px',
+                                    borderRadius: layout === 'vertical' ? '38px' : '42px',
+                                    overflow: 'hidden',
+                                    flexShrink: 0,
+                                    background: '#f4f4f4',
+                                    boxShadow: '0 18px 42px rgba(0,0,0,0.18)',
+                                    transform: `scale(${revealScale * revealPulse})`,
+                                }}
+                            >
+                                <Img
+                                    src={staticFile(question.image)}
+                                    alt={question.title}
+                                    style={{
+                                        width: '100%',
+                                        height: '100%',
+                                        objectFit: 'cover',
+                                    }}
+                                />
+                            </div>
+
+                            <div
+                                style={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    textAlign: 'center',
+                                    width: layout === 'vertical' ? '100%' : '820px',
+                                    maxWidth: layout === 'vertical' ? '100%' : '820px',
+                                    minWidth: layout === 'vertical' ? undefined : '820px',
+                                    minHeight: layout === 'vertical' ? 'auto' : '760px',
+                                    padding: layout === 'vertical' ? '0 20px' : '0 30px',
+                                }}
+                            >
+                                <div
+                                    style={{
+                                        fontFamily: "'DynaPuff', sans-serif",
+                                        fontSize: revealTitleFontSize,
+                                        lineHeight: 1.05,
+                                        color: '#ffffff',
+                                        textShadow: '5px 5px 0 #000000, -5px -5px 0 #000000, 5px -5px 0 #000000, -5px 5px 0 #000000, 0 5px 0 #000000, 0 -5px 0 #000000, 5px 0 0 #000000, -5px 0 0 #000000',
+                                        transform: `translateY(${revealTitleFloatY}px) rotate(${revealTitleRotate}deg) scale(${revealTitleScale})`,
+                                        width: '100%',
+                                        overflowWrap: 'anywhere',
+                                    }}
+                                >
+                                    {revealTitle}
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
 
-                {/* ── 6. LOGO (bottom center) ── */}
-                <Img src={logoPapelcool} className="corner-logo perspective-logo" alt="Papelcool logo" />
+                <div
+                    className="timer-container"
+                    style={{
+                        position: 'absolute',
+                        bottom: layout === 'vertical' ? '125px' : '105px',
+                        left: '50%',
+                        transform: 'translateX(-50%)',
+                        width: layout === 'vertical' ? '960px' : '2360px',
+                        height: layout === 'vertical' ? '35px' : '45px',
+                        border: layout === 'vertical' ? '4px solid #000000' : '5px solid #000000',
+                        borderRadius: '50px',
+                        background: 'rgba(255, 255, 255, 0.36)',
+                        overflow: 'hidden',
+                        zIndex: 100,
+                        opacity: timerOpacity,
+                    }}
+                >
+                    <div
+                        className="timer-bar"
+                        style={{
+                            width: timerWidth,
+                            height: '100%',
+                            background: timerColor,
+                            boxShadow: `0 0 ${timerGlow}px ${timerColor}`,
+                        }}
+                    />
+                </div>
+
             </div>
         </AbsoluteFill>
     );

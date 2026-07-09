@@ -6,15 +6,15 @@ import qrArrow from '../assets/qr-arrow.svg';
 const TRANSLATIONS = {
     es: {
         title: '¿CUÁNTAS\nACERTASTE?',
-        commentText: '¡Déjalo en los comentarios!',
+        commentText: 'Comenta cuántas acertaste',
         ctaButton: '¡SUSCRÍBETE!',
-        supportText: 'entra aqui para apoyar el canal',
+        supportText: 'entra aquí para apoyar el canal',
     },
     en: {
         title: 'HOW MANY\nDID YOU GET?',
-        commentText: 'Leave it in the comments!',
+        commentText: 'Comment how many you got right',
         ctaButton: 'SUBSCRIBE!',
-        supportText: 'enter here to support the channel',
+        supportText: 'go here to support the channel',
     },
 } as const;
 
@@ -27,6 +27,7 @@ export const Outro: React.FC<OutroProps> = ({ lang = 'es' }) => {
     const frame = useCurrentFrame();
     const { durationInFrames } = useVideoConfig();
     const t = TRANSLATIONS[lang];
+    const supportText = t.supportText;
 
     const enter = (start: number, duration = 24) =>
         interpolate(frame, [start, start + duration], [0, 1], {
@@ -72,51 +73,8 @@ export const Outro: React.FC<OutroProps> = ({ lang = 'es' }) => {
 
     const titleLines = t.title.split('\n');
 
-    // Helper for floating shapes
-    const f = (speed: number, offset = 0) => Math.sin((frame + offset) / speed);
-    const c = (speed: number, offset = 0) => Math.cos((frame + offset) / speed);
-
     return (
         <AbsoluteFill style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            {/* Floating decorative shapes */}
-            <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none', zIndex: 1 }}>
-                <svg width="170" height="170" viewBox="0 0 100 100" style={{
-                    position: 'absolute', top: '6%', right: '7%',
-                    transform: `translate(${f(55) * 10}px, ${c(40) * 14}px) rotate(${frame / 5}deg)`,
-                    opacity: 0.35,
-                }}><circle cx="50" cy="50" r="40" fill="#FFE600" /></svg>
-
-                <svg width="140" height="140" viewBox="0 0 100 100" style={{
-                    position: 'absolute', top: '12%', left: '6%',
-                    transform: `translate(${c(60, 15) * 12}px, ${f(50, 20) * 10}px) rotate(${-frame / 6}deg)`,
-                    opacity: 0.33,
-                }}><rect x="18" y="18" width="64" height="64" rx="16" fill="#D1E9FF" /></svg>
-
-                <svg width="120" height="120" viewBox="0 0 100 100" style={{
-                    position: 'absolute', bottom: '10%', right: '10%',
-                    transform: `translate(${f(70, 25) * 14}px, ${c(55, 30) * 12}px) rotate(${frame / 7}deg)`,
-                    opacity: 0.32,
-                }}><polygon points="50,10 90,90 10,90" fill="#FF4D94" /></svg>
-
-                <svg width="150" height="150" viewBox="0 0 100 100" style={{
-                    position: 'absolute', bottom: '15%', left: '8%',
-                    transform: `translate(${c(50, 35) * 10}px, ${f(65, 40) * 16}px) rotate(${-frame / 4.5}deg)`,
-                    opacity: 0.34,
-                }}><circle cx="50" cy="50" r="36" fill="#407BFF" /></svg>
-
-                <svg width="100" height="100" viewBox="0 0 100 100" style={{
-                    position: 'absolute', top: '50%', right: '3%',
-                    transform: `translate(${f(45, 50) * 6}px, ${c(60, 10) * 8}px) rotate(${frame / 8}deg)`,
-                    opacity: 0.28,
-                }}><rect x="22" y="22" width="56" height="56" rx="14" fill="#FFE600" /></svg>
-
-                <svg width="110" height="110" viewBox="0 0 100 100" style={{
-                    position: 'absolute', top: '48%', left: '2%',
-                    transform: `translate(${c(75, 15) * 8}px, ${f(50, 45) * 10}px) rotate(${-frame / 6.5}deg)`,
-                    opacity: 0.30,
-                }}><polygon points="50,5 95,37 77,90 23,90 5,37" fill="#D1E9FF" /></svg>
-            </div>
-
             <div className="outro-v3-container" style={{ zIndex: 2, position: 'relative' }}>
                 <div
                     className="outro-qr-corner"
@@ -132,7 +90,7 @@ export const Outro: React.FC<OutroProps> = ({ lang = 'es' }) => {
                                 transform: `translateY(${calloutTextFloat}px) rotate(${calloutTextTilt}deg) scale(${calloutTextScale})`,
                             }}
                         >
-                            {t.supportText}
+                            {supportText}
                         </div>
                         <Img
                             src={qrArrow}

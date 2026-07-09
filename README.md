@@ -54,7 +54,7 @@ Para regenerar las locuciones reales del proyecto:
 python scripts/generate_tts_google.py
 ```
 
-Eso sobrescribe `public/intro_es.mp3`, `public/intro_en.mp3`, `public/outro_es.mp3` y `public/outro_en.mp3` usando Gemini TTS.
+Eso regenera `public/intro_es.mp3`, `public/intro_en.mp3`, `public/outro_es.mp3` y `public/outro_en.mp3` usando Gemini TTS.
 
 ### Voiceover rules
 
